@@ -228,7 +228,13 @@ class TuyaWebApi {
                         obj.expires_in
                       );
                       // Change url based on areacode in accesstoken first two chars
-                      this.session.areaCode = obj.access_token.substr(0, 2);
+                      this.session.areaCode = 'EU';
+
+                        if(obj.access_token)
+                        {
+                            this.session.areaCode = obj.access_token.substr(0, 2);
+                        }
+
                       switch (this.session.areaCode) {
                         case 'AY':
                           this.session.areaBaseUrl = 'https://px1.tuyacn.com';

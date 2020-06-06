@@ -154,10 +154,6 @@ function SynTexSwitchAccessory(id, name)
     }).bind(this);
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-
-    //logger.log('debug', this);
-
-    //this.platformAccessory = new this.api.platformAccessory(this.name, 'ubiczuufbzosuzbaicbz');
 }
 
 
@@ -165,7 +161,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 {
     tuyaWebAPI.getDeviceState(this.id).then(function(data) {
 
-        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
+        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
 
         callback(null, data.state);
 
