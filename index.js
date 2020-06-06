@@ -110,11 +110,13 @@ function updateDeviceState(accessory)
 {
     tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
     
-        accessory.changeHandler(data.state);
+        accessory.changeHandler(data.online ? data.state : new Error('Offline'));
 
     }.bind(this)).catch(function(e) {
 
         logger.err(e);
+
+        accessory.changeHandler(e);
     });
 }
 
