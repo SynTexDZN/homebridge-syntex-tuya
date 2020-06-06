@@ -233,6 +233,8 @@ class TuyaWebApi {
                         if(obj.access_token)
                         {
                             this.session.areaCode = obj.access_token.substr(0, 2);
+
+                            console.log(this.session.areaCode);
                         }
 
                       switch (this.session.areaCode) {
