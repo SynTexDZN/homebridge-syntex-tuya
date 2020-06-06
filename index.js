@@ -45,22 +45,14 @@ function SynTexTuyaPlatform(log, sconfig, api)
         log
     );
 
-    logger.log('debug', accessories);
-
     api.on('didFinishLaunching', function() {
-
-        logger.log('debug', accessories);
 
         this.tuyaWebApi.getOrRefreshToken().then(function(token) {
 
             this.tuyaWebApi.token = token;
 
-            logger.log('debug', accessories);
-    
             this.tuyaWebApi.discoverDevices().then(function(devices) {
                 
-                logger.log('debug', accessories);
-
                 for(const device of devices)
                 {
                     //this.addAccessory(device);
