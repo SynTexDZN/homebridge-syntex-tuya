@@ -84,14 +84,7 @@ SynTexTuyaPlatform.prototype = {
     
                     for(var i = 0; i < accessories.length; i++)
                     {
-                        tuyaWebAPI.getDeviceState(accessories[i].id).then(function(data) {
-    
-                            accessories[i].changeHandler(data.state);
-                    
-                        }.bind(this)).catch(function(e) {
-                    
-                            logger.err(e);
-                        });
+                        updateDeviceState(accessories[i]);
                     }
     
                 }, this.pollingInterval * 1000);
@@ -108,6 +101,18 @@ SynTexTuyaPlatform.prototype = {
             logger.err(e);
         });
     }
+}
+
+function updateDeviceState(accessory)
+{
+    tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
+    
+        accessory.changeHandler(data.state);
+
+    }.bind(this)).catch(function(e) {
+
+        logger.err(e);
+    });
 }
 
 function SynTexSwitchAccessory(id, name)
