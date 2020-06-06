@@ -35,6 +35,8 @@ function SynTexTuyaPlatform(log, sconfig, api)
     
     logger.create('SynTexTuya', this.logDirectory, api.user.storagePath());
 
+    this.api = api;
+
     this.tuyaWebApi = new TuyaWebApi(
         this.username,
         this.password,
@@ -160,6 +162,8 @@ function SynTexSwitchAccessory(name)
     }).bind(this);
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+
+    this.platformAccessory = new this.api.platformAccessory(this.name, 'ubiczuufbzosuzbaicbz');
 }
 
 
