@@ -41,16 +41,16 @@ function SynTexTuyaPlatform(log, sconfig, api)
         log
     );
 
-    api.on('didFinishLaunching', function () {
+    api.on('didFinishLaunching', function() {
 
         this.tuyaWebApi.getOrRefreshToken().then((token) => {
 
             this.tuyaWebApi.token = token;
     
-            // Start discovery for devices
-            this.tuyaWebApi.discoverDevices().then((devices) => {
-                // Add devices to Homebridge
-                for (const device of devices) {
+            this.tuyaWebApi.discoverDevices().then(function(devices) {
+                
+                for(const device of devices)
+                {
                     //this.addAccessory(device);
                     logger.log('debug', device.name);
                     logger.log('debug', device.dev_type);
@@ -58,8 +58,9 @@ function SynTexTuyaPlatform(log, sconfig, api)
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
-            }).catch((error) => {
-                this.log.error(error);
+            }).catch(function(e) {
+
+                logger.err(e);
             });
             /*
             // Set interval for refreshing device states
@@ -68,10 +69,12 @@ function SynTexTuyaPlatform(log, sconfig, api)
             }, this.pollingInterval * 1000);
             */
     
-        }).catch((error) => {
-            this.log.error(error);
+        }).catch(function(e) {
+
+            logger.err(e);
         });
-    });
+
+    }.bind(this));
 
     //DeviceManager.SETUP(logger, this.cacheDirectory);
 
