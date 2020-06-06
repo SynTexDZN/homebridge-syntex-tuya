@@ -70,7 +70,7 @@ SynTexTuyaPlatform.prototype = {
                     }
                     else if(device.dev_type == 'light')
                     {
-                        var accessory = new SynTexLightAccessory(device.name);
+                        var accessory = new SynTexLightAccessory(device.id, device.name);
 
                         accessories.push(accessory);
                     }
