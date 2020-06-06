@@ -41,31 +41,36 @@ function SynTexTuyaPlatform(log, sconfig, api)
         log
     );
 
-    this.tuyaWebApi.getOrRefreshToken().then((token) => {
+    api.on('didFinishLaunching', function () {
 
-        this.tuyaWebApi.token = token;
+        this.tuyaWebApi.getOrRefreshToken().then((token) => {
 
-        // Start discovery for devices
-        this.tuyaWebApi.discoverDevices().then((devices) => {
-            // Add devices to Homebridge
-            for (const device of devices) {
-                //this.addAccessory(device);
-                logger.log('debug', device.dev_type);
-            }
-            // Get device state of all devices - once
-            //this.refreshDeviceStates();
+            this.tuyaWebApi.token = token;
+    
+            // Start discovery for devices
+            this.tuyaWebApi.discoverDevices().then((devices) => {
+                // Add devices to Homebridge
+                for (const device of devices) {
+                    //this.addAccessory(device);
+                    logger.log('debug', device.name);
+                    logger.log('debug', device.dev_type);
+                    logger.log('debug', device.data);
+                }
+                // Get device state of all devices - once
+                //this.refreshDeviceStates();
+            }).catch((error) => {
+                this.log.error(error);
+            });
+            /*
+            // Set interval for refreshing device states
+            this.refreshInterval = setInterval(() => {
+                this.refreshDeviceStates();
+            }, this.pollingInterval * 1000);
+            */
+    
         }).catch((error) => {
             this.log.error(error);
         });
-        /*
-        // Set interval for refreshing device states
-        this.refreshInterval = setInterval(() => {
-            this.refreshDeviceStates();
-        }, this.pollingInterval * 1000);
-        */
-
-    }).catch((error) => {
-        this.log.error(error);
     });
 
     //DeviceManager.SETUP(logger, this.cacheDirectory);
