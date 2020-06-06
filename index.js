@@ -88,12 +88,24 @@ SynTexTuyaPlatform.prototype = {
 
                 logger.err(e);
             });
-            /*
-            // Set interval for refreshing device states
-            this.refreshInterval = setInterval(() => {
-                this.refreshDeviceStates();
+
+            this.refreshInterval = setInterval(function() {
+
+                console.log('debug', 'Refreshing Tuya States');
+
+                for(var i = 0; i < accessories.length; i++)
+                {
+                    tuyaWebAPI.getDeviceState(accessories[i].id).then(function(data) {
+
+                        accessory.changeHandler(data.state);
+                
+                    }.bind(this)).catch(function(e) {
+                
+                        logger.err(e);
+                    });
+                }
+
             }, this.pollingInterval * 1000);
-            */
     
         }.bind(this)).catch(function(e) {
 
