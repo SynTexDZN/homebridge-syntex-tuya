@@ -1,0 +1,39 @@
+{
+  "name": "homebridge-syntex-tuya",
+  "version": "1.0.0",
+  "description": "A webhook plugin for Tuya devices",
+  "main": "index.js",
+  "author": "SynTexDZN",
+  "engines": {
+    "homebridge": ">=0.3.0",
+    "node": ">=9.11.2"
+  },
+  "dependencies": {
+    "json-fs-store": "^1.0.1",
+    "request": "^2.88.0"
+  },
+  "keywords": [
+    "syntex",
+    "syntex-tuya",
+    "homebridge-plugin",
+    "homebridge",
+    "plugin",
+    "http",
+    "tuya",
+    "homekit",
+    "smarthome",
+    "siri"
+  ],
+  "homepage": "https://github.com/SynTexDZN/homebridge-syntex-tuya#readme",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SynTexDZN/homebridge-syntex-tuya.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SynTexDZN/homebridge-syntex-tuya/issues"
+  },
+  "license": "ISC",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
