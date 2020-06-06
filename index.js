@@ -163,9 +163,9 @@ function SynTexSwitchAccessory(name)
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 
-    logger.log('debug', this);
+    //logger.log('debug', this);
 
-    this.platformAccessory = new this.api.platformAccessory(this.name, 'ubiczuufbzosuzbaicbz');
+    //this.platformAccessory = new this.api.platformAccessory(this.name, 'ubiczuufbzosuzbaicbz');
 }
 
 
@@ -178,3 +178,8 @@ SynTexSwitchAccessory.prototype.setState = function(powerOn, callback, context)
 {
     callback();
 }
+
+SynTexSwitchAccessory.prototype.getServices = function()
+{
+    return [this.service];
+};
