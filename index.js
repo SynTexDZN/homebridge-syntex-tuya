@@ -3,6 +3,7 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var logger = require('./logger');
+const TuyaWebApi = require('./tuyawebapi');
 
 module.exports = function(homebridge)
 {
