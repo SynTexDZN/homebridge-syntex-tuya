@@ -84,8 +84,11 @@ SynTexTuyaPlatform.prototype = {
                         //this.accessories.set(id, accessory);
                         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [ accessory ]);
 */
-                    this.api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
+                    //this.api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
+                    accessories.push(accessory);
                 }
+
+                callback(accessories);
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
             }.bind(this)).catch(function(e) {
@@ -104,8 +107,6 @@ SynTexTuyaPlatform.prototype = {
             logger.err(e);
         });
     
-        callback(accessories);
-        
         var createServerCallback = (async function(request, response)
         {
             try
