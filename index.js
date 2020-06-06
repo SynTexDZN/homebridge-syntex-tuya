@@ -110,7 +110,7 @@ function updateDeviceState(accessory)
 {
     tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
     
-        accessory.service.getCharacteristic(Characteristic.On).updateValue(null);
+        accessory.service.getCharacteristic(Characteristic.On).updateValue(new Error('offline'));
 
     }.bind(this)).catch(function(e) {
 
