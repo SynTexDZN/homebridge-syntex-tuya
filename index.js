@@ -10,7 +10,8 @@ module.exports = function(homebridge)
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
     
-    homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexTuya', SynTexTuyaPlatform);
+    homebridge.registerPlatform('homebridge-syntex-tuya', 'SynTexTuya', SynTexTuyaPlatform);
+    homebridge.registerAccessory('homebridge-syntex-tuya', 'SynTexTuyaSwitch', SynTexSwitchAccessory);
     /*
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
@@ -43,12 +44,14 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
     api.on('didFinishLaunching', function() {
 
-        this.tuyaWebApi.getOrRefreshToken().then((token) => {
+        this.tuyaWebApi.getOrRefreshToken().then(function(token) {
 
             this.tuyaWebApi.token = token;
     
             this.tuyaWebApi.discoverDevices().then(function(devices) {
                 
+                logger.log('debug', this);
+
                 for(const device of devices)
                 {
                     //this.addAccessory(device);
@@ -58,7 +61,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
                     var accessory = new SynTexSwitchAccessory(device.name);
 
-                    api.registerPlatformAccessories('homebridge-syntex-tuya', 'SynTexSwitch', [accessory]);
+                    api.registerPlatformAccessories('homebridge-syntex-tuya', 'SynTexSwitch', [SynTexSwitchAccessory]);
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
@@ -73,7 +76,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
             }, this.pollingInterval * 1000);
             */
     
-        }).catch(function(e) {
+        }.bind(this)).catch(function(e) {
 
             logger.err(e);
         });
