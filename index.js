@@ -153,7 +153,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
         logger.err(e);
 
-        callback(null);
+        callback(e);
     });
 };
 
