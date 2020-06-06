@@ -12,6 +12,9 @@ module.exports = function(homebridge)
     
     homebridge.registerPlatform('homebridge-syntex-tuya', 'SynTexTuya', SynTexTuyaPlatform);
     homebridge.registerAccessory('homebridge-syntex-tuya', 'SynTexTuyaSwitch', SynTexSwitchAccessory);
+
+    logger.log('debug', accessories);
+
     /*
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
@@ -42,26 +45,44 @@ function SynTexTuyaPlatform(log, sconfig, api)
         log
     );
 
+    logger.log('debug', accessories);
+
     api.on('didFinishLaunching', function() {
+
+        logger.log('debug', accessories);
 
         this.tuyaWebApi.getOrRefreshToken().then(function(token) {
 
             this.tuyaWebApi.token = token;
+
+            logger.log('debug', accessories);
     
             this.tuyaWebApi.discoverDevices().then(function(devices) {
                 
-                logger.log('debug', this);
+                logger.log('debug', accessories);
 
                 for(const device of devices)
                 {
                     //this.addAccessory(device);
+                    /*
                     logger.log('debug', device.name);
                     logger.log('debug', device.dev_type);
-                    logger.log('debug', device.data);
+                    logger.log('debug', device.data);*/
 
-                    var accessory = new SynTexSwitchAccessory(device.name);
-
-                    api.registerPlatformAccessories('homebridge-syntex-tuya', 'SynTexSwitch', [SynTexSwitchAccessory]);
+                    //var accessory = new SynTexSwitchAccessory(device.name);
+                    /*
+                    const accessory = createAccessory({
+                        log: this.log,
+                        api: this.api,
+                        bridge: this.bridge,
+                        id: device.name,
+                        node
+                      });
+                  
+                      //this.accessories.set(id, accessory);
+                      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [ accessory ]);
+*/
+                    //api.registerPlatformAccessories('homebridge-syntex-tuya', 'SynTexSwitch', [SynTexSwitchAccessory]);
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
