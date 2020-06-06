@@ -193,7 +193,7 @@ function SynTexLightAccessory(id, name)
     this.id = id;
     this.name = name;
 
-    this.service = new Service.Light(this.name);
+    this.service = new Service.Lightbulb(this.name);
     /*
     DeviceManager.getDevice(this).then(function(state) {
 
