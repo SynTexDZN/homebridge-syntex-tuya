@@ -72,6 +72,9 @@ SynTexTuyaPlatform.prototype = {
                     {
                         //var accessory = new SynTexLightAccessory(device.name);
 
+                        logger.log('debug', device.color);
+                        logger.log('debug', device);
+
                         //accessories.push(accessory);
                     }
                 }
