@@ -4,8 +4,9 @@ module.exports = function(homebridge)
 {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
+    
+    homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexTuya', SynTexTuyaPlatform);
     /*
-    homebridge.registerPlatform('homebridge-syntex-webhooks', 'SynTexWebHooks', SynTexWebHookPlatform);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStripeRGB', SynTexWebHookStripeRGBAccessory);
@@ -13,7 +14,7 @@ module.exports = function(homebridge)
     */
 };
 
-function SynTexWebHookPlatform(log, sconfig, api)
+function SynTexTuyaPlatform(log, sconfig, api)
 {
     this.username = sconfig['username'];
     this.password = sconfig['password'];
@@ -32,7 +33,7 @@ function SynTexWebHookPlatform(log, sconfig, api)
     restart = false;
 }
 
-SynTexWebHookPlatform.prototype = {
+SynTexTuyaPlatform.prototype = {
     
     accessories : function(callback)
     {
