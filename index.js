@@ -62,6 +62,8 @@ function SynTexTuyaPlatform(log, sconfig, api)
                     logger.log('debug', device.data);*/
 
                     var accessory = new SynTexSwitchAccessory(device.name);
+
+                    logger.debug('debug', accessory);
                     /*
                     const accessory = createAccessory({
                         log: this.log,
