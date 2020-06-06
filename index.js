@@ -173,8 +173,6 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
         callback(null);
     });
-
-    callback(null, true);
 };
 
 SynTexSwitchAccessory.prototype.setState = function(powerOn, callback, context)
