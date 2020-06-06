@@ -58,7 +58,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
                     var accessory = new SynTexSwitchAccessory(device.name);
 
-                    api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
+                    api.registerPlatformAccessories('homebridge-syntex-tuya', 'SynTexSwitch', [accessory]);
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
@@ -139,7 +139,7 @@ function SynTexSwitchAccessory(name)
     */
     this.changeHandler = (function(newState)
     {
-        //this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
 
     }).bind(this);
     
