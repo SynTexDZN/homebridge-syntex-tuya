@@ -157,7 +157,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
     });
 };
 
-SynTexSwitchAccessory.prototype.setState = function(state, callback, context)
+SynTexSwitchAccessory.prototype.setState = function(state, callback)
 {
     const value = state ? 1 : 0;
 
@@ -170,6 +170,8 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback, context)
     }.bind(this)).catch(function(e) {
 
         logger.err(e);
+
+        callback(e);
     });
 }
 
