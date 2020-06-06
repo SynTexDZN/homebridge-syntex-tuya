@@ -32,6 +32,41 @@ function SynTexTuyaPlatform(log, sconfig, api)
     
     logger.create('SynTexTuya', this.logDirectory, api.user.storagePath());
 
+    this.tuyaWebApi = new TuyaWebApi(
+        this.username,
+        this.password,
+        this.countryCode,
+        this.platform,
+        log
+    );
+
+    this.tuyaWebApi.getOrRefreshToken().then((token) => {
+
+        this.tuyaWebApi.token = token;
+
+        // Start discovery for devices
+        this.tuyaWebApi.discoverDevices().then((devices) => {
+            // Add devices to Homebridge
+            for (const device of devices) {
+                //this.addAccessory(device);
+                logger.log('debug', device);
+            }
+            // Get device state of all devices - once
+            //this.refreshDeviceStates();
+        }).catch((error) => {
+            this.log.error(error);
+        });
+        /*
+        // Set interval for refreshing device states
+        this.refreshInterval = setInterval(() => {
+            this.refreshDeviceStates();
+        }, this.pollingInterval * 1000);
+        */
+
+    }).catch((error) => {
+        this.log.error(error);
+    });
+
     //DeviceManager.SETUP(logger, this.cacheDirectory);
 
     restart = false;
