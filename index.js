@@ -177,7 +177,7 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback, context)
 {
     const value = state ? 1 : 0;
 
-    tuyaWebAPI.setDeviceState(this.deviceId, 'turnOnOff', { value: value }).then(function() {
+    tuyaWebAPI.setDeviceState(this.id, 'turnOnOff', { value: value }).then(function() {
 
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
         
