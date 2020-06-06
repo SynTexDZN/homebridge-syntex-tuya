@@ -35,7 +35,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
     
     logger.create('SynTexTuya', this.logDirectory, api.user.storagePath());
 
-    //this.api = api;
+    this.api = api;
 
     //DeviceManager.SETUP(logger, this.cacheDirectory);
 
@@ -84,7 +84,7 @@ SynTexTuyaPlatform.prototype = {
                         //this.accessories.set(id, accessory);
                         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [ accessory ]);
 */
-                    api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
+                    this.api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
