@@ -58,7 +58,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
                     var accessory = new SynTexSwitchAccessory(device.name);
 
-                    this.api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
+                    api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
