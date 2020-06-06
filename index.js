@@ -67,7 +67,7 @@ SynTexTuyaPlatform.prototype = {
                     //this.addAccessory(device);
                     if(device.dev_type == 'switch')
                     {
-                        var accessory = new SynTexSwitchAccessory(device.name);
+                        var accessory = new SynTexSwitchAccessory(device.id, device.name);
 
                         accessories.push(accessory);
                     }
@@ -134,9 +134,11 @@ SynTexTuyaPlatform.prototype = {
     }
 }
 
-function SynTexSwitchAccessory(name)
+function SynTexSwitchAccessory(id, name)
 {
+    this.id = id;
     this.name = name;
+
     this.service = new Service.Switch(this.name);
     /*
     DeviceManager.getDevice(this).then(function(state) {
@@ -161,8 +163,9 @@ function SynTexSwitchAccessory(name)
 
 SynTexSwitchAccessory.prototype.getState = function(callback)
 {
-    tuyaWebAPI.getDeviceState(this.deviceId).then(function(data) {
+    tuyaWebAPI.getDeviceState(this.id).then(function(data) {
 
+        logger.log('debug', data);
         //this.getCachedState(Characteristic.On, data.state);
         callback(null, data.state);
 
