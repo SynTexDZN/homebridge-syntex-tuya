@@ -102,7 +102,7 @@ class TuyaWebApi {
       'payload': {
         'accessToken': this.session.accessToken,
         'devId': deviceId,
-        'value': 1
+        'value': 2
       }
     }
 
