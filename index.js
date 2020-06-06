@@ -1,7 +1,4 @@
 var Service, Characteristic;
-var request = require('request');
-var http = require('http');
-var url = require('url');
 var logger = require('./logger');
 const TuyaWebApi = require('./tuyawebapi');
 var tuyaWebAPI;
@@ -89,7 +86,7 @@ SynTexTuyaPlatform.prototype = {
                     {
                         tuyaWebAPI.getDeviceState(accessories[i].id).then(function(data) {
     
-                            accessory.updateReachability(data.online);
+                            accessories[i].changeHandler(data.state);
                     
                         }.bind(this)).catch(function(e) {
                     
@@ -110,38 +107,6 @@ SynTexTuyaPlatform.prototype = {
 
             logger.err(e);
         });
-    
-        var createServerCallback = (async function(request, response)
-        {
-            try
-            {
-                var urlParts = url.parse(request.url, true);
-                var urlParams = urlParts.query;
-                var urlPath = urlParts.pathname;
-                var body = [];
-                
-                body = Buffer.concat(body).toString();
-
-                response.statusCode = 200;
-                response.setHeader('Content-Type', 'application/json');
-                response.setHeader('Access-Control-Allow-Origin', '*');
-
-                if(urlPath == '/devices' && urlParams.mac)
-                {
-
-                }
-            }
-            catch(e)
-            {
-                logger.err(e);
-            }
-
-        }).bind(this);
-
-        http.createServer(createServerCallback).listen(this.port, '0.0.0.0');
-           
-        logger.log('info', "Tuya Server läuft auf Port '" + this.port + "'");
-
     }
 }
 
