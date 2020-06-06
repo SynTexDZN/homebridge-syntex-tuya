@@ -62,7 +62,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
-            }).catch(function(e) {
+            }.bind(this)).catch(function(e) {
 
                 logger.err(e);
             });
