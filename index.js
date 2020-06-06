@@ -13,8 +13,6 @@ module.exports = function(homebridge)
     homebridge.registerPlatform('homebridge-syntex-tuya', 'SynTexTuya', SynTexTuyaPlatform);
     homebridge.registerAccessory('homebridge-syntex-tuya', 'SynTexTuyaSwitch', SynTexSwitchAccessory);
 
-    logger.log('debug', accessories);
-
     /*
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
@@ -63,7 +61,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
                     var accessory = new SynTexSwitchAccessory(device.name);
 
-                    logger.debug('debug', accessory);
+                    logger.log('debug', accessory);
                     /*
                     const accessory = createAccessory({
                         log: this.log,
