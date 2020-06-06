@@ -165,11 +165,13 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 {
     tuyaWebAPI.getDeviceState(this.id).then(function(data) {
 
-        logger.log('debug', data);
-        //this.getCachedState(Characteristic.On, data.state);
+        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
+
         callback(null, data.state);
 
-    }).catch((error) => {
+    }).catch(function(e) {
+
+        logger.err(e);
 
         callback(null);
     });
@@ -177,7 +179,20 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
 SynTexSwitchAccessory.prototype.setState = function(powerOn, callback, context)
 {
-    callback();
+    const value = state ? 1 : 0;
+
+    this.platform.tuyaWebApi.setDeviceState(this.deviceId, 'turnOnOff', { value: value }).then(() => {
+
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        
+        callback();
+
+    }).catch(function(e) {
+
+        logger.err(e);
+        
+        callback();
+    });
 }
 
 SynTexSwitchAccessory.prototype.getServices = function()
