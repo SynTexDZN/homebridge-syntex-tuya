@@ -46,8 +46,6 @@ SynTexTuyaPlatform.prototype = {
     
     accessories : function(callback)
     {
-        var accessories = [];
-
         this.tuyaWebApi = new TuyaWebApi(
             this.username,
             this.password,
@@ -61,36 +59,24 @@ SynTexTuyaPlatform.prototype = {
 
             this.tuyaWebApi.discoverDevices().then(function(devices) {
                 
+                var accessories = [];
+
                 for(const device of devices)
                 {
                     //this.addAccessory(device);
-                    /*
-                    logger.log('debug', device.name);
-                    logger.log('debug', device.dev_type);
-                    logger.log('debug', device.data);*/
+                    if(device.dev_type == 'switch')
+                    {
+                        var accessory = new SynTexSwitchAccessory(device.name);
 
-                    var accessory = new SynTexSwitchAccessory(device.name);
+                        accessories.push(accessory);
+                    }
 
-                    logger.log('debug', accessory);
-                    /*
-                    const accessory = createAccessory({
-                        log: this.log,
-                        api: this.api,
-                        bridge: this.bridge,
-                        id: device.name,
-                        node
-                        });
-                    
-                        //this.accessories.set(id, accessory);
-                        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [ accessory ]);
-*/
-                    //this.api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
-                    accessories.push(accessory);
+                    logger.log('debug', device);
                 }
 
                 callback(accessories);
-                // Get device state of all devices - once
                 //this.refreshDeviceStates();
+
             }.bind(this)).catch(function(e) {
 
                 logger.err(e);
