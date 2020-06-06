@@ -83,13 +83,13 @@ SynTexTuyaPlatform.prototype = {
 
                 this.refreshInterval = setInterval(function() {
 
-                    console.log('debug', 'Refreshing Tuya States');
+                    logger.log('debug', 'Refreshing Tuya States');
     
                     for(var i = 0; i < accessories.length; i++)
                     {
                         tuyaWebAPI.getDeviceState(accessories[i].id).then(function(data) {
     
-                            accessory.changeHandler(data.state);
+                            accessory.updateReachability(data.online);
                     
                         }.bind(this)).catch(function(e) {
                     
