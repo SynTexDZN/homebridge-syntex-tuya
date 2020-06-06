@@ -70,12 +70,9 @@ SynTexTuyaPlatform.prototype = {
                     }
                     else if(device.dev_type == 'light')
                     {
-                        //var accessory = new SynTexLightAccessory(device.name);
+                        var accessory = new SynTexLightAccessory(device.name);
 
-                        logger.log('debug', device.color);
-                        logger.log('debug', device);
-
-                        //accessories.push(accessory);
+                        accessories.push(accessory);
                     }
                 }
 
@@ -113,6 +110,8 @@ function updateDeviceState(accessory)
 {
     tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
     
+        logger.log('debug', data);
+
         accessory.changeHandler(data.state);
 
     }.bind(this)).catch(function(e) {
@@ -144,7 +143,6 @@ function SynTexSwitchAccessory(id, name)
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 }
-
 
 SynTexSwitchAccessory.prototype.getState = function(callback)
 {
@@ -186,6 +184,33 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback)
 }
 
 SynTexSwitchAccessory.prototype.getServices = function()
+{
+    return [this.service];
+};
+
+function SynTexLightAccessory(id, name)
+{
+    this.id = id;
+    this.name = name;
+
+    this.service = new Service.Light(this.name);
+    /*
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+
+    }.bind(this));
+    */
+    this.changeHandler = (function(newState)
+    {
+        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+
+    }).bind(this);
+    
+    //this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+}
+
+SynTexLightAccessory.prototype.getServices = function()
 {
     return [this.service];
 };
