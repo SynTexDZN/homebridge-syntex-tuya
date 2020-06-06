@@ -4,6 +4,7 @@ var http = require('http');
 var url = require('url');
 var logger = require('./logger');
 const TuyaWebApi = require('./tuyawebapi');
+var tuyaWebAPI;
 
 module.exports = function(homebridge)
 {
@@ -37,7 +38,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
     this.api = api;
 
-    this.tuyaWebApi = new TuyaWebApi(
+    tuyaWebAPI = new TuyaWebApi(
         this.username,
         this.password,
         this.countryCode,
@@ -53,11 +54,11 @@ SynTexTuyaPlatform.prototype = {
     
     accessories : function(callback)
     {
-        this.tuyaWebApi.getOrRefreshToken().then(function(token) {
+        tuyaWebAPI.getOrRefreshToken().then(function(token) {
 
-            this.tuyaWebApi.token = token;
+            tuyaWebAPI.token = token;
 
-            this.tuyaWebApi.discoverDevices().then(function(devices) {
+            tuyaWebAPI.discoverDevices().then(function(devices) {
                 
                 var accessories = [];
 
@@ -160,7 +161,7 @@ function SynTexSwitchAccessory(name)
 
 SynTexSwitchAccessory.prototype.getState = function(callback)
 {
-    this.tuyaWebApi.getDeviceState(this.deviceId).then(function(data) {
+    tuyaWebAPI.getDeviceState(this.deviceId).then(function(data) {
 
         //this.getCachedState(Characteristic.On, data.state);
         callback(null, data.state);
