@@ -69,7 +69,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
                     logger.log('debug', device.dev_type);
                     logger.log('debug', device.data);*/
 
-                    //var accessory = new SynTexSwitchAccessory(device.name);
+                    var accessory = new SynTexSwitchAccessory(device.name);
                     /*
                     const accessory = createAccessory({
                         log: this.log,
@@ -82,7 +82,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
                       //this.accessories.set(id, accessory);
                       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [ accessory ]);
 */
-                    //api.registerPlatformAccessories('homebridge-syntex-tuya', 'SynTexSwitch', [SynTexSwitchAccessory]);
+                    api.registerPlatformAccessories('homebridge-syntex-tuya', 'SynTexSwitch', [accessory]);
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
@@ -167,5 +167,16 @@ function SynTexSwitchAccessory(name)
 
     }).bind(this);
     
-    //this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+}
+
+
+SynTexSwitchAccessory.prototype.getState = function(callback)
+{
+    callback(null, true);
+};
+
+SynTexSwitchAccessory.prototype.setState = function(powerOn, callback, context)
+{
+    callback();
 }
