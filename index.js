@@ -55,6 +55,10 @@ function SynTexTuyaPlatform(log, sconfig, api)
                     logger.log('debug', device.name);
                     logger.log('debug', device.dev_type);
                     logger.log('debug', device.data);
+
+                    var accessory = new SynTexSwitchAccessory(device.name);
+
+                    this.accessories.set(device.id, accessory);
                 }
                 // Get device state of all devices - once
                 //this.refreshDeviceStates();
@@ -120,4 +124,24 @@ SynTexTuyaPlatform.prototype = {
            
         logger.log('info', "Tuya Server läuft auf Port '" + this.port + "'");
     }
+}
+
+function SynTexSwitchAccessory(name)
+{
+    this.name = name;
+    this.service = new Service.Switch(this.name);
+    /*
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+
+    }.bind(this));
+    */
+    this.changeHandler = (function(newState)
+    {
+        //this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+
+    }).bind(this);
+    
+    //this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 }
