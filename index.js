@@ -89,6 +89,11 @@ SynTexTuyaPlatform.prototype = {
     
                 }, this.pollingInterval * 1000);
 
+                for(var i = 0; i < accessories.length; i++)
+                {
+                    updateDeviceState(accessories[i]);
+                }
+
                 callback(accessories);
 
             }.bind(this)).catch(function(e) {
