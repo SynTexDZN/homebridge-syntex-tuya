@@ -163,6 +163,8 @@ function SynTexSwitchAccessory(name)
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 
+    logger.log('debug', this);
+
     this.platformAccessory = new this.api.platformAccessory(this.name, 'ubiczuufbzosuzbaicbz');
 }
 
