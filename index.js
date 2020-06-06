@@ -15,17 +15,17 @@ module.exports = function(homebridge)
 
 function SynTexWebHookPlatform(log, sconfig, api)
 {
-    this.username = sconfig['sensors'];
-    this.password = sconfig['switches'];
-    this.countryCode = sconfig['lights'] || '49';
-    this.platform = sconfig['statelessswitches'] || 'smart_life';
-    this.pollingInterval = sconfig['statelessswitches'] || 10;
+    this.username = sconfig['username'];
+    this.password = sconfig['password'];
+    this.countryCode = sconfig['countryCode'] || '49';
+    this.platform = sconfig['plat'] || 'smart_life';
+    this.pollingInterval = sconfig['pollingInterval'] || 10;
     
     this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
     this.logDirectory = sconfig['log_directory'] || './SynTex/log';
-    this.port = sconfig['port'] || 1710;
+    this.port = sconfig['port'] || 1712;
     
-    logger.create('SynTexWebHooks', this.logDirectory, api.user.storagePath());
+    logger.create('SynTexTuya', this.logDirectory, api.user.storagePath());
 
     //DeviceManager.SETUP(logger, this.cacheDirectory);
 
