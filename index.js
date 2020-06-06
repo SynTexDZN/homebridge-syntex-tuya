@@ -110,7 +110,7 @@ function updateDeviceState(accessory)
 {
     tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
     
-        accessory.changeHandler(data.online ? data.state : null);
+        accessory.changeHandler(data.state);
 
     }.bind(this)).catch(function(e) {
 
@@ -170,8 +170,6 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback, context)
     }.bind(this)).catch(function(e) {
 
         logger.err(e);
-        
-        callback();
     });
 }
 
