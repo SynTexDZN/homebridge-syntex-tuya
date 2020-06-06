@@ -57,7 +57,7 @@ class TuyaWebApi {
       'header': {
         'name': 'Discovery',
         'namespace': 'discovery',
-        'payloadVersion': 1
+        'payloadVersion': 2
       },
       'payload': {
         'accessToken': this.session.accessToken
