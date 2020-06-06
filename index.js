@@ -37,6 +37,13 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
     this.api = api;
 
+    this.tuyaWebApi = new TuyaWebApi(
+        this.username,
+        this.password,
+        this.countryCode,
+        this.platform
+    );
+
     //DeviceManager.SETUP(logger, this.cacheDirectory);
 
     restart = false;
@@ -46,13 +53,6 @@ SynTexTuyaPlatform.prototype = {
     
     accessories : function(callback)
     {
-        this.tuyaWebApi = new TuyaWebApi(
-            this.username,
-            this.password,
-            this.countryCode,
-            this.platform
-        );
-    
         this.tuyaWebApi.getOrRefreshToken().then(function(token) {
 
             this.tuyaWebApi.token = token;
@@ -129,6 +129,7 @@ SynTexTuyaPlatform.prototype = {
         http.createServer(createServerCallback).listen(this.port, '0.0.0.0');
            
         logger.log('info', "Tuya Server läuft auf Port '" + this.port + "'");
+
     }
 }
 
