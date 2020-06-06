@@ -165,7 +165,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
         callback(null, data.state);
 
-    }).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
 
@@ -177,18 +177,18 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback, context)
 {
     const value = state ? 1 : 0;
 
-    this.platform.tuyaWebApi.setDeviceState(this.deviceId, 'turnOnOff', { value: value }).then(() => {
+    tuyaWebAPI.setDeviceState(this.deviceId, 'turnOnOff', { value: value }).then((function() {
 
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
         
         callback();
 
-    }).catch(function(e) {
+    }.bind(this)).catch(function(e) {
 
         logger.err(e);
         
         callback();
-    });
+    }));
 }
 
 SynTexSwitchAccessory.prototype.getServices = function()
