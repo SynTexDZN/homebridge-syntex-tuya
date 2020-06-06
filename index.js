@@ -52,8 +52,7 @@ SynTexTuyaPlatform.prototype = {
             this.username,
             this.password,
             this.countryCode,
-            this.platform,
-            log
+            this.platform
         );
     
         this.tuyaWebApi.getOrRefreshToken().then(function(token) {
