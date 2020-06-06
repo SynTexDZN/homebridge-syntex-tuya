@@ -70,6 +70,12 @@ SynTexTuyaPlatform.prototype = {
 
                         accessories.push(accessory);
                     }
+                    else if(device.dev_type == 'light')
+                    {
+                        //var accessory = new SynTexLightAccessory(device.name);
+
+                        //accessories.push(accessory);
+                    }
 
                     logger.log('debug', device);
                 }
@@ -153,6 +159,16 @@ function SynTexSwitchAccessory(name)
 
 SynTexSwitchAccessory.prototype.getState = function(callback)
 {
+    this.platform.tuyaWebApi.getDeviceState(this.deviceId).then(function(data) {
+
+        //this.getCachedState(Characteristic.On, data.state);
+        callback(null, data.state);
+
+    }).catch((error) => {
+        
+        callback(null);
+    });
+
     callback(null, true);
 };
 
