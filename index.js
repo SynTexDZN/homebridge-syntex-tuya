@@ -1,4 +1,8 @@
 var Service, Characteristic;
+var request = require('request');
+var http = require('http');
+var url = require('url');
+var logger = require('./logger');
 
 module.exports = function(homebridge)
 {
@@ -65,6 +69,11 @@ SynTexTuyaPlatform.prototype = {
             {
                 logger.err(e);
             }
-        });
+
+        }).bind(this);
+
+        http.createServer(createServerCallback).listen(this.port, '0.0.0.0');
+           
+        logger.log('info', "Tuya Server läuft auf Port '" + this.port + "'");
     }
 }
