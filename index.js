@@ -50,7 +50,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
             // Add devices to Homebridge
             for (const device of devices) {
                 //this.addAccessory(device);
-                logger.log('debug', device);
+                logger.log('debug', device.dev_type);
             }
             // Get device state of all devices - once
             //this.refreshDeviceStates();
