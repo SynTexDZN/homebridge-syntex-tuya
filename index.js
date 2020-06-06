@@ -112,9 +112,9 @@ function updateDeviceState(accessory)
     
         if(!data.online)
         {
-            throw new Error('Offline')
+            logger.log('debug', accessory);
         }
-        
+
         accessory.changeHandler(data.state);
 
     }.bind(this)).catch(function(e) {
