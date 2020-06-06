@@ -74,8 +74,6 @@ SynTexTuyaPlatform.prototype = {
 
                         //accessories.push(accessory);
                     }
-
-                    logger.log('debug', device);
                 }
 
                 this.refreshInterval = setInterval(function() {
