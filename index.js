@@ -107,8 +107,7 @@ function updateDeviceState(accessory)
 {
     tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
     
-        accessory.changeHandler(data.state);
-        accessory.updateReachability(data.online);
+        accessory.changeHandler(data.online ? data.state : null);
 
     }.bind(this)).catch(function(e) {
 
