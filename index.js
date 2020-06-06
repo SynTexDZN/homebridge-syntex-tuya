@@ -37,16 +37,25 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
     //this.api = api;
 
-    this.tuyaWebApi = new TuyaWebApi(
-        this.username,
-        this.password,
-        this.countryCode,
-        this.platform,
-        log
-    );
+    //DeviceManager.SETUP(logger, this.cacheDirectory);
 
-    api.on('didFinishLaunching', function() {
+    restart = false;
+}
 
+SynTexTuyaPlatform.prototype = {
+    
+    accessories : function(callback)
+    {
+        var accessories = [];
+
+        this.tuyaWebApi = new TuyaWebApi(
+            this.username,
+            this.password,
+            this.countryCode,
+            this.platform,
+            log
+        );
+    
         this.tuyaWebApi.getOrRefreshToken().then(function(token) {
 
             this.tuyaWebApi.token = token;
@@ -71,10 +80,10 @@ function SynTexTuyaPlatform(log, sconfig, api)
                         bridge: this.bridge,
                         id: device.name,
                         node
-                      });
-                  
-                      //this.accessories.set(id, accessory);
-                      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [ accessory ]);
+                        });
+                    
+                        //this.accessories.set(id, accessory);
+                        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [ accessory ]);
 */
                     api.registerAccessory('homebridge-syntex-tuya', 'SynTexSwitch', accessory);
                 }
@@ -95,20 +104,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
 
             logger.err(e);
         });
-
-    }.bind(this));
-
-    //DeviceManager.SETUP(logger, this.cacheDirectory);
-
-    restart = false;
-}
-
-SynTexTuyaPlatform.prototype = {
     
-    accessories : function(callback)
-    {
-        var accessories = [];
-        
         callback(accessories);
         
         var createServerCallback = (async function(request, response)
