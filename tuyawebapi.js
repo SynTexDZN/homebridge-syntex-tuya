@@ -97,7 +97,7 @@ class TuyaWebApi {
       'header': {
         'name': 'QueryDevice',
         'namespace': 'query',
-        'payloadVersion': 1
+        'payloadVersion': 2
       },
       'payload': {
         'accessToken': this.session.accessToken,
