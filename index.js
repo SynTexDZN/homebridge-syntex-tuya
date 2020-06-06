@@ -112,7 +112,7 @@ function updateDeviceState(accessory)
     
         if(!data.online)
         {
-            logger.log('debug', accessory);
+            throw new Error('Offline');
         }
 
         accessory.changeHandler(data.state);
@@ -152,6 +152,11 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 {
     tuyaWebAPI.getDeviceState(this.id).then(function(data) {
 
+        if(!data.online)
+        {
+            throw new Error('Offline');
+        }
+        
         logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
 
         callback(null, data.state);
