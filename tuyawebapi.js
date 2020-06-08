@@ -57,7 +57,7 @@ class TuyaWebApi {
       'header': {
         'name': 'Discovery',
         'namespace': 'discovery',
-        'payloadVersion': 2
+        'payloadVersion': 1
       },
       'payload': {
         'accessToken': this.session.accessToken
@@ -97,12 +97,12 @@ class TuyaWebApi {
       'header': {
         'name': 'QueryDevice',
         'namespace': 'query',
-        'payloadVersion': 2
+        'payloadVersion': 1
       },
       'payload': {
         'accessToken': this.session.accessToken,
         'devId': deviceId,
-        'value': 2
+        'value': 1
       }
     }
 
