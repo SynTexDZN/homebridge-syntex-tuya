@@ -110,8 +110,6 @@ function updateDeviceState(accessory)
 {
     tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
     
-        logger.log('debug', data);
-
         accessory.changeHandler(data.state);
 
     }.bind(this)).catch(function(e) {
