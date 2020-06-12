@@ -112,7 +112,6 @@ class TuyaWebApi {
         JSON.stringify(data),
         'GET',
         (response, obj) => {
-            console.log(obj);
           if (obj.payload && obj.header && obj.header.code === 'SUCCESS') {
             resolve(obj.payload.data);
           }
