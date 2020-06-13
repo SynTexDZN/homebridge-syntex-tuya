@@ -147,7 +147,7 @@ function SynTexSwitchAccessory(id, name)
     this.id = id;
     this.name = name;
 
-    this.service = new Service.Outlet(this.name, this.name);
+    this.service = new Service.Outlet(this.name);
     /*
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -211,7 +211,7 @@ SynTexSwitchAccessory.prototype.getServices = function()
         .setCharacteristic(Characteristic.Manufacturer, 'SynTex-MultiSwitch')
         .setCharacteristic(Characteristic.Model, 'SynTex-MultiSwitch');
 
-    return [informationService, this.service];
+    return [informationService, this.service, new Service.Switch(this.name)];
 };
 
 function SynTexLightAccessory(id, name)
