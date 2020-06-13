@@ -211,7 +211,7 @@ SynTexSwitchAccessory.prototype.getServices = function()
         .setCharacteristic(Characteristic.Manufacturer, 'SynTex-MultiSwitch')
         .setCharacteristic(Characteristic.Model, 'SynTex-MultiSwitch');
 
-    return [informationService, this.service, new Service.Switch(this.name)];
+    return [informationService, this.service, new Service.Switch(this.name), new Service.ContactSensor(this.name)];
 };
 
 function SynTexLightAccessory(id, name)
