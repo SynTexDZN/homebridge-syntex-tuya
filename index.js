@@ -308,7 +308,7 @@ function SynTexSpeakerAccessory(id, name)
     this.id = id;
     this.name = name;
 
-    this.service = new Service.TelevisionSpeaker(this.name, 'tvSpeakerService');
+    this.service = new Service.Speaker(this.name, 'tvSpeakerService');
     /*
     DeviceManager.getDevice(this).then(function(state) {
 
