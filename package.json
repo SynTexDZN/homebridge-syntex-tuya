@@ -1,6 +1,6 @@
 {
   "name": "homebridge-syntex-tuya",
-  "version": "1.0.0-b83",
+  "version": "1.0.0-b84",
   "description": "A webhook plugin for Tuya devices",
   "main": "index.js",
   "author": "SynTexDZN",
