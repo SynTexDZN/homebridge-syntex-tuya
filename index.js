@@ -205,7 +205,13 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback)
 
 SynTexSwitchAccessory.prototype.getServices = function()
 {
-    return [this.service];
+    var informationService = new Service.AccessoryInformation();
+
+    informationService
+        .setCharacteristic(Characteristic.Manufacturer, 'SynTex-MultiSwitch')
+        .setCharacteristic(Characteristic.Model, 'SynTex-MultiSwitch');
+
+    return [informationService, this.service];
 };
 
 function SynTexLightAccessory(id, name)
