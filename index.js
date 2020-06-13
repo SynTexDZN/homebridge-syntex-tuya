@@ -65,13 +65,22 @@ SynTexTuyaPlatform.prototype = {
                     //this.addAccessory(device);
                     if(device.dev_type == 'switch')
                     {
-                        if(device.name.includes('TV'))
+                        var accessory = null;
+
+                        for(var i = 0; i < this.defaults.length; i++)
                         {
-                            var accessory = new SynTexTVAccessory(device.id, device.name);
+                            if(this.defaults[i].id == device.id)
+                            {
+                                if(this.defaults[i].type == 'TV')
+                                {
+                                    accessory = new SynTexTVAccessory(device.id, device.name);
+                                }
+                            }
                         }
-                        else
+
+                        if(accessory == null)
                         {
-                            var accessory = new SynTexSwitchAccessory(device.id, device.name);
+                            accessory = new SynTexSwitchAccessory(device.id, device.name);
                         }
 
                         accessories.push(accessory);
