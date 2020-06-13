@@ -78,7 +78,7 @@ SynTexTuyaPlatform.prototype = {
                                 }
                                 else if(this.defaults[i].type == 'Speaker')
                                 {
-                                    accessory = new SynTexTVSpeakerAccessory(device.id, device.name);
+                                    accessory = new SynTexSpeakerAccessory(device.id, device.name);
                                 }
                             }
                         }
@@ -303,12 +303,12 @@ SynTexTVAccessory.prototype.getServices = function()
     return [this.service];
 };
 
-function SynTexTVSpeakerAccessory(id, name)
+function SynTexSpeakerAccessory(id, name)
 {
     this.id = id;
     this.name = name;
 
-    this.service = new Service.TelevisionSpeaker(this.name, 'tvSpeakerService');
+    this.service = new Service.Speaker(this.name, 'tvSpeakerService');
     /*
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -325,7 +325,7 @@ function SynTexTVSpeakerAccessory(id, name)
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 }
 
-SynTexTVSpeakerAccessory.prototype.getState = function(callback)
+SynTexSpeakerAccessory.prototype.getState = function(callback)
 {
     tuyaWebAPI.getDeviceState(this.id).then(function(data) {
 
@@ -346,7 +346,7 @@ SynTexTVSpeakerAccessory.prototype.getState = function(callback)
     });
 };
 
-SynTexTVSpeakerAccessory.prototype.setState = function(state, callback)
+SynTexSpeakerAccessory.prototype.setState = function(state, callback)
 {
     const value = state ? 1 : 0;
 
@@ -364,7 +364,7 @@ SynTexTVSpeakerAccessory.prototype.setState = function(state, callback)
     });
 }
 
-SynTexTVSpeakerAccessory.prototype.getServices = function()
+SynTexSpeakerAccessory.prototype.getServices = function()
 {
     return [this.service];
 };
