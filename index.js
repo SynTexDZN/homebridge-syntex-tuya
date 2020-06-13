@@ -125,7 +125,7 @@ function SynTexSwitchAccessory(id, name)
     this.id = id;
     this.name = name;
 
-    this.service = new Service.Switch(this.name);
+    this.service = new Service.Outlet(this.name);
     /*
     DeviceManager.getDevice(this).then(function(state) {
 
