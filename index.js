@@ -321,8 +321,10 @@ function SynTexSpeakerAccessory(id, name)
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
 
     }).bind(this);
-    
+
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.getCharacteristic(Characteristic.Mute).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.addCharacteristic(new Characteristic.Volume()).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 }
 
 SynTexSpeakerAccessory.prototype.getState = function(callback)
