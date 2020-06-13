@@ -226,7 +226,7 @@ function SynTexTVAccessory(id, name)
     this.id = id;
     this.name = name;
 
-    this.service = new Service.Television(this.name);
+    this.service = new Service.Television(this.name, 'tvService');
     /*
     DeviceManager.getDevice(this).then(function(state) {
 
@@ -241,6 +241,8 @@ function SynTexTVAccessory(id, name)
     }).bind(this);
     
     this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+
+    this.service.setCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 }
 
 SynTexTVAccessory.prototype.getState = function(callback)
