@@ -26,6 +26,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
     this.countryCode = sconfig['countryCode'] || '49';
     this.platform = sconfig['plat'] || 'smart_life';
     this.pollingInterval = sconfig['pollingInterval'] || 10;
+    this.defaults = sconfig['defaults'] || [];
     
     this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
     this.logDirectory = sconfig['log_directory'] || './SynTex/log';
