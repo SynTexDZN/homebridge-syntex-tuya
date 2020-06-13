@@ -76,6 +76,10 @@ SynTexTuyaPlatform.prototype = {
                                 {
                                     accessory = new SynTexTVAccessory(device.id, device.name);
                                 }
+                                else if(this.defaults[i].type == 'Speaker')
+                                {
+                                    accessory = new SynTexTVSpeakerAccessory(device.id, device.name);
+                                }
                             }
                         }
 
@@ -250,7 +254,7 @@ function SynTexTVAccessory(id, name)
 
     }).bind(this);
     
-    this.service.getCharacteristic(Characteristic.Active).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 
     this.service.setCharacteristic(Characteristic.ConfiguredName, this.name);
 }
@@ -295,6 +299,72 @@ SynTexTVAccessory.prototype.setState = function(state, callback)
 }
 
 SynTexTVAccessory.prototype.getServices = function()
+{
+    return [this.service];
+};
+
+function SynTexTVSpeakerAccessory(id, name)
+{
+    this.id = id;
+    this.name = name;
+
+    this.service = new Service.TelevisionSpeaker(this.name, 'tvSpeakerService');
+    /*
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+
+    }.bind(this));
+    */
+    this.changeHandler = (function(newState)
+    {
+        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+
+    }).bind(this);
+    
+    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+}
+
+SynTexTVSpeakerAccessory.prototype.getState = function(callback)
+{
+    tuyaWebAPI.getDeviceState(this.id).then(function(data) {
+
+        if(!data.online)
+        {
+            callback(new Error('Offline'));
+        }
+
+        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+
+        callback(null, data.state);
+
+    }.bind(this)).catch(function(e) {
+
+        logger.err(e);
+
+        callback(e);
+    });
+};
+
+SynTexTVSpeakerAccessory.prototype.setState = function(state, callback)
+{
+    const value = state ? 1 : 0;
+
+    tuyaWebAPI.setDeviceState(this.id, 'turnOnOff', { value: value }).then(function() {
+
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        
+        callback();
+
+    }.bind(this)).catch(function(e) {
+
+        logger.err(e);
+
+        callback(e);
+    });
+}
+
+SynTexTVSpeakerAccessory.prototype.getServices = function()
 {
     return [this.service];
 };
