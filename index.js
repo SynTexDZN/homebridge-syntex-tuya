@@ -253,10 +253,12 @@ function SynTexTVAccessory(id, name)
         this.service.getCharacteristic(Characteristic.On).updateValue(newState);
 
     }).bind(this);
-    
+
     this.service.getCharacteristic(Characteristic.Active).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 
     this.service.setCharacteristic(Characteristic.ConfiguredName, this.name);
+
+    logger.log('debug', this);
 }
 
 SynTexTVAccessory.prototype.getState = function(callback)
