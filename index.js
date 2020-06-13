@@ -61,6 +61,7 @@ SynTexTuyaPlatform.prototype = {
 
                 for(const device of devices)
                 {
+                    logger.log('debug', device);
                     //this.addAccessory(device);
                     if(device.dev_type == 'switch')
                     {
