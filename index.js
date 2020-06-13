@@ -9,7 +9,7 @@ module.exports = function(homebridge)
     Characteristic = homebridge.hap.Characteristic;
     
     homebridge.registerPlatform('homebridge-syntex-tuya', 'SynTexTuya', SynTexTuyaPlatform);
-    homebridge.registerAccessory('homebridge-syntex-tuya', 'SynTexTuyaSwitch', SynTexSwitchAccessory);
+    //homebridge.registerAccessory('homebridge-syntex-tuya', 'SynTexTuyaSwitch', SynTexSwitchAccessory);
 
     /*
     homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
@@ -65,7 +65,14 @@ SynTexTuyaPlatform.prototype = {
                     //this.addAccessory(device);
                     if(device.dev_type == 'switch')
                     {
-                        var accessory = new SynTexSwitchAccessory(device.id, device.name);
+                        if(device.name.includes('TV'))
+                        {
+                            var accessory = new SynTexTVAccessory(device.id, device.name);
+                        }
+                        else
+                        {
+                            var accessory = new SynTexSwitchAccessory(device.id, device.name);
+                        }
 
                         accessories.push(accessory);
                     }
@@ -210,6 +217,72 @@ function SynTexLightAccessory(id, name)
 }
 
 SynTexLightAccessory.prototype.getServices = function()
+{
+    return [this.service];
+};
+
+function SynTexTVAccessory(id, name)
+{
+    this.id = id;
+    this.name = name;
+
+    this.service = new Service.Television(this.name);
+    /*
+    DeviceManager.getDevice(this).then(function(state) {
+
+        this.value = validateUpdate(this.mac, this.type, state);
+
+    }.bind(this));
+    */
+    this.changeHandler = (function(newState)
+    {
+        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+
+    }).bind(this);
+    
+    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+}
+
+SynTexTVAccessory.prototype.getState = function(callback)
+{
+    tuyaWebAPI.getDeviceState(this.id).then(function(data) {
+
+        if(!data.online)
+        {
+            callback(new Error('Offline'));
+        }
+
+        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+
+        callback(null, data.state);
+
+    }.bind(this)).catch(function(e) {
+
+        logger.err(e);
+
+        callback(e);
+    });
+};
+
+SynTexTVAccessory.prototype.setState = function(state, callback)
+{
+    const value = state ? 1 : 0;
+
+    tuyaWebAPI.setDeviceState(this.id, 'turnOnOff', { value: value }).then(function() {
+
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        
+        callback();
+
+    }.bind(this)).catch(function(e) {
+
+        logger.err(e);
+
+        callback(e);
+    });
+}
+
+SynTexTVAccessory.prototype.getServices = function()
 {
     return [this.service];
 };
