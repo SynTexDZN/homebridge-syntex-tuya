@@ -250,7 +250,7 @@ function SynTexTVAccessory(id, name)
 
     }).bind(this);
     
-    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+    this.service.getCharacteristic(Characteristic.Active).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 
     this.service.setCharacteristic(Characteristic.ConfiguredName, this.name);
 }
