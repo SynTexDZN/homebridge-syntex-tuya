@@ -62,8 +62,6 @@ SynTexTuyaPlatform.prototype = {
 
                 for(const device of devices)
                 {
-                    logger.log('debug', device);
-                    //this.addAccessory(device);
                     if(device.dev_type == 'switch')
                     {
                         var accessory = null;
@@ -257,8 +255,6 @@ function SynTexTVAccessory(id, name)
     this.service.getCharacteristic(Characteristic.Active).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
 
     this.service.setCharacteristic(Characteristic.ConfiguredName, this.name);
-
-    logger.log('debug', this);
 }
 
 SynTexTVAccessory.prototype.getState = function(callback)
