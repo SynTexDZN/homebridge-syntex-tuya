@@ -75,7 +75,11 @@ class TuyaWebApi {
               resolve(obj.payload.devices);
             }
           }
-          reject(new Error('No valid response from API', obj));
+          else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
+            reject(new Error('Requesting too quickly' + obj));
+          } else {
+            reject(new Error('No valid response from API' + obj));
+          }
         },
         (error) => {
           reject(error);
@@ -115,8 +119,10 @@ class TuyaWebApi {
           if (obj.payload && obj.header && obj.header.code === 'SUCCESS') {
             resolve(obj.payload.data);
           }
-          else {
-            reject(new Error('Invalid payload in response: ', obj))
+          else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
+            reject(new Error('Requesting too quickly: ' + obj));
+          } else {
+            reject(new Error('Invalid payload in response: ' + obj));
           }
         },
         (error) => {
@@ -126,7 +132,7 @@ class TuyaWebApi {
     });
   }
 
-  setDeviceState(deviceId, method, payload) {
+  setDeviceState(deviceId, method, payload = {}) {
     if (!this.session.hasValidToken()) {
       throw new Error('No valid token');
     }
@@ -158,7 +164,7 @@ class TuyaWebApi {
             resolve();
           }
           else {
-            reject(new Error('Invalid payload in response: ', obj))
+            reject(new Error('Invalid payload in response: ' + obj))
           }
         },
         (error) => {
@@ -207,7 +213,7 @@ class TuyaWebApi {
               },
                 (err, res, body) => {
                   if (err) {
-                    reject(new Error('Authentication fault, could not retreive token.', err));
+                    reject(new Error('Authentication fault, could not retreive token. ' + err));
                   }
                   else {
                     let obj;
@@ -233,8 +239,6 @@ class TuyaWebApi {
                       if(obj.access_token)
                       {
                           this.session.areaCode = obj.access_token.substr(0, 2);
-
-                          console.log(this.session.areaCode);
                       }
 
                       switch (this.session.areaCode) {
