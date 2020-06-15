@@ -126,7 +126,7 @@ class TuyaWebApi {
     });
   }
 
-  setDeviceState(deviceId, method, payload = {}) {
+  setDeviceState(deviceId, method, payload) {
     if (!this.session.hasValidToken()) {
       throw new Error('No valid token');
     }
@@ -230,12 +230,12 @@ class TuyaWebApi {
                       // Change url based on areacode in accesstoken first two chars
                       this.session.areaCode = 'EU';
 
-                        if(obj.access_token)
-                        {
-                            this.session.areaCode = obj.access_token.substr(0, 2);
+                      if(obj.access_token)
+                      {
+                          this.session.areaCode = obj.access_token.substr(0, 2);
 
-                            console.log(this.session.areaCode);
-                        }
+                          console.log(this.session.areaCode);
+                      }
 
                       switch (this.session.areaCode) {
                         case 'AY':
