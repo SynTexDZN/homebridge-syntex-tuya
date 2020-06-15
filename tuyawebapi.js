@@ -76,9 +76,9 @@ class TuyaWebApi {
             }
           }
           else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
-            reject(new Error('Requesting too quickly' + obj));
+            reject(new Error('Requesting too quickly' + JSON.stringify(obj)));
           } else {
-            reject(new Error('No valid response from API' + obj));
+            reject(new Error('No valid response from API' + JSON.stringify(obj)));
           }
         },
         (error) => {
@@ -120,9 +120,9 @@ class TuyaWebApi {
             resolve(obj.payload.data);
           }
           else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
-            reject(new Error('Requesting too quickly: ' + obj));
+            reject(new Error('Requesting too quickly: ' + JSON.stringify(obj)));
           } else {
-            reject(new Error('Invalid payload in response: ' + obj));
+            reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)));
           }
         },
         (error) => {
@@ -164,7 +164,7 @@ class TuyaWebApi {
             resolve();
           }
           else {
-            reject(new Error('Invalid payload in response: ' + obj))
+            reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
           }
         },
         (error) => {
@@ -213,7 +213,7 @@ class TuyaWebApi {
               },
                 (err, res, body) => {
                   if (err) {
-                    reject(new Error('Authentication fault, could not retreive token. ' + err));
+                    reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err)));
                   }
                   else {
                     let obj;
