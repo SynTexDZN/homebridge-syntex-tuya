@@ -1,4 +1,5 @@
-var logger, accessories = [];
+var logger, tuyaWebAPI, accessories = [];
+const TuyaWebApi = require('./tuyawebapi');
 
 function getDevice(id)
 {
@@ -91,9 +92,10 @@ function readTuyaAPI(id)
     });
 }
 
-function SETUP(log)
+function SETUP(log, api)
 {
     logger = log;
+    tuyaWebAPI = api;
 }
 
 module.exports = {

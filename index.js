@@ -44,7 +44,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
         this.platform
     );
 
-    DeviceManager.SETUP(logger);
+    DeviceManager.SETUP(logger, tuyaWebAPI);
 
     restart = false;
 }
