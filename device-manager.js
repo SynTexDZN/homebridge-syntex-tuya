@@ -79,6 +79,7 @@ function refreshAccessory(accessory)
 
                 if(!found)
                 {
+                    logger.log('debug', accessory.id + ' - ' + data.state)
                     accessories.push({ id : accessory.id, value : data.state });
                 }
                 
