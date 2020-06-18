@@ -43,7 +43,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
         this.platform
     );
 
-    //DeviceManager.SETUP(logger, this.cacheDirectory);
+    DeviceManager.SETUP(logger);
 
     restart = false;
 }
@@ -128,15 +128,31 @@ SynTexTuyaPlatform.prototype = {
 
 function updateDeviceState(accessory)
 {
-    tuyaWebAPI.getDeviceState(accessory.id).then(function(data) {
-    
-        accessory.changeHandler(data.state);
+    DeviceManager.getDevice(accessory.id).then(function(data) {
 
-    }.bind(this)).catch(function(e) {
+        if(data == null)
+        {
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
+
+            callback(null, null);
+        }
+        else
+        {
+            if(!data.online)
+            {
+                callback(new Error('Offline'));
+            }
+
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+
+            callback(null, data.state);
+        }
+
+    }.bind(accessory)).catch(function(e) {
 
         logger.err(e);
 
-        accessory.changeHandler(e);
+        callback(e);
     });
 }
 
@@ -164,16 +180,25 @@ function SynTexSwitchAccessory(id, name)
 
 SynTexSwitchAccessory.prototype.getState = function(callback)
 {
-    tuyaWebAPI.getDeviceState(this.id).then(function(data) {
+    DeviceManager.getDevice(this.id).then(function(data) {
 
-        if(!data.online)
+        if(data == null)
         {
-            callback(new Error('Offline'));
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
+
+            callback(null, null);
         }
+        else
+        {
+            if(!data.online)
+            {
+                callback(new Error('Offline'));
+            }
 
-        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
 
-        callback(null, data.state);
+            callback(null, data.state);
+        }
 
     }.bind(this)).catch(function(e) {
 
@@ -185,9 +210,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
 SynTexSwitchAccessory.prototype.setState = function(state, callback)
 {
-    const value = state ? 1 : 0;
-
-    tuyaWebAPI.setDeviceState(this.id, 'turnOnOff', { value: value }).then(function() {
+    DeviceManager.setDevice(this.id, value).then(function() {
 
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
         
