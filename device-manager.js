@@ -8,6 +8,8 @@ function getDevice(id)
 
         for(var i = 0; i < accessories.length; i++)
         {
+            logger.log('debug', id + ' - ' + accessories[i].value);
+
             if(accessories[i].id == id)
             {
                 found = true;
@@ -79,7 +81,7 @@ function refreshAccessory(accessory)
 
                 if(!found)
                 {
-                    logger.log('debug', accessory.id + ' - ' + data.state)
+                    logger.log('debug', accessory.id + ' - ' + data.state);
                     accessories.push({ id : accessory.id, value : data.state });
                 }
                 
