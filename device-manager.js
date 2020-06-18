@@ -58,6 +58,30 @@ function setDevice(id, value)
     });
 }
 
+function refreshAccessory(accessory)
+{
+    return new Promise(resolve => {
+
+        readTuyaAPI(accessory.id).then(function(state) {
+
+            if(state != null)
+            {
+                for(var i = 0; i < accessories.length; i++)
+                {
+                    if(accessories[i].id == accessory.id)
+                    {
+                        accessories[i].value = state;
+                    }
+                }
+                
+                accessory.changeHandler(state);
+            }
+
+            resolve();
+        });
+    });
+}
+
 function writeTuyaAPI(id, value)
 {
     return new Promise(resolve => {
@@ -66,7 +90,7 @@ function writeTuyaAPI(id, value)
 
             resolve(true);
     
-        }.bind(this)).catch(function(e) {
+        }).catch(function(e) {
     
             logger.err(e);
     
@@ -83,7 +107,7 @@ function readTuyaAPI(id)
     
             resolve(data);
     
-        }.bind(this)).catch(function(e) {
+        }).catch(function(e) {
     
             logger.err(e);
     
@@ -101,5 +125,6 @@ function SETUP(log, api)
 module.exports = {
     getDevice,
     setDevice,
+    refreshAccessory,
     SETUP
 };

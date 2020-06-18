@@ -103,14 +103,14 @@ SynTexTuyaPlatform.prototype = {
     
                     for(var i = 0; i < accessories.length; i++)
                     {
-                        updateDeviceState(accessories[i]);
+                        DeviceManager.refreshAccessory(accessories[i]);
                     }
     
                 }, this.pollingInterval * 1000);
 
                 for(var i = 0; i < accessories.length; i++)
                 {
-                    updateDeviceState(accessories[i]);
+                    DeviceManager.refreshAccessory(accessories[i]);
                 }
 
                 callback(accessories);
@@ -125,36 +125,6 @@ SynTexTuyaPlatform.prototype = {
             logger.err(e);
         });
     }
-}
-
-function updateDeviceState(accessory)
-{
-    DeviceManager.getDevice(accessory.id).then(function(data) {
-
-        if(data == null)
-        {
-            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
-
-            callback(null, null);
-        }
-        else
-        {
-            if(!data.online)
-            {
-                //callback(new Error('Offline'));
-            }
-
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
-
-            //callback(null, data.state);
-        }
-
-    }.bind(accessory)).catch(function(e) {
-
-        logger.err(e);
-
-        //callback(e);
-    });
 }
 
 function SynTexSwitchAccessory(id, name)
