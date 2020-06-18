@@ -1,6 +1,7 @@
 var Service, Characteristic;
 var logger = require('./logger');
 const TuyaWebApi = require('./tuyawebapi');
+var DeviceManager = require('./device-manager');
 var tuyaWebAPI;
 
 module.exports = function(homebridge)
