@@ -120,7 +120,7 @@ class TuyaWebApi {
             resolve(obj.payload.data);
           }
           else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
-            reject(new Error(deviceId + ': Requesting too quickly: ' + JSON.stringify(obj)));
+            reject(new Error(deviceId + ': Requesting too quickly!'));
           } else {
             reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)));
           }
