@@ -1,5 +1,4 @@
 var logger, tuyaWebAPI, accessories = [];
-const TuyaWebApi = require('./tuyawebapi');
 
 function getDevice(id)
 {
@@ -62,7 +61,7 @@ function refreshAccessory(accessory)
 {
     return new Promise(resolve => {
 
-        readTuyaAPI(accessory.id).then(function(state) {
+        readTuyaAPI(accessory.id).then(function(data) {
 
             if(state != null)
             {
@@ -70,11 +69,11 @@ function refreshAccessory(accessory)
                 {
                     if(accessories[i].id == accessory.id)
                     {
-                        accessories[i].value = state;
+                        accessories[i].value = data.state;
                     }
                 }
                 
-                accessory.changeHandler(state);
+                accessory.changeHandler(data.state);
             }
 
             resolve();
