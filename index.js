@@ -99,8 +99,6 @@ SynTexTuyaPlatform.prototype = {
 
                 this.refreshInterval = setInterval(function() {
 
-                    logger.log('debug', 'Refreshing Tuya States');
-    
                     for(var i = 0; i < accessories.length; i++)
                     {
                         DeviceManager.refreshAccessory(accessories[i]);
