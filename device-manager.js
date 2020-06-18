@@ -83,7 +83,7 @@ function refreshAccessory(accessory)
                     }
                 }
 
-                logger.log('debug', 'X: ' + data);
+                logger.log('debug', 'X: ' + data.state);
 
                 if(!found)
                 {
