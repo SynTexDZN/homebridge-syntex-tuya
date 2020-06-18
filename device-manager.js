@@ -14,6 +14,8 @@ function getDevice(id)
             {
                 found = true;
 
+                logger.log('debug', 'Y: ' + accessories[i].value);
+
                 resolve(accessories[i].value);
             }
         }
@@ -24,6 +26,8 @@ function getDevice(id)
                 id : id,
                 value : await readTuyaAPI(id)
             };
+
+            logger.log('debug', 'Z: ' + accessory.value);
 
             accessories.push(accessory);
 
@@ -79,9 +83,10 @@ function refreshAccessory(accessory)
                     }
                 }
 
+                logger.log('debug', 'X: ' + data);
+
                 if(!found)
                 {
-                    logger.log('debug', accessory.id + ' - ' + data.state);
                     accessories.push({ id : accessory.id, value : data.state });
                 }
                 
