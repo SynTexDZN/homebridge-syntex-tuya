@@ -63,7 +63,7 @@ function refreshAccessory(accessory)
 
         readTuyaAPI(accessory.id).then(function(data) {
 
-            if(state != null)
+            if(data != null)
             {
                 for(var i = 0; i < accessories.length; i++)
                 {
