@@ -65,12 +65,21 @@ function refreshAccessory(accessory)
 
             if(data != null)
             {
+                var found = false;
+
                 for(var i = 0; i < accessories.length; i++)
                 {
                     if(accessories[i].id == accessory.id)
                     {
                         accessories[i].value = data.state;
+
+                        found = true;
                     }
+                }
+
+                if(!found)
+                {
+                    accessories.push({ id : accessory.id, value : data.state });
                 }
                 
                 accessory.changeHandler(data.state);
