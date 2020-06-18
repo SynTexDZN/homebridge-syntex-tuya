@@ -141,19 +141,19 @@ function updateDeviceState(accessory)
         {
             if(!data.online)
             {
-                callback(new Error('Offline'));
+                //callback(new Error('Offline'));
             }
 
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
 
-            callback(null, data.state);
+            //callback(null, data.state);
         }
 
     }.bind(accessory)).catch(function(e) {
 
         logger.err(e);
 
-        callback(e);
+        //callback(e);
     });
 }
 
