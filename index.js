@@ -257,16 +257,25 @@ function SynTexTVAccessory(id, name)
 
 SynTexTVAccessory.prototype.getState = function(callback)
 {
-    tuyaWebAPI.getDeviceState(this.id).then(function(data) {
+    DeviceManager.getDevice(this.id).then(function(data) {
 
-        if(!data.online)
+        if(data == null)
         {
-            callback(new Error('Offline'));
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
+
+            callback(null, null);
         }
+        else
+        {
+            if(!data.online)
+            {
+                callback(new Error('Offline'));
+            }
 
-        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
 
-        callback(null, data.state);
+            callback(null, data.state);
+        }
 
     }.bind(this)).catch(function(e) {
 
@@ -328,16 +337,25 @@ function SynTexSpeakerAccessory(id, name)
 
 SynTexSpeakerAccessory.prototype.getState = function(callback)
 {
-    tuyaWebAPI.getDeviceState(this.id).then(function(data) {
+    DeviceManager.getDevice(this.id).then(function(data) {
 
-        if(!data.online)
+        if(data == null)
         {
-            callback(new Error('Offline'));
+            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
+
+            callback(null, null);
         }
+        else
+        {
+            if(!data.online)
+            {
+                callback(new Error('Offline'));
+            }
 
-        logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
 
-        callback(null, data.state);
+            callback(null, data.state);
+        }
 
     }.bind(this)).catch(function(e) {
 
