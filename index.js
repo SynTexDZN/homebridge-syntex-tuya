@@ -140,9 +140,11 @@ function SynTexSwitchAccessory(id, name)
 
     }.bind(this));
     */
-    this.changeHandler = (function(newState)
+    this.changeHandler = (function(state)
     {
-        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
     
@@ -213,9 +215,11 @@ function SynTexLightAccessory(id, name)
 
     }.bind(this));
     */
-    this.changeHandler = (function(newState)
+    this.changeHandler = (function(state)
     {
-        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
     
@@ -240,9 +244,11 @@ function SynTexTVAccessory(id, name)
 
     }.bind(this));
     */
-    this.changeHandler = (function(newState)
+    this.changeHandler = (function(state)
     {
-        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
 
@@ -308,9 +314,11 @@ function SynTexSpeakerAccessory(id, name)
 
     }.bind(this));
     */
-    this.changeHandler = (function(newState)
+    this.changeHandler = (function(state)
     {
-        this.service.getCharacteristic(Characteristic.On).updateValue(newState);
+        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.mac + ' )');
+
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
 
