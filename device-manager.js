@@ -12,8 +12,6 @@ function getDevice(id)
             {
                 found = true;
 
-                logger.log('debug', 'FOUND 3 ' + accessories[i].id + ' - ' + id);
-
                 resolve(accessories[i].value);
             }
         }
@@ -24,14 +22,7 @@ function getDevice(id)
 
                 if(data != null)
                 {
-                    var accessory = {
-                        id : id,
-                        value : data.state 
-                    };
-
-                    logger.log('debug', 'PUSH 3 ' + id + ' - ' + data.state);
-        
-                    accessories.push(accessory);
+                    accessories.push({ id : id, value : data.state });
                 }
 
                 resolve(data != null ? data.state : null);
@@ -53,15 +44,11 @@ function setDevice(id, value)
                 accessories[i].value = value;
 
                 found = true;
-
-                logger.log('debug', 'FOUND 2 ' + accessories[i].id + ' - ' + id);
             }
         }
 
         if(!found)
         {
-            logger.log('debug', 'PUSH 2 ' + id + ' - ' + value);
-
             accessories.push({ id : id, value : value });
         }
 
@@ -88,15 +75,11 @@ function refreshAccessory(accessory)
                         accessories[i].value = data.state;
 
                         found = true;
-
-                        logger.log('debug', 'FOUND 1 ' + accessories[i].id + ' - ' + accessory.id);
                     }
                 }
 
                 if(!found)
                 {
-                    logger.log('debug', 'PUSH 1 ' + accessory.id + ' - ' + data.state);
-
                     accessories.push({ id : accessory.id, value : data.state });
                 }
                 

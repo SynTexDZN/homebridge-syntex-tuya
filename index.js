@@ -153,24 +153,17 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this.id).then(function(state) {
 
-        if(state == null)
+        if(state != null)
         {
-            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
-
-            callback(null, null);
-        }
-        else
-        {
-            /*
-            if(!data.online)
-            {
-                callback(new Error('Offline'));
-            }
-            */
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
-
-            callback(null, state);
         }
+        /*
+        if(!data.online)
+        {
+            callback(new Error('Offline'));
+        }
+        */
+        callback(null, state);
 
     }.bind(this)).catch(function(e) {
 
@@ -260,24 +253,17 @@ SynTexTVAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this.id).then(function(state) {
 
-        if(state == null)
+        if(state != null)
         {
-            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
-
-            callback(null, null);
-        }
-        else
-        {
-            /*
-            if(!data.online)
-            {
-                callback(new Error('Offline'));
-            }
-            */
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
-
-            callback(null, state);
         }
+        /*
+        if(!data.online)
+        {
+            callback(new Error('Offline'));
+        }
+        */
+        callback(null, state);
 
     }.bind(this)).catch(function(e) {
 
@@ -341,23 +327,17 @@ SynTexSpeakerAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this.id).then(function(state) {
 
-        if(data == null)
+        if(state != null)
         {
-            logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
-
-            callback(null, null);
-        }
-        else
-        {
-            if(!data.online)
-            {
-                callback(new Error('Offline'));
-            }
-
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
-
-            callback(null, state);
         }
+        /*
+        if(!data.online)
+        {
+            callback(new Error('Offline'));
+        }
+        */
+        callback(null, state);
 
     }.bind(this)).catch(function(e) {
 
