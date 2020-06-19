@@ -25,7 +25,7 @@ function getDevice(id)
                     accessories.push({ id : id, value : data.state });
                 }
 
-                resolve(data != null ? data.state : null);
+                resolve(data != null ? data.state : new Error('Fetch Error'));
             });
         }
     });
