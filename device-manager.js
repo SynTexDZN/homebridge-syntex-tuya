@@ -29,7 +29,7 @@ function getDevice(id)
                         value : data.state 
                     };
 
-                    logger.log('debug', 'PUSH 3 ' + accessories[i].id + ' - ' + data.state);
+                    logger.log('debug', 'PUSH 3 ' + id + ' - ' + data.state);
         
                     accessories.push(accessory);
                 }
@@ -95,7 +95,7 @@ function refreshAccessory(accessory)
 
                 if(!found)
                 {
-                    logger.log('debug', 'PUSH 1 ' + accessories[i].id + ' - ' + data.state);
+                    logger.log('debug', 'PUSH 1 ' + accessory.id + ' - ' + data.state);
 
                     accessories.push({ id : accessory.id, value : data.state });
                 }
