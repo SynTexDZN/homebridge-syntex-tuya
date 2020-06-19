@@ -151,7 +151,7 @@ function SynTexSwitchAccessory(id, name)
 
 SynTexSwitchAccessory.prototype.getState = function(callback)
 {
-    DeviceManager.getDevice(this.id).then(function(data) {
+    DeviceManager.getDevice(this.id).then(function(state) {
 
         if(data == null)
         {
@@ -166,9 +166,9 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
                 callback(new Error('Offline'));
             }
 
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
 
-            callback(null, data.state);
+            callback(null, state);
         }
 
     }.bind(this)).catch(function(e) {
@@ -257,7 +257,7 @@ function SynTexTVAccessory(id, name)
 
 SynTexTVAccessory.prototype.getState = function(callback)
 {
-    DeviceManager.getDevice(this.id).then(function(data) {
+    DeviceManager.getDevice(this.id).then(function(state) {
 
         if(data == null)
         {
@@ -272,9 +272,9 @@ SynTexTVAccessory.prototype.getState = function(callback)
                 callback(new Error('Offline'));
             }
 
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
 
-            callback(null, data.state);
+            callback(null, state);
         }
 
     }.bind(this)).catch(function(e) {
@@ -337,7 +337,7 @@ function SynTexSpeakerAccessory(id, name)
 
 SynTexSpeakerAccessory.prototype.getState = function(callback)
 {
-    DeviceManager.getDevice(this.id).then(function(data) {
+    DeviceManager.getDevice(this.id).then(function(state) {
 
         if(data == null)
         {
@@ -352,9 +352,9 @@ SynTexSpeakerAccessory.prototype.getState = function(callback)
                 callback(new Error('Offline'));
             }
 
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + data.state + "' ( " + this.id + ' )');
+            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
 
-            callback(null, data.state);
+            callback(null, state);
         }
 
     }.bind(this)).catch(function(e) {
