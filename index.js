@@ -99,35 +99,11 @@ SynTexTuyaPlatform.prototype = {
 
                 this.refreshInterval = setInterval(function() {
 
-                    for(var i = 0; i < accessories.length; i++)
-                    {
-                        DeviceManager.refreshAccessory(accessories[i]);
-                    }
+                    DeviceManager.refreshAccessory();
     
                 }, this.pollingInterval * 1000);
 
-                for(var i = 0; i < accessories.length; i++)
-                {
-                    DeviceManager.refreshAccessory(accessories[i]);
-                }
-
-                tuyaWebAPI.getAllDeviceStates().then((devices) => {
-                    
-                    for(const device of devices)
-                    {
-                        for(var i = 0; i < accessories.length; i++)
-                        {
-                            if(accessories[i].id == device.id)
-                            {
-                                logger.log('debug', device.id + ' - ' + device.data.state);
-                            }
-                        }
-                    }
-
-                }).catch(function(e) {
-
-                    logger.err(e);
-                });
+                DeviceManager.refreshAccessory();
 
                 callback(accessories);
 

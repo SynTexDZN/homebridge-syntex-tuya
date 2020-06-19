@@ -58,21 +58,39 @@ function setDevice(id, value)
     });
 }
 
-function refreshAccessory(accessory)
+var found = false;
+
+for(var i = 0; i < accessories.length; i++)
+{
+    if(accessories[i].id == accessory.id)
+    {
+        accessories[i].value = data.state;
+
+        found = true;
+    }
+}
+
+
+
+accessory.changeHandler(data.state);
+
+function refreshAccessory()
 {
     return new Promise(resolve => {
 
-        readTuyaAPI(accessory.id).then(function(data) {
-
-            if(data != null)
+        tuyaWebAPI.getAllDeviceStates().then((devices) => {
+                    
+            for(const device of devices)
             {
                 var found = false;
 
                 for(var i = 0; i < accessories.length; i++)
                 {
-                    if(accessories[i].id == accessory.id)
+                    if(accessories[i].id == device.id)
                     {
-                        accessories[i].value = data.state;
+                        accessories[i].value = device.data.state;
+
+                        accessories[i].changeHandler(device.data.state);
 
                         found = true;
                     }
@@ -80,13 +98,17 @@ function refreshAccessory(accessory)
 
                 if(!found)
                 {
-                    accessories.push({ id : accessory.id, value : data.state });
+                    accessories.push({ id : device.id, value : device.data.state });
                 }
-                
-                accessory.changeHandler(data.state);
             }
 
-            resolve();
+            resolve(true);
+
+        }).catch(function(e) {
+
+            logger.err(e);
+
+            resolve(false);
         });
     });
 }
