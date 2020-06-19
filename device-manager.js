@@ -36,7 +36,7 @@ function getDevice(id)
                     accessories.push(accessory);
                 }
 
-                resolve(data.state);
+                resolve(data.state || null);
             });
         }
     });
