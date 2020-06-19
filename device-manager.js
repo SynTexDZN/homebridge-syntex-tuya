@@ -58,22 +58,6 @@ function setDevice(id, value)
     });
 }
 
-var found = false;
-
-for(var i = 0; i < accessories.length; i++)
-{
-    if(accessories[i].id == accessory.id)
-    {
-        accessories[i].value = data.state;
-
-        found = true;
-    }
-}
-
-
-
-accessory.changeHandler(data.state);
-
 function refreshAccessory()
 {
     return new Promise(resolve => {
