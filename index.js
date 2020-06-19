@@ -115,9 +115,15 @@ SynTexTuyaPlatform.prototype = {
                     
                     for(const device of devices)
                     {
-                        logger.log('debug', JSON.stringify(device));
+                        for(var i = 0; i < accessories.length; i++)
+                        {
+                            if(accessories[i].id == device.id)
+                            {
+                                logger.log('debug', device.id + ' - ' + device.data.state);
+                            }
+                        }
                     }
-                    
+
                 }).catch(function(e) {
 
                     logger.err(e);
