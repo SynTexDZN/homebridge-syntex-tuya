@@ -153,7 +153,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this.id).then(function(state) {
 
-        if(data == null)
+        if(state == null)
         {
             logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
 
@@ -161,11 +161,12 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
         }
         else
         {
+            /*
             if(!data.online)
             {
                 callback(new Error('Offline'));
             }
-
+            */
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
 
             callback(null, state);
@@ -259,7 +260,7 @@ SynTexTVAccessory.prototype.getState = function(callback)
 {
     DeviceManager.getDevice(this.id).then(function(state) {
 
-        if(data == null)
+        if(state == null)
         {
             logger.log('error', 'Es wurde kein passendes Gerät in der Storage gefunden! ( ' + this.id + ' )');
 
@@ -267,11 +268,12 @@ SynTexTVAccessory.prototype.getState = function(callback)
         }
         else
         {
+            /*
             if(!data.online)
             {
                 callback(new Error('Offline'));
             }
-
+            */
             logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
 
             callback(null, state);
