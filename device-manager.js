@@ -58,7 +58,7 @@ function setDevice(id, value)
     });
 }
 
-function refreshAccessory()
+function refreshAccessories(a)
 {
     return new Promise(resolve => {
 
@@ -74,8 +74,6 @@ function refreshAccessory()
                     {
                         accessories[i].value = device.data.state;
 
-                        //accessories[i].changeHandler(device.data.state);
-
                         found = true;
                     }
                 }
@@ -83,6 +81,14 @@ function refreshAccessory()
                 if(!found)
                 {
                     accessories.push({ id : device.id, value : device.data.state });
+                }
+
+                for(var i = 0; i < a.length; i++)
+                {
+                    if(a[i].id == device.id)
+                    {
+                        a[i].changeHandler(device.data.state);
+                    }
                 }
             }
 
@@ -140,6 +146,6 @@ function SETUP(log, api)
 module.exports = {
     getDevice,
     setDevice,
-    refreshAccessory,
+    refreshAccessories,
     SETUP
 };

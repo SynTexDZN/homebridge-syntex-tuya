@@ -99,11 +99,11 @@ SynTexTuyaPlatform.prototype = {
 
                 this.refreshInterval = setInterval(function() {
 
-                    DeviceManager.refreshAccessory();
+                    DeviceManager.refreshAccessories(accessories);
     
                 }, this.pollingInterval * 1000);
 
-                DeviceManager.refreshAccessory();
+                DeviceManager.refreshAccessories(accessories);
 
                 callback(accessories);
 
