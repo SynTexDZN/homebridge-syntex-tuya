@@ -169,7 +169,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
 SynTexSwitchAccessory.prototype.setState = function(state, callback)
 {
-    DeviceManager.setDevice(this.id, value).then(function() {
+    DeviceManager.setDevice(this.id, state).then(function() {
 
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
         
@@ -269,9 +269,7 @@ SynTexTVAccessory.prototype.getState = function(callback)
 
 SynTexTVAccessory.prototype.setState = function(state, callback)
 {
-    const value = state ? 1 : 0;
-
-    tuyaWebAPI.setDeviceState(this.id, 'turnOnOff', { value: value }).then(function() {
+    DeviceManager.setDevice(this.id, state).then(function() {
 
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
         
@@ -343,9 +341,7 @@ SynTexSpeakerAccessory.prototype.getState = function(callback)
 
 SynTexSpeakerAccessory.prototype.setState = function(state, callback)
 {
-    const value = state ? 1 : 0;
-
-    tuyaWebAPI.setDeviceState(this.id, 'turnOnOff', { value: value }).then(function() {
+    DeviceManager.setDevice(this.id, state).then(function() {
 
         logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
         
