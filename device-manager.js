@@ -74,7 +74,7 @@ function refreshAccessory()
                     {
                         accessories[i].value = device.data.state;
 
-                        accessories[i].changeHandler(device.data.state);
+                        //accessories[i].changeHandler(device.data.state);
 
                         found = true;
                     }
