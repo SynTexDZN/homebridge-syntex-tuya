@@ -22,16 +22,22 @@ function getDevice(id)
 
         if(!found)
         {
-            var accessory = {
-                id : id,
-                value : await readTuyaAPI(id)
-            };
+            readTuyaAPI(id).then(function(data) {
 
-            logger.log('debug', 'Z: ' + accessory.value);
+                if(data != null)
+                {
+                    var accessory = {
+                        id : id,
+                        value : data.state 
+                    };
+        
+                    logger.log('debug', 'Z: ' + accessory.value);
+        
+                    accessories.push(accessory);
+                }
 
-            accessories.push(accessory);
-
-            resolve(accessory.value);
+                resolve(data.state);
+            });
         }
     });
 }
