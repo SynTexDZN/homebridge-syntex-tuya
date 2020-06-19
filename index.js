@@ -111,6 +111,18 @@ SynTexTuyaPlatform.prototype = {
                     DeviceManager.refreshAccessory(accessories[i]);
                 }
 
+                tuyaWebAPI.getAllDeviceStates().then((devices) => {
+                    
+                    for(const device of devices)
+                    {
+                        logger.log('debug', JSON.stringify(device));
+                    }
+                    
+                }).catch(function(e) {
+
+                    logger.err(e);
+                });
+
                 callback(accessories);
 
             }.bind(this)).catch(function(e) {
