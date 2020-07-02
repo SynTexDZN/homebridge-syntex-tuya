@@ -134,7 +134,7 @@ function SynTexSwitchAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
@@ -149,7 +149,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
         if(state != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
+            logger.log('read', this.id, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
         }
         /*
         if(!data.online)
@@ -171,7 +171,7 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback)
 {
     DeviceManager.setDevice(this.id, state).then(function() {
 
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
         
         callback();
 
@@ -203,7 +203,7 @@ function SynTexLightAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
@@ -232,7 +232,7 @@ function SynTexTVAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
@@ -249,7 +249,7 @@ SynTexTVAccessory.prototype.getState = function(callback)
 
         if(state != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
+            logger.log('read', this.id, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
         }
         /*
         if(!data.online)
@@ -271,7 +271,7 @@ SynTexTVAccessory.prototype.setState = function(state, callback)
 {
     DeviceManager.setDevice(this.id, state).then(function() {
 
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
         
         callback();
 
@@ -303,7 +303,7 @@ function SynTexSpeakerAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
@@ -321,7 +321,7 @@ SynTexSpeakerAccessory.prototype.getState = function(callback)
 
         if(state != null)
         {
-            logger.log('read', "HomeKit Status für '" + this.name + "' ist '" + state + "' ( " + this.id + ' )');
+            logger.log('read', this.id, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
         }
         /*
         if(!data.online)
@@ -343,7 +343,7 @@ SynTexSpeakerAccessory.prototype.setState = function(state, callback)
 {
     DeviceManager.setDevice(this.id, state).then(function() {
 
-        logger.log('update', "HomeKit Status für '" + this.name + "' geändert zu '" + state + "' ( " + this.id + ' )');
+        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
         
         callback();
 
