@@ -11,7 +11,7 @@ logger.create = function(pluginName, logDirectory, config)
     logger.logs = store(logDirectory);
 };
 
-logger.log = function(level, mac, name, message)
+logger.log = function(level, mac, letters, message)
 {
     var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
 
@@ -55,7 +55,7 @@ logger.log = function(level, mac, name, message)
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
-        saveLog(level[0].toUpperCase() + level.substring(1), mac, name, Math.round(new Date().getTime() / 1000), message);
+        saveLog(level[0].toUpperCase() + level.substring(1), mac, letters, Math.round(new Date().getTime() / 1000), message);
     }
 }
 
@@ -68,6 +68,28 @@ logger.err = function(error)
 logger.debug = function(message)
 {
     logger.log('debug', 'bridge', 'Bridge', message);
+}
+
+logger.list = function()
+{
+    return new Promise(async function(resolve) {
+
+        var logPath = await getLogPath(prefix);
+
+        logger.debug(logPath);
+
+        store(logPath).list(function(err, objects)
+        {
+            if(!objects || err)
+            {
+                resolve([]);
+            }
+            else
+            {
+                resolve(objects);
+            }
+        });
+    });
 }
 
 logger.load = function(pluginName, group)
@@ -84,15 +106,25 @@ logger.load = function(pluginName, group)
                 {    
                     var logs = [];
 
-                    for(var i = 1; i < Object.keys(obj).length; i++)
+                    for(const i in obj)
                     {
-                        if(obj[Object.keys(obj)[i]].logs && (group == null || group == Object.keys(obj)[i]))
+                        console.log('I: ' + i);
+
+                        if(i != 'id' && (group == null || group == i))
                         {
-                            for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
+                            for(const k in obj[i])
                             {
-                                if(group == null || obj[Object.keys(obj)[i]].logs[j].l == 'Update' || obj[Object.keys(obj)[i]].logs[j].l == 'Success')
+                                console.log('K: ' + k);
+
+                                for(const j in obj[i][k])
                                 {
-                                    logs.push(obj[Object.keys(obj)[i]].logs[j]);
+                                    console.log('J: ' + j);
+
+                                    if(group == null || obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
+                                    {
+                                        var l = obj[i][k][j];
+                                        logs.push({ t : l.t, l : l.l, m : l.m, s : k });
+                                    }
                                 }
                             }
                         }
@@ -148,9 +180,9 @@ function getLogPath(pluginName)
 var inWork = false;
 var que = [];
 
-async function saveLog(level, mac, name, time, message)
+async function saveLog(level, mac, letters, time, message)
 {
-    var queOBJ = { mac : mac, name : name, time : time, level : level, message : message };
+    var queOBJ = { mac : mac, letters : letters, time : time, level : level, message : message };
 
     if(inWork)
     {
@@ -179,17 +211,12 @@ async function saveLog(level, mac, name, time, message)
                     device[mac] = {};
                 }
 
-                if(!device[mac].name || device[mac].name == '')
+                if(!device[mac][letters])
                 {
-                    device[mac].name = name;
+                    device[mac][letters] = [];
                 }
 
-                if(!device[mac].logs)
-                {
-                    device[mac].logs = [];
-                }
-
-                device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
+                device[mac][letters][device[mac][letters].length] = { t : time, l : level, m : message };
 
                 logger.logs.add(device, function(err) {
 
@@ -202,7 +229,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(que.length != 0)
                     {
-                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message);
+                        saveLog(que[0].level, que[0].mac, que[0].letters, que[0].time, que[0].message);
                     }
                 });
             }
@@ -210,7 +237,9 @@ async function saveLog(level, mac, name, time, message)
             {
                 var entry = { id : prefix };
 
-                entry[mac] = { name : name, logs : [ { t : time, l : level, m : message } ] };
+                entry[mac] = {};
+
+                entry[mac][letters] = [ { t : time, l : level, m : message } ];
 
                 logger.logs.add(entry, (err) => {
 
@@ -223,7 +252,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(que.length != 0)
                     {
-                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message);
+                        saveLog(que[0].level, que[0].mac, que[0].letters, que[0].time, que[0].message);
                     }
                 });
             }
