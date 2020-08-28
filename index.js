@@ -161,7 +161,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
     }.bind(this)).catch(function(e) {
 
-        logger.err(e);
+        logger.log('warn', this.id, this.name, 'HomeKit Status für [' + this.name + '] konnte nicht überprüft werden ( ' + this.id + ' )');
 
         callback(e);
     });
