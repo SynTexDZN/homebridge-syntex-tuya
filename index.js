@@ -114,7 +114,7 @@ SynTexTuyaPlatform.prototype = {
 
         }.bind(this)).catch(function(e) {
 
-            logger.err(e);
+            logger.log('warn', 'bridge', 'Bridge', 'Tuya Token konnte nicht überprüft werden');
         });
     }
 }
