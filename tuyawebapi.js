@@ -35,7 +35,7 @@ class Session {
 }
 
 class TuyaWebApi {
-  constructor(username, password, countryCode, tuyaPlatform = 'tuya', log = null) {
+  constructor(username, password, countryCode, tuyaPlatform = 'tuya', logger) {
     this.username = username;
     this.password = password;
     this.countryCode = countryCode;
@@ -45,7 +45,7 @@ class TuyaWebApi {
 
     this.authBaseUrl = 'https://px1.tuyaeu.com';
 
-    this.log = log;
+    this.logger = logger;
   }
 
   discoverDevices() {
@@ -76,7 +76,8 @@ class TuyaWebApi {
             }
           }
           else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
-            reject(new Error('Requesting too quickly!'));
+            logger.log('warn', 'bridge', 'Bridge', 'Zu viele Anfragen hintereinander');
+            reject();
           } else {
             reject(new Error('No valid response from API' + JSON.stringify(obj)));
           }
