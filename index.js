@@ -110,12 +110,12 @@ SynTexTuyaPlatform.prototype = {
 
             }.bind(this)).catch(function(e) {
 
-                logger.log('warn', 'bridge', 'Bridge', 'HomeKit Status konnte nicht überprüft werden');
+                logger.err(e);
             });
 
         }.bind(this)).catch(function(e) {
 
-            logger.log('warn', 'bridge', 'Bridge', 'Tuya Token konnte nicht überprüft werden');
+            logger.err(e);
         });
     }
 }
@@ -162,7 +162,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
     }.bind(this)).catch(function(e) {
 
-        logger.log('warn', this.id, this.name, 'HomeKit Status für [' + this.name + '] konnte nicht überprüft werden ( ' + this.id + ' )');
+        logger.err(e);
 
         callback(e);
     });

@@ -76,8 +76,7 @@ class TuyaWebApi {
             }
           }
           else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
-            logger.log('warn', 'bridge', 'Bridge', 'Zu viele Anfragen hintereinander');
-            reject();
+            reject(new Error('Requesting too quickly!'));
           } else {
             reject(new Error('No valid response from API' + JSON.stringify(obj)));
           }
