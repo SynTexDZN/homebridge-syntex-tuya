@@ -154,9 +154,6 @@ class TuyaWebApi {
     data.payload.accessToken = this.session.accessToken;
     data.payload.devId = deviceId;
 
-    console.log(data);
-    console.log(JSON.stringify(data));
-
     return new Promise((resolve, reject) => {
       this.sendRequestJson(
         this.session.areaBaseUrl + '/homeassistant/skill',

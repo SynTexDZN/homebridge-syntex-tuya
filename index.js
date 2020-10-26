@@ -136,7 +136,6 @@ SynTexTuyaPlatform.prototype = {
 	
                             if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
                             {
-                                console.log(typeof state);
                                 accessory.changeHandler(state);
                             }
                             else
@@ -173,7 +172,8 @@ SynTexTuyaPlatform.prototype = {
                             mac: accessories[i].id,
                             name: accessories[i].name,
                             services: accessories[i].services,
-                            version: '99.99.99'
+                            version: '99.99.99',
+                            plugin: 'SynTexTuya'
                         };
                     }
 
@@ -195,7 +195,7 @@ SynTexTuyaPlatform.prototype = {
         
                 WebServer.addPage('/update', async (response, urlParams) => {
         
-                    var version = urlParams.version ? urlParams.version : 'latest';
+                    var version = urlParams.version != null ? urlParams.version : 'latest';
         
                     const { exec } = require('child_process');
                     
