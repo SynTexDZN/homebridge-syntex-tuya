@@ -2,6 +2,7 @@ var Service, Characteristic;
 var logger = require('./logger');
 const TuyaWebApi = require('./tuyawebapi');
 var DeviceManager = require('./device-manager');
+var WebServer = require('../webserver');
 var tuyaWebAPI;
 
 module.exports = function(homebridge)
@@ -33,7 +34,8 @@ function SynTexTuyaPlatform(log, sconfig, api)
     this.logDirectory = sconfig['log_directory'] || './SynTex/log';
     this.port = sconfig['port'] || 1712;
     
-    logger.create('SynTexTuya', this.logDirectory, api.user.storagePath());
+    logger = new logger('SynTexTuya', this.logDirectory, api.user.storagePath());
+    WebServer = new WebServer('SynTexTuya', logger, this.port);
 
     this.api = api;
 
@@ -108,6 +110,123 @@ SynTexTuyaPlatform.prototype = {
 
                 callback(accessories);
 
+                WebServer.addPage('/devices', async (response, urlParams) => {
+	
+                    if(urlParams.id)
+                    {
+                        var accessory = null;
+            
+                        for(var i = 0; i < accessories.length; i++)
+                        {
+                            if(accessories[i].id == urlParams.id)
+                            {
+                                accessory = accessories[i];
+                            }
+                        }
+            
+                        if(accessory == null)
+                        {
+                            logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
+            
+                            response.write('Error');
+                        }
+                        else if(urlParams.value)
+                        {
+                            var state = null;
+            
+                            if(state != null)
+                            {
+                                accessory.changeHandler(state);
+                            }
+                            else
+                            {
+                                logger.log('error', urlParams.id, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.id + ' )');
+                            }
+            
+                            DeviceManager.setDevice(urlParams.id, urlParams.value); // TODO : Concat RGB Light Services
+                                
+                            response.write(state != null ? 'Success' : 'Error');
+                        }
+                        else
+                        {
+                            var state = await DeviceManager.getDevice(urlParams.id);
+            
+                            response.write(state != null ? state.toString() : 'Error');
+                        }
+                    }
+                    else
+                    {
+                        response.write('Error');
+                    }
+            
+                    response.end();
+                });
+
+                WebServer.addPage('/accessories', (response, urlParams) => {
+
+                    var a = [];
+
+                    for(var i = 0; i < accessories.length; i++)
+                    {
+                        a[i] = {
+                            mac: accessories[i].id,
+                            name: accessories[i].name,
+                            services: accessories[i].services,
+                            version: '99.99.99'
+                        };
+                    }
+
+                    response.write(JSON.stringify(a));
+                    response.end();
+                });
+
+                WebServer.addPage('/version', (response, urlParams) => {
+
+                    response.write(require('./package.json').version);
+                    response.end();
+                });
+        
+                WebServer.addPage('/check-restart', (response, urlParams) => {
+        
+                    response.write(restart.toString());
+                    response.end();
+                });
+        
+                WebServer.addPage('/update', async (response, urlParams) => {
+        
+                    var version = urlParams.version ? urlParams.version : 'latest';
+        
+                    const { exec } = require('child_process');
+                    
+                    exec('sudo npm install homebridge-syntex-tuya@' + version + ' -g', (error, stdout, stderr) => {
+        
+                        try
+                        {
+                            if(error || stderr.includes('ERR!'))
+                            {
+                                logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
+                            }
+                            else
+                            {
+                                logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
+        
+                                restart = true;
+        
+                                logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+        
+                                exec('sudo systemctl restart homebridge');
+                            }
+        
+                            response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                            response.end();
+                        }
+                        catch(e)
+                        {
+                            logger.err(e);
+                        }
+                    });
+                });
+
             }.bind(this)).catch(function(e) {
 
                 logger.err(e);
@@ -124,6 +243,7 @@ function SynTexSwitchAccessory(id, name)
 {
     this.id = id;
     this.name = name;
+    this.services = 'switch';
 
     this.service = new Service.Outlet(this.name);
     /*
@@ -193,6 +313,7 @@ function SynTexLightAccessory(id, name)
 {
     this.id = id;
     this.name = name;
+    this.services = 'led';
 
     this.service = new Service.Lightbulb(this.name);
     /*
@@ -222,6 +343,7 @@ function SynTexTVAccessory(id, name)
 {
     this.id = id;
     this.name = name;
+    this.services = 'television';
 
     this.service = new Service.Television(this.name, 'tvService');
     /*
@@ -293,6 +415,7 @@ function SynTexSpeakerAccessory(id, name)
 {
     this.id = id;
     this.name = name;
+    this.services = 'speaker';
 
     this.service = new Service.Speaker(this.name, 'tvSpeakerService');
     /*
