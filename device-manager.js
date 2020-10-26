@@ -107,7 +107,7 @@ function writeTuyaAPI(id, value)
 {
     return new Promise(resolve => {
         
-        tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value ? 1 : 0 }).then(function() {
+        tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value == 'true' ? 1 : 0 }).then(function() {
 
             resolve(true);
     
