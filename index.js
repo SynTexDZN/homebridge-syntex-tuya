@@ -32,7 +32,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
     
     this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
     this.logDirectory = sconfig['log_directory'] || './SynTex/log';
-    this.port = sconfig['port'] || 1712;
+    this.port = sconfig['port'] || 1713;
     
     logger = new logger('SynTexTuya', this.logDirectory, api.user.storagePath());
     WebServer = new WebServer('SynTexTuya', logger, this.port);
