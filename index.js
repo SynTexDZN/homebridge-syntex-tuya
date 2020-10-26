@@ -112,7 +112,7 @@ SynTexTuyaPlatform.prototype = {
 
                 WebServer.addPage('/devices', async (response, urlParams) => {
 	
-                    if(urlParams.id)
+                    if(urlParams.id != null)
                     {
                         var accessory = null;
             
@@ -130,7 +130,7 @@ SynTexTuyaPlatform.prototype = {
             
                             response.write('Error');
                         }
-                        else if(urlParams.value)
+                        else if(urlParams.value != null)
                         {
                             var state = null;
             
