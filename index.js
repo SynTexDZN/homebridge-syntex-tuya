@@ -144,7 +144,7 @@ SynTexTuyaPlatform.prototype = {
                                 logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
                             }
             
-                            DeviceManager.setDevice(urlParams.mac, urlParams.value); // TODO : Concat RGB Light Services
+                            DeviceManager.setDevice(urlParams.mac, state); // TODO : Concat RGB Light Services
                                 
                             response.write(state != null ? 'Success' : 'Error');
                         }
