@@ -259,7 +259,7 @@ function SynTexSwitchAccessory(id, name)
     {
         logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
-        this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
     
@@ -330,7 +330,7 @@ function SynTexLightAccessory(id, name)
     {
         logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
-        this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
     
@@ -361,7 +361,7 @@ function SynTexTVAccessory(id, name)
     {
         logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
-        this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
 
@@ -434,7 +434,7 @@ function SynTexSpeakerAccessory(id, name)
     {
         logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
-        this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
+        this.service.getCharacteristic(Characteristic.On).updateValue(state);
 
     }).bind(this);
 
