@@ -134,17 +134,17 @@ SynTexTuyaPlatform.prototype = {
                         {
                             var state = null;
 	
-                            if((state = validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
+                            if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
                             {
                                 console.log(typeof state);
                                 accessory.changeHandler(state);
                             }
                             else
                             {
-                                logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+                                logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
                             }
             
-                            DeviceManager.setDevice(urlParams.mac, state); // TODO : Concat RGB Light Services
+                            DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
                                 
                             response.write(state != null ? 'Success' : 'Error');
                         }
