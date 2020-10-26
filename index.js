@@ -132,16 +132,7 @@ SynTexTuyaPlatform.prototype = {
                         }
                         else if(urlParams.value != null)
                         {
-                            var state = null;
-            
-                            if(state != null)
-                            {
-                                accessory.changeHandler(state);
-                            }
-                            else
-                            {
-                                logger.log('error', urlParams.id, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.id + ' )');
-                            }
+                            accessory.changeHandler(state);
             
                             DeviceManager.setDevice(urlParams.id, urlParams.value); // TODO : Concat RGB Light Services
                                 
