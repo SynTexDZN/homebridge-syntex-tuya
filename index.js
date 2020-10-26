@@ -132,11 +132,20 @@ SynTexTuyaPlatform.prototype = {
                         }
                         else if(urlParams.value != null)
                         {
-                            accessory.changeHandler(urlParams.value);
+                            var state = null;
+	
+                            if((state = validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
+                            {
+                                accessory.changeHandler(state);
+                            }
+                            else
+                            {
+                                logger.log('error', urlParams.mac, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+                            }
             
-                            DeviceManager.setDevice(urlParams.id, urlParams.value); // TODO : Concat RGB Light Services
+                            DeviceManager.setDevice(urlParams.mac, urlParams.value); // TODO : Concat RGB Light Services
                                 
-                            response.write('Success');
+                            response.write(state != null ? 'Success' : 'Error');
                         }
                         else
                         {
@@ -235,6 +244,7 @@ function SynTexSwitchAccessory(id, name)
     this.id = id;
     this.name = name;
     this.services = 'switch';
+    this.letters = '40';
 
     this.service = new Service.Outlet(this.name);
     /*
@@ -246,7 +256,7 @@ function SynTexSwitchAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
 
@@ -261,7 +271,7 @@ SynTexSwitchAccessory.prototype.getState = function(callback)
 
         if(state != null)
         {
-            logger.log('read', this.id, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
+            logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
         }
         /*
         if(!data.online)
@@ -283,7 +293,7 @@ SynTexSwitchAccessory.prototype.setState = function(state, callback)
 {
     DeviceManager.setDevice(this.id, state).then(function() {
 
-        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
         
         callback();
 
@@ -305,6 +315,7 @@ function SynTexLightAccessory(id, name)
     this.id = id;
     this.name = name;
     this.services = 'led';
+    this.letters = '40';
 
     this.service = new Service.Lightbulb(this.name);
     /*
@@ -316,7 +327,7 @@ function SynTexLightAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
 
@@ -335,6 +346,7 @@ function SynTexTVAccessory(id, name)
     this.id = id;
     this.name = name;
     this.services = 'television';
+    this.letters = '40';
 
     this.service = new Service.Television(this.name, 'tvService');
     /*
@@ -346,7 +358,7 @@ function SynTexTVAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
 
@@ -363,7 +375,7 @@ SynTexTVAccessory.prototype.getState = function(callback)
 
         if(state != null)
         {
-            logger.log('read', this.id, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
+            logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
         }
         /*
         if(!data.online)
@@ -385,7 +397,7 @@ SynTexTVAccessory.prototype.setState = function(state, callback)
 {
     DeviceManager.setDevice(this.id, state).then(function() {
 
-        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
         
         callback();
 
@@ -407,6 +419,7 @@ function SynTexSpeakerAccessory(id, name)
     this.id = id;
     this.name = name;
     this.services = 'speaker';
+    this.letters = '40';
 
     this.service = new Service.Speaker(this.name, 'tvSpeakerService');
     /*
@@ -418,7 +431,7 @@ function SynTexSpeakerAccessory(id, name)
     */
     this.changeHandler = (function(state)
     {
-        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
         this.service.getCharacteristic(Characteristic.On).updateValue(state == 'true');
 
@@ -436,7 +449,7 @@ SynTexSpeakerAccessory.prototype.getState = function(callback)
 
         if(state != null)
         {
-            logger.log('read', this.id, this.name, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
+            logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
         }
         /*
         if(!data.online)
@@ -458,7 +471,7 @@ SynTexSpeakerAccessory.prototype.setState = function(state, callback)
 {
     DeviceManager.setDevice(this.id, state).then(function() {
 
-        logger.log('update', this.id, this.name, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
         
         callback();
 
@@ -474,3 +487,55 @@ SynTexSpeakerAccessory.prototype.getServices = function()
 {
     return [this.service];
 };
+
+function validateUpdate(mac, letters, state)
+{
+    var type = letterToType(letters[0]);
+
+    if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
+    {
+        if(state != true && state != false && state != 'true' && state != 'false')
+        {
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+
+            return null;
+        }
+
+        return (state == 'true' || state == true ? true : false);
+    }
+    else if(type === 'light' || type === 'temperature')
+    {
+        if(isNaN(state))
+        {
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+        }
+
+        return !isNaN(state) ? parseFloat(state) : null;
+    }
+    else if(type === 'humidity' || type === 'airquality')
+    {
+        if(isNaN(state))
+        {
+            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+        }
+
+        return !isNaN(state) ? parseInt(state) : null;
+    }
+    else
+    {
+        return state;
+    }
+}
+
+var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
+var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
+
+function letterToType(letter)
+{
+    return types[letters.indexOf(letter.toUpperCase())];
+}
+
+function typeToLetter(type)
+{
+    return letters[types.indexOf(type.toLowerCase())];
+}
