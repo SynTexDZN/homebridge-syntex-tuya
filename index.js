@@ -136,6 +136,7 @@ SynTexTuyaPlatform.prototype = {
 	
                             if((state = validateUpdate(urlParams.mac, accessory.letters, urlParams.value)) != null)
                             {
+                                console.log(typeof state);
                                 accessory.changeHandler(state);
                             }
                             else
