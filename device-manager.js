@@ -106,6 +106,8 @@ function refreshAccessories(a)
 function writeTuyaAPI(id, value)
 {
     return new Promise(resolve => {
+
+        console.log(value ? 1 : 0, value, typeof value);
         
         tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value ? 1 : 0 }).then(function() {
 
