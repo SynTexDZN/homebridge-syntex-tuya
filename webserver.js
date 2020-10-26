@@ -26,7 +26,7 @@ module.exports = class WebServer
                 {
                     if(request.method == 'POST')
                     {
-                        var post = '';
+                        var post = '', page = pages[i];
 
                         request.on('data', (data) => {
 
@@ -49,7 +49,7 @@ module.exports = class WebServer
                                 }
                             }
                             
-                            pages[i].callback(response, urlParams, json);
+                            page.callback(response, urlParams, json);
                         });
                     }
                     else
