@@ -1,8 +1,6 @@
-var Service, Characteristic;
-var logger = require('./logger');
+var DeviceManager = require('./device-manager'), WebServer = require('./webserver'), logger = require('./logger');
 const TuyaWebApi = require('./tuyawebapi');
-var DeviceManager = require('./device-manager');
-var WebServer = require('./webserver');
+var Service, Characteristic;
 var tuyaWebAPI;
 
 module.exports = function(homebridge)
@@ -11,14 +9,6 @@ module.exports = function(homebridge)
     Characteristic = homebridge.hap.Characteristic;
     
     homebridge.registerPlatform('homebridge-syntex-tuya', 'SynTexTuya', SynTexTuyaPlatform);
-    //homebridge.registerAccessory('homebridge-syntex-tuya', 'SynTexTuyaSwitch', SynTexSwitchAccessory);
-
-    /*
-    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSensor', SynTexWebHookSensorAccessory);
-    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookSwitch', SynTexWebHookSwitchAccessory);
-    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStripeRGB', SynTexWebHookStripeRGBAccessory);
-    homebridge.registerAccessory('homebridge-syntex-webhooks', 'SynTexWebHookStatelessSwitch', SynTexWebHookStatelessSwitchAccessory);
-    */
 };
 
 function SynTexTuyaPlatform(log, sconfig, api)
@@ -136,6 +126,8 @@ SynTexTuyaPlatform.prototype = {
 	
                             if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
                             {
+                                DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
+
                                 accessory.changeHandler(state);
                             }
                             else
@@ -143,8 +135,6 @@ SynTexTuyaPlatform.prototype = {
                                 logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
                             }
             
-                            DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
-                                
                             response.write(state != null ? 'Success' : 'Error');
                         }
                         else
