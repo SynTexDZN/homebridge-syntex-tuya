@@ -25,7 +25,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
     this.port = sconfig['port'] || 1713;
     
     logger = new logger('SynTexTuya', this.logDirectory, api.user.storagePath());
-    WebServer = new WebServer('SynTexTuya', logger, this.port);
+    WebServer = new WebServer('SynTexTuya', logger, this.port, false);
 
     this.api = api;
 
