@@ -1,4 +1,4 @@
-var http = require('http'), url = require('url'), fs = require('fs'), path = require('path');;
+var http = require('http'), url = require('url'), fs = require('fs'), path = require('path');
 var logger, pages = [], head = '';
 
 module.exports = class WebServer
@@ -44,13 +44,9 @@ module.exports = class WebServer
 
             for(var i = 0; i < pages.length; i++)
             {
-                console.log(urlPath, pages[i].path, (urlPath == pages[i].path || urlPath == pages[i].path + '.html'));
-
                 if(urlPath == pages[i].path || urlPath == pages[i].path + '.html')
                 {
                     found = true;
-
-                    console.log('FOUND');
 
                     if(request.method == 'POST')
                     {
@@ -87,20 +83,16 @@ module.exports = class WebServer
                 }
             }
 
-            console.log(found);
-
             if(!found)
             {
                 if(data == '')
                 {
-                    console.log('NO DATA', urlPath);
-                    response.setHeader('Content-Type', 'text/html; charset=utf-8');
-                    response.write(head + await read(__dirname + '/includes/not-found.html'));
+                    response.statusCode = 404;
+                    //response.setHeader('Content-Type', 'text/html; charset=utf-8');
+                    //response.write(head + await read(__dirname + '/includes/not-found.html'));
                 }
                 else if(relPath)
                 {
-                    console.log(relPath);
-
                     var mimeType = {
                         ".html": "text/html; charset=utf-8",
                         ".jpeg": "image/jpeg",
