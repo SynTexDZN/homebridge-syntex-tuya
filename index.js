@@ -152,7 +152,7 @@ SynTexTuyaPlatform.prototype = {
                     response.end();
                 });
 
-                WebServer.addPage('/accessories', (response, urlParams) => {
+                WebServer.addPage('/accessories', (response) => {
 
                     var a = [];
 
@@ -171,13 +171,13 @@ SynTexTuyaPlatform.prototype = {
                     response.end();
                 });
 
-                WebServer.addPage('/version', (response, urlParams) => {
+                WebServer.addPage('/version', (response) => {
 
                     response.write(require('./package.json').version);
                     response.end();
                 });
         
-                WebServer.addPage('/check-restart', (response, urlParams) => {
+                WebServer.addPage('/check-restart', (response) => {
         
                     response.write(restart.toString());
                     response.end();
