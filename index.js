@@ -1,4 +1,4 @@
-var DeviceManager = require('./device-manager'), WebServer = require('./webserver'), logger = require('./logger');
+const DeviceManager = require('./device-manager'), WebServer = require('./webserver'), logger = require('./logger');
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI;
