@@ -1,7 +1,7 @@
 let DeviceManager = require('./device-manager'), WebServer = require('./webserver'), logger = require('./logger');
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
-var tuyaWebAPI;
+var tuyaWebAPI, restart = true;
 
 module.exports = function(homebridge)
 {
@@ -171,19 +171,19 @@ SynTexTuyaPlatform.prototype = {
                     response.end();
                 });
 
-                WebServer.addPage('/version', (response) => {
+                WebServer.addPage('/serverside/version', (response) => {
 
                     response.write(require('./package.json').version);
                     response.end();
                 });
         
-                WebServer.addPage('/check-restart', (response) => {
+                WebServer.addPage('/serverside/check-restart', (response) => {
         
                     response.write(restart.toString());
                     response.end();
                 });
         
-                WebServer.addPage('/update', async (response, urlParams) => {
+                WebServer.addPage('/serverside/update', async (response, urlParams) => {
         
                     var version = urlParams.version != null ? urlParams.version : 'latest';
         
