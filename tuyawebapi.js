@@ -1,8 +1,10 @@
 const request = require('request');
 const querystring = require('querystring');
 
-class Session {
-	constructor(accessToken, refreshToken, expiresIn, areaCode, areaBaseUrl) {
+class Session
+{
+	constructor(accessToken, refreshToken, expiresIn, areaCode, areaBaseUrl)
+	{
 		this.accessToken;
 		this.refreshToken;
 		this.expiresOn;
@@ -11,25 +13,30 @@ class Session {
 		this.resetToken(accessToken, refreshToken, expiresIn);
 	}
 
-	resetToken(accessToken, refreshToken, expiresIn) {
+	resetToken(accessToken, refreshToken, expiresIn)
+	{
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
-		this.expiresOn = this._getCurrentEpoch() + expiresIn - 100; // subtract 100 ticks to expire token before it actually does
+		this.expiresOn = this.getCurrentEpoch() + expiresIn - 100; // subtract 100 ticks to expire token before it actually does
 	}
 
-	hasToken() {
+	hasToken()
+	{
 		return this.accessToken && true;
 	}
 
-	isTokenExpired() {
-		return this.expiresOn < this._getCurrentEpoch();
+	isTokenExpired()
+	{
+		return this.expiresOn < this.getCurrentEpoch();
 	}
 
-	hasValidToken() {
+	hasValidToken()
+	{
 		return this.hasToken() && !this.isTokenExpired();
 	}
 
-	_getCurrentEpoch() {
+	getCurrentEpoch()
+	{
 		return Math.round((new Date()).getTime() / 1000);
 	}
 }
@@ -78,7 +85,7 @@ class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error('Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
+					reject(new Error('Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
 				}
 				else
 				{
@@ -127,7 +134,7 @@ class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error(deviceId + ': Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
+					reject(new Error(deviceId + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
 				}
 				else
 				{
@@ -175,7 +182,7 @@ class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error(deviceId + ': Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
+					reject(new Error(deviceId + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
 				}
 				else
 				{
@@ -189,8 +196,10 @@ class TuyaWebApi
 		});
 	}
 
-	getOrRefreshToken() {
-		if (!this.session.hasToken()) {
+	getOrRefreshToken()
+	{
+		if(!this.session.hasToken())
+		{
 			// No token, lets get a token from the Tuya Web API
 			if (!this.username) {
 				throw new Error('No username configured');
@@ -307,42 +316,50 @@ class TuyaWebApi
 	 * HTTP methods
 	*/
 
-	sendRequest(url, body, method, callbackSuccess, callbackError) {
+	sendRequest(url, body, method, callbackSuccess, callbackError)
+	{
 		request({
 			url: url,
 			body: body,
 			method: method,
 			rejectUnauthorized: false,
 		},
-			(error, response, body) => {
-				if (error) {
-					callbackError(error);
-				}
-				else {
-					callbackSuccess(response, body)
-				}
-			});
-	}
+		(error, response, body) => {
 
-	sendRequestJson(url, body, method, callbackSuccess, callbackError) {
-		// this.log.debug(JSON.stringify(body));
-		
-		this.sendRequest(url, body, method,
-			(response, body) => {
-				// this.log.debug(JSON.stringify(body));
-
-				try {
-					const obj = JSON.parse(body);
-					callbackSuccess(response, obj);
-				}
-				catch (error) {
-					callbackError(new Error(`Could not parse json. Body: ${body}`, error));
-				}
-			},
-			(error) => {
+			if(error)
+			{
 				callbackError(error);
 			}
-		);
+			else
+			{
+				callbackSuccess(response, body)
+			}
+		});
+	}
+
+	sendRequestJson(url, body, method, callbackSuccess, callbackError)
+	{
+		// this.log.debug(JSON.stringify(body));
+		
+		this.sendRequest(url, body, method, (response, body) => {
+
+			// this.log.debug(JSON.stringify(body));
+
+			try
+			{
+				const obj = JSON.parse(body);
+				
+				callbackSuccess(response, obj);
+			}
+			catch(error)
+			{
+				callbackError(new Error(`Could not parse json. Body: ${body}`, error));
+			}
+		},
+		(error) => {
+
+			callbackError(error);
+		});
 	}
 }
 
