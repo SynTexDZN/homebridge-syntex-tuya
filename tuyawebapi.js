@@ -2,331 +2,348 @@ const request = require('request');
 const querystring = require('querystring');
 
 class Session {
-  constructor(accessToken, refreshToken, expiresIn, areaCode, areaBaseUrl) {
-    this.accessToken;
-    this.refreshToken;
-    this.expiresOn;
-    this.areaCode = areaCode;
-    this.areaBaseUrl = areaBaseUrl;
-    this.resetToken(accessToken, refreshToken, expiresIn);
-  }
+	constructor(accessToken, refreshToken, expiresIn, areaCode, areaBaseUrl) {
+		this.accessToken;
+		this.refreshToken;
+		this.expiresOn;
+		this.areaCode = areaCode;
+		this.areaBaseUrl = areaBaseUrl;
+		this.resetToken(accessToken, refreshToken, expiresIn);
+	}
 
-  resetToken(accessToken, refreshToken, expiresIn) {
-    this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
-    this.expiresOn = this._getCurrentEpoch() + expiresIn - 100; // subtract 100 ticks to expire token before it actually does
-  }
+	resetToken(accessToken, refreshToken, expiresIn) {
+		this.accessToken = accessToken;
+		this.refreshToken = refreshToken;
+		this.expiresOn = this._getCurrentEpoch() + expiresIn - 100; // subtract 100 ticks to expire token before it actually does
+	}
 
-  hasToken() {
-    return this.accessToken && true;
-  }
+	hasToken() {
+		return this.accessToken && true;
+	}
 
-  isTokenExpired() {
-    return this.expiresOn < this._getCurrentEpoch();
-  }
+	isTokenExpired() {
+		return this.expiresOn < this._getCurrentEpoch();
+	}
 
-  hasValidToken() {
-    return this.hasToken() && !this.isTokenExpired();
-  }
+	hasValidToken() {
+		return this.hasToken() && !this.isTokenExpired();
+	}
 
-  _getCurrentEpoch() {
-    return Math.round((new Date()).getTime() / 1000);
-  }
+	_getCurrentEpoch() {
+		return Math.round((new Date()).getTime() / 1000);
+	}
 }
 
-class TuyaWebApi {
-  constructor(username, password, countryCode, tuyaPlatform = 'tuya', logger) {
-    this.username = username;
-    this.password = password;
-    this.countryCode = countryCode;
-    this.tuyaPlatform = tuyaPlatform;
+class TuyaWebApi
+{
+	constructor(username, password, countryCode, tuyaPlatform = 'tuya', logger)
+	{
+		this.username = username;
+		this.password = password;
+		this.countryCode = countryCode;
+		this.tuyaPlatform = tuyaPlatform;
 
-    this.session = new Session();
+		this.session = new Session();
 
-    this.authBaseUrl = 'https://px1.tuyaeu.com';
+		this.authBaseUrl = 'https://px1.tuyaeu.com';
 
-    this.logger = logger;
-  }
+		this.logger = logger;
+	}
 
-  discoverDevices() {
-    if (!this.session.hasValidToken()) {
-      throw new Error('No valid token');
-    }
+	discoverDevices()
+	{
+		if(!this.session.hasValidToken())
+		{
+			throw new Error('No valid token');
+		}
 
-    var data = {
-      'header': {
-        'name': 'Discovery',
-        'namespace': 'discovery',
-        'payloadVersion': 1
-      },
-      'payload': {
-        'accessToken': this.session.accessToken
-      }
-    };
+		var data = {
+			'header': {
+				'name': 'Discovery',
+				'namespace': 'discovery',
+				'payloadVersion': 1
+			},
+			'payload': {
+				'accessToken': this.session.accessToken
+			}
+		};
 
-    return new Promise((resolve, reject) => {
-      this.sendRequestJson(
-        this.session.areaBaseUrl + '/homeassistant/skill',
-        JSON.stringify(data),
-        'GET',
-        (response, obj) => {
-          if (obj.header && obj.header.code === 'SUCCESS' && obj.payload && obj.payload.devices) {
-            resolve(obj.payload.devices);
-          }
-          else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
-            reject(new Error('Requesting too quickly!'));
-          } else {
-            reject(new Error('No valid response from API' + JSON.stringify(obj)));
-          }
-        },
-        (error) => {
-          reject(error);
-        }
-      )
-    });
-  }
+		return new Promise((resolve, reject) => {
 
-  getAllDeviceStates() {
-    return this.discoverDevices();
-  }
+			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', JSON.stringify(data), 'GET', (response, obj) => {
 
-  getDeviceState(deviceId) {
-    if (!this.session.hasValidToken()) {
-      throw new Error('No valid token');
-    }
+				if(obj.header && obj.header.code == 'SUCCESS' && obj.payload && obj.payload.devices)
+				{
+					resolve(obj.payload.devices);
+				}
+				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
+				{
+					reject(new Error(deviceId + ': Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
+				}
+				else
+				{
+					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
+				}
+			},
+			(error) => {
 
-    var data = {
-      'header': {
-        'name': 'QueryDevice',
-        'namespace': 'query',
-        'payloadVersion': 1
-      },
-      'payload': {
-        'accessToken': this.session.accessToken,
-        'devId': deviceId,
-        'value': 1
-      }
-    }
+				reject(error);
+			});
+		});
+	}
 
-    return new Promise((resolve, reject) => {
-      this.sendRequestJson(
-        this.session.areaBaseUrl + '/homeassistant/skill',
-        JSON.stringify(data),
-        'GET',
-        (response, obj) => {
-          if (obj.header && obj.header.code === 'SUCCESS' && obj.payload && obj.payload.data) {
-            resolve(obj.payload.data);
-          }
-          else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
-            reject(new Error(deviceId + ': Requesting too quickly!'));
-          } else {
-            reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)));
-          }
-        },
-        (error) => {
-          reject(error);
-        }
-      )
-    });
-  }
+	getAllDeviceStates()
+	{
+		return this.discoverDevices();
+	}
 
-  setDeviceState(deviceId, method, payload = {}) {
-    if (!this.session.hasValidToken()) {
-      throw new Error('No valid token');
-    }
+	getDeviceState(deviceId)
+	{
+		if(!this.session.hasValidToken())
+		{
+			throw new Error('No valid token');
+		}
 
-    /* Methods
-     * turnOnOff -> 0 = off, 1 = on
-     * brightnessSet --> 0..100 
-    */
+		var data = {
+			'header': {
+				'name': 'QueryDevice',
+				'namespace': 'query',
+				'payloadVersion': 1
+			},
+			'payload': {
+				'accessToken': this.session.accessToken,
+				'devId': deviceId,
+				'value': 1
+			}
+		};
 
-    var data = {
-      'header': {
-        'name': method,
-        'namespace': 'control',
-        'payloadVersion': 1
-      },
-      'payload': payload
-    }
+		return new Promise((resolve, reject) => {
 
-    data.payload.accessToken = this.session.accessToken;
-    data.payload.devId = deviceId;
+			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', JSON.stringify(data), 'GET', (response, obj) => {
 
-    return new Promise((resolve, reject) => {
-      this.sendRequestJson(
-        this.session.areaBaseUrl + '/homeassistant/skill',
-        JSON.stringify(data),
-        'POST',
-        (response, obj) => {
-          if (obj.header && obj.header.code === 'SUCCESS') {
-            resolve();
-          }
-          else {
-            reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
-          }
-        },
-        (error) => {
-          reject(error);
-        }
-      )
-    });
-  }
+				if(obj.header && obj.header.code == 'SUCCESS' && obj.payload && obj.payload.data)
+				{
+					resolve(obj.payload.data);
+				}
+				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
+				{
+					reject(new Error(deviceId + ': Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
+				}
+				else
+				{
+					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
+				}
+			},
+			(error) => {
 
-  getOrRefreshToken() {
-    if (!this.session.hasToken()) {
-      // No token, lets get a token from the Tuya Web API
-      if (!this.username) {
-        throw new Error('No username configured');
-      }
-      else {
-        if (!this.password) {
-          throw new Error('No password configured');
-        }
-        else {
-          if (!this.countryCode) {
-            throw new Error('No country code configured');
-          }
-          else {
+				reject(error);
+			});
+		});
+	}
 
-            const form = {
-              userName: this.username,
-              password: this.password,
-              countryCode: this.countryCode,
-              bizType: this.tuyaPlatform,
-              from: 'tuya',
-            };
+	setDeviceState(deviceId, method, payload = {})
+	{
+		if(!this.session.hasValidToken())
+		{
+			throw new Error('No valid token');
+		}
 
-            const formData = querystring.stringify(form);
-            const contentLength = formData.length;
+		/* Methods
+		 * turnOnOff -> 0 = off, 1 = on
+		 * brightnessSet --> 0..100 
+		*/
 
-            return new Promise((resolve, reject) => {
-              request({
-                headers: {
-                  'Content-Length': contentLength,
-                  'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                uri: this.authBaseUrl + '/homeassistant/auth.do',
-                body: formData,
-                method: 'POST'
-              },
-                (err, res, body) => {
-                  if (err) {
-                    reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err)));
-                  }
-                  else {
-                    let obj;
-                    try {
-                      obj = JSON.parse(body);
-                    }
-                    catch (error) {
-                      reject(new Error(`Could not parse json. Body: ${body}`, error));
-                    }
-                    if (obj.responseStatus === 'error') {
-                      reject(new Error('Authentication fault: ' + obj.errorMsg));
-                    }
-                    else {
-                      // Received token
-                      this.session.resetToken(
-                        obj.access_token,
-                        obj.refresh_token,
-                        obj.expires_in
-                      );
-                      // Change url based on areacode in accesstoken first two chars
-                      this.session.areaCode = 'EU';
+		var data = {
+			'header': {
+				'name': method,
+				'namespace': 'control',
+				'payloadVersion': 1
+			},
+			'payload': payload
+		}
 
-                      if(obj.access_token)
-                      {
-                          this.session.areaCode = obj.access_token.substr(0, 2);
-                      }
+		data.payload.accessToken = this.session.accessToken;
+		data.payload.devId = deviceId;
 
-                      switch (this.session.areaCode) {
-                        case 'AY':
-                          this.session.areaBaseUrl = 'https://px1.tuyacn.com';
-                          break;
-                        case 'EU':
-                          this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
-                          break;
-                        case 'US':
-                        default:
-                          this.session.areaBaseUrl = 'https://px1.tuyaus.com';
-                      }
-                      resolve(this.session);
-                    }
-                  }
-                });
-            });
-          }
-        }
-      }
-    }
-    else {
-      if (this.session.hasToken() && this.session.isTokenExpired()) {
-        // Refresh token
-        return new Promise((resolve, reject) => {
-          this.sendRequestJson(
-            this.session.areaBaseUrl + '/homeassistant/access.do?grant_type=refresh_token&refresh_token=' + this.session.refreshToken,
-            '',
-            'GET',
-            (response, obj) => {
-              // Received token
-              this.session.resetToken(
-                obj.access_token,
-                obj.refresh_token,
-                obj.expires_in
-              );
-              resolve(this.session);
-            },
-            (error) => {
-              reject(error);
-            }
-          )
-        });
-      }
-    }
-  }
+		return new Promise((resolve, reject) => {
 
-  /*
-   * --------------------------------------
-   * HTTP methods
-  */
+			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', JSON.stringify(data), 'POST', (response, obj) => {
 
-  sendRequest(url, body, method, callbackSuccess, callbackError) {
-    request({
-      url: url,
-      body: body,
-      method: method,
-      rejectUnauthorized: false,
-    },
-      (error, response, body) => {
-        if (error) {
-          callbackError(error);
-        }
-        else {
-          callbackSuccess(response, body)
-        }
-      });
-  }
+				if(obj.header && obj.header.code == 'SUCCESS')
+				{
+					resolve();
+				}
+				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
+				{
+					reject(new Error(deviceId + ': Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
+				}
+				else
+				{
+					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
+				}
+			},
+			(error) => {
 
-  sendRequestJson(url, body, method, callbackSuccess, callbackError) {
-    // this.log.debug(JSON.stringify(body));
-    
-    this.sendRequest(url, body, method,
-      (response, body) => {
-        // this.log.debug(JSON.stringify(body));
+				reject(error);
+			});
+		});
+	}
 
-        try {
-          const obj = JSON.parse(body);
-          callbackSuccess(response, obj);
-        }
-        catch (error) {
-          callbackError(new Error(`Could not parse json. Body: ${body}`, error));
-        }
-      },
-      (error) => {
-        callbackError(error);
-      }
-    );
-  }
+	getOrRefreshToken() {
+		if (!this.session.hasToken()) {
+			// No token, lets get a token from the Tuya Web API
+			if (!this.username) {
+				throw new Error('No username configured');
+			}
+			else {
+				if (!this.password) {
+					throw new Error('No password configured');
+				}
+				else {
+					if (!this.countryCode) {
+						throw new Error('No country code configured');
+					}
+					else {
+
+						const form = {
+							userName: this.username,
+							password: this.password,
+							countryCode: this.countryCode,
+							bizType: this.tuyaPlatform,
+							from: 'tuya',
+						};
+
+						const formData = querystring.stringify(form);
+						const contentLength = formData.length;
+
+						return new Promise((resolve, reject) => {
+							request({
+								headers: {
+									'Content-Length': contentLength,
+									'Content-Type': 'application/x-www-form-urlencoded'
+								},
+								uri: this.authBaseUrl + '/homeassistant/auth.do',
+								body: formData,
+								method: 'POST'
+							},
+								(err, res, body) => {
+									if (err) {
+										reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err)));
+									}
+									else {
+										let obj;
+										try {
+											obj = JSON.parse(body);
+										}
+										catch (error) {
+											reject(new Error(`Could not parse json. Body: ${body}`, error));
+										}
+										if (obj.responseStatus === 'error') {
+											reject(new Error('Authentication fault: ' + obj.errorMsg));
+										}
+										else {
+											// Received token
+											this.session.resetToken(
+												obj.access_token,
+												obj.refresh_token,
+												obj.expires_in
+											);
+											// Change url based on areacode in accesstoken first two chars
+											this.session.areaCode = 'EU';
+
+											if(obj.access_token)
+											{
+													this.session.areaCode = obj.access_token.substr(0, 2);
+											}
+
+											switch (this.session.areaCode) {
+												case 'AY':
+													this.session.areaBaseUrl = 'https://px1.tuyacn.com';
+													break;
+												case 'EU':
+													this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
+													break;
+												case 'US':
+												default:
+													this.session.areaBaseUrl = 'https://px1.tuyaus.com';
+											}
+											resolve(this.session);
+										}
+									}
+								});
+						});
+					}
+				}
+			}
+		}
+		else {
+			if (this.session.hasToken() && this.session.isTokenExpired()) {
+				// Refresh token
+				return new Promise((resolve, reject) => {
+					this.sendRequestJson(
+						this.session.areaBaseUrl + '/homeassistant/access.do?grant_type=refresh_token&refresh_token=' + this.session.refreshToken,
+						'',
+						'GET',
+						(response, obj) => {
+							// Received token
+							this.session.resetToken(
+								obj.access_token,
+								obj.refresh_token,
+								obj.expires_in
+							);
+							resolve(this.session);
+						},
+						(error) => {
+							reject(error);
+						}
+					)
+				});
+			}
+		}
+	}
+
+	/*
+	 * --------------------------------------
+	 * HTTP methods
+	*/
+
+	sendRequest(url, body, method, callbackSuccess, callbackError) {
+		request({
+			url: url,
+			body: body,
+			method: method,
+			rejectUnauthorized: false,
+		},
+			(error, response, body) => {
+				if (error) {
+					callbackError(error);
+				}
+				else {
+					callbackSuccess(response, body)
+				}
+			});
+	}
+
+	sendRequestJson(url, body, method, callbackSuccess, callbackError) {
+		// this.log.debug(JSON.stringify(body));
+		
+		this.sendRequest(url, body, method,
+			(response, body) => {
+				// this.log.debug(JSON.stringify(body));
+
+				try {
+					const obj = JSON.parse(body);
+					callbackSuccess(response, obj);
+				}
+				catch (error) {
+					callbackError(new Error(`Could not parse json. Body: ${body}`, error));
+				}
+			},
+			(error) => {
+				callbackError(error);
+			}
+		);
+	}
 }
 
 module.exports = TuyaWebApi;
