@@ -22,11 +22,11 @@ class Session {
   }
 
   isTokenExpired() {
-    return this.token.expiresOn > this._getCurrentEpoch();
+    return this.expiresOn < this._getCurrentEpoch();
   }
 
   hasValidToken() {
-    return this.accessToken && this.expiresOn > this._getCurrentEpoch();
+    return this.hasToken() && !this.isTokenExpired();
   }
 
   _getCurrentEpoch() {
@@ -62,7 +62,7 @@ class TuyaWebApi {
       'payload': {
         'accessToken': this.session.accessToken
       }
-    }
+    };
 
     return new Promise((resolve, reject) => {
       this.sendRequestJson(
@@ -70,10 +70,8 @@ class TuyaWebApi {
         JSON.stringify(data),
         'GET',
         (response, obj) => {
-          if (obj.header && obj.header.code === 'SUCCESS') {
-            if (obj.payload && obj.payload.devices) {
-              resolve(obj.payload.devices);
-            }
+          if (obj.header && obj.header.code === 'SUCCESS' && obj.payload && obj.payload.devices) {
+            resolve(obj.payload.devices);
           }
           else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
             reject(new Error('Requesting too quickly!'));
@@ -116,7 +114,7 @@ class TuyaWebApi {
         JSON.stringify(data),
         'GET',
         (response, obj) => {
-          if (obj.payload && obj.header && obj.header.code === 'SUCCESS') {
+          if (obj.header && obj.header.code === 'SUCCESS' && obj.payload && obj.payload.data) {
             resolve(obj.payload.data);
           }
           else if (obj.header && obj.header.code === 'FrequentlyInvoke') {
@@ -190,16 +188,16 @@ class TuyaWebApi {
           }
           else {
 
-            var form = {
+            const form = {
               userName: this.username,
               password: this.password,
               countryCode: this.countryCode,
               bizType: this.tuyaPlatform,
-              from: "tuya"
-            }
+              from: 'tuya',
+            };
 
-            var formData = querystring.stringify(form);
-            var contentLength = formData.length;
+            const formData = querystring.stringify(form);
+            const contentLength = formData.length;
 
             return new Promise((resolve, reject) => {
               request({
