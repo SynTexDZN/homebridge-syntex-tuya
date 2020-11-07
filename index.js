@@ -17,7 +17,7 @@ function SynTexTuyaPlatform(log, sconfig, api)
     this.password = sconfig['password'];
     this.countryCode = sconfig['countryCode'] || '49';
     this.platform = sconfig['plat'] || 'smart_life';
-    this.pollingInterval = sconfig['pollingInterval'] || 10;
+    this.pollingInterval = Math.max((sconfig['pollingInterval'] || 605), 605);
     this.defaults = sconfig['defaults'] || [];
     
     this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
