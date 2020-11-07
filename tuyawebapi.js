@@ -200,131 +200,127 @@ class TuyaWebApi
 	{
 		if(!this.session.hasToken())
 		{
-			// No token, lets get a token from the Tuya Web API
-			if (!this.username) {
+			if(!this.username)
+			{
 				throw new Error('No username configured');
 			}
-			else {
-				if (!this.password) {
-					throw new Error('No password configured');
-				}
-				else {
-					if (!this.countryCode) {
-						throw new Error('No country code configured');
-					}
-					else {
-
-						const form = {
-							userName: this.username,
-							password: this.password,
-							countryCode: this.countryCode,
-							bizType: this.tuyaPlatform,
-							from: 'tuya',
-						};
-
-						const formData = querystring.stringify(form);
-						const contentLength = formData.length;
-
-						return new Promise((resolve, reject) => {
-							request({
-								headers: {
-									'Content-Length': contentLength,
-									'Content-Type': 'application/x-www-form-urlencoded'
-								},
-								uri: this.authBaseUrl + '/homeassistant/auth.do',
-								body: formData,
-								method: 'POST'
-							},
-								(err, res, body) => {
-									if (err) {
-										reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err)));
-									}
-									else {
-										let obj;
-										try {
-											obj = JSON.parse(body);
-										}
-										catch (error) {
-											reject(new Error(`Could not parse json. Body: ${body}`, error));
-										}
-										if (obj.responseStatus === 'error') {
-											reject(new Error('Authentication fault: ' + obj.errorMsg));
-										}
-										else {
-											// Received token
-											this.session.resetToken(
-												obj.access_token,
-												obj.refresh_token,
-												obj.expires_in
-											);
-											// Change url based on areacode in accesstoken first two chars
-											this.session.areaCode = 'EU';
-
-											if(obj.access_token)
-											{
-													this.session.areaCode = obj.access_token.substr(0, 2);
-											}
-
-											switch (this.session.areaCode) {
-												case 'AY':
-													this.session.areaBaseUrl = 'https://px1.tuyacn.com';
-													break;
-												case 'EU':
-													this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
-													break;
-												case 'US':
-												default:
-													this.session.areaBaseUrl = 'https://px1.tuyaus.com';
-											}
-											resolve(this.session);
-										}
-									}
-								});
-						});
-					}
-				}
+			else if(!this.password)
+			{
+				throw new Error('No password configured');
 			}
-		}
-		else {
-			if (this.session.hasToken() && this.session.isTokenExpired()) {
-				// Refresh token
+			else if(!this.countryCode)
+			{
+				throw new Error('No country code configured');
+			}
+			else
+			{
+				const form = {
+					userName: this.username,
+					password: this.password,
+					countryCode: this.countryCode,
+					bizType: this.tuyaPlatform,
+					from: 'tuya',
+				};
+
+				const formData = querystring.stringify(form);
+				const contentLength = formData.length;
+
 				return new Promise((resolve, reject) => {
-					this.sendRequestJson(
-						this.session.areaBaseUrl + '/homeassistant/access.do?grant_type=refresh_token&refresh_token=' + this.session.refreshToken,
-						'',
-						'GET',
-						(response, obj) => {
-							// Received token
-							this.session.resetToken(
-								obj.access_token,
-								obj.refresh_token,
-								obj.expires_in
-							);
-							resolve(this.session);
+
+					var theRequest = {
+						headers: {
+							'Content-Length': contentLength,
+							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						(error) => {
-							reject(error);
+						uri: this.authBaseUrl + '/homeassistant/auth.do',
+						body: formData,
+						method: 'POST'
+					}
+
+					request(theRequest, (err, res, body) => {
+
+						if(err)
+						{
+							reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err)));
 						}
-					)
+						else
+						{
+							let obj;
+
+							try
+							{
+								obj = JSON.parse(body);
+							}
+							catch(error)
+							{
+								reject(new Error(`Could not parse json. Body: ${body}`, error));
+							}
+
+							if(obj.responseStatus === 'error')
+							{
+								reject(new Error('Authentication fault: ' + obj.errorMsg));
+							}
+							else
+							{
+								// Received token
+								this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
+								
+								// Change url based on areacode in accesstoken first two chars
+								this.session.areaCode = 'EU';
+
+								if(obj.access_token)
+								{
+									this.session.areaCode = obj.access_token.substr(0, 2);
+								}
+
+								switch(this.session.areaCode)
+								{
+									case 'AY':
+										this.session.areaBaseUrl = 'https://px1.tuyacn.com';
+										break;
+									case 'EU':
+										this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
+										break;
+									case 'US':
+									default:
+										this.session.areaBaseUrl = 'https://px1.tuyaus.com';
+								}
+
+								resolve(this.session);
+							}
+						}
+					});
 				});
 			}
 		}
-	}
+		else if(this.session.isTokenExpired())
+		{
+			return new Promise((resolve, reject) => {
 
-	/*
-	 * --------------------------------------
-	 * HTTP methods
-	*/
+				this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/access.do?grant_type=refresh_token&refresh_token=' + this.session.refreshToken, '', 'GET', (response, obj) => {
+						
+					this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
+
+					resolve(this.session);
+				},
+				(error) => {
+
+					reject(error);
+				});
+			});
+		}
+	}
 
 	sendRequest(url, body, method, callbackSuccess, callbackError)
 	{
-		request({
+		var theRequest = {
 			url: url,
 			body: body,
 			method: method,
-			rejectUnauthorized: false,
-		},
-		(error, response, body) => {
+			rejectUnauthorized: false
+		};
+
+		request(theRequest, (error, response, body) => {
 
 			if(error)
 			{
@@ -339,16 +335,12 @@ class TuyaWebApi
 
 	sendRequestJson(url, body, method, callbackSuccess, callbackError)
 	{
-		// this.log.debug(JSON.stringify(body));
-		
 		this.sendRequest(url, body, method, (response, body) => {
-
-			// this.log.debug(JSON.stringify(body));
 
 			try
 			{
 				const obj = JSON.parse(body);
-				
+
 				callbackSuccess(response, obj);
 			}
 			catch(error)
