@@ -78,7 +78,7 @@ class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error(deviceId + ': Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
+					reject(new Error('Requesting too quickly! ' + JSON.stringify(obj.header.msg)));
 				}
 				else
 				{
@@ -331,16 +331,13 @@ class TuyaWebApi
 			(response, body) => {
 				// this.log.debug(JSON.stringify(body));
 
-				console.log(typeof body);
-				const obj = JSON.parse(body);
-					callbackSuccess(response, obj);
-/*
 				try {
-					
+					const obj = JSON.parse(body);
+					callbackSuccess(response, obj);
 				}
 				catch (error) {
 					callbackError(new Error(`Could not parse json. Body: ${body}`, error));
-				}*/
+				}
 			},
 			(error) => {
 				callbackError(error);
