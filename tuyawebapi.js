@@ -331,6 +331,8 @@ class TuyaWebApi
 			(response, body) => {
 				// this.log.debug(JSON.stringify(body));
 
+				console.log(typeof body);
+
 				try {
 					const obj = JSON.parse(body);
 					callbackSuccess(response, obj);
