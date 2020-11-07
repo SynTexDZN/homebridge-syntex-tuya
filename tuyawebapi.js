@@ -332,14 +332,15 @@ class TuyaWebApi
 				// this.log.debug(JSON.stringify(body));
 
 				console.log(typeof body);
-
-				try {
-					const obj = JSON.parse(body);
+				const obj = JSON.parse(body);
 					callbackSuccess(response, obj);
+/*
+				try {
+					
 				}
 				catch (error) {
 					callbackError(new Error(`Could not parse json. Body: ${body}`, error));
-				}
+				}*/
 			},
 			(error) => {
 				callbackError(error);
