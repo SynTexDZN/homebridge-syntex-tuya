@@ -49,6 +49,6 @@ module.exports = class SynTexBaseAccessory
     
     getServices()
     {
-        return [this.service];
+        return this.service;
     }
 }
