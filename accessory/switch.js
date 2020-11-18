@@ -16,13 +16,7 @@ module.exports = class SynTexSwitchAccessory extends Base
         this.letters = '40';
 
         this.service.push(new Service.Outlet(this.name));
-        /*
-        DeviceManager.getDevice(this).then(function(state) {
-
-            this.value = validateUpdate(this.mac, this.type, state);
-
-        }.bind(this));
-        */
+        
         this.changeHandler = (function(state)
         {
             logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');

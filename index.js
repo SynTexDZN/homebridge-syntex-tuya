@@ -2,7 +2,7 @@ let DeviceManager = require('./device-manager'), WebServer = require('./webserve
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
-const SynTexSwitchAccessory = require('./accessory/switch');
+const SynTexSwitchAccessory = require('./accessory/switch'), SynTexBulbAccessory = require('./accessory/bulb');
 
 module.exports = function(homebridge)
 {
@@ -85,7 +85,7 @@ SynTexTuyaPlatform.prototype = {
                     }
                     else if(device.dev_type == 'light')
                     {
-                        var accessory = new SynTexLightAccessory(device.id, device.name);
+                        var accessory = new SynTexBulbAccessory(device.id, device.name);
 
                         accessories.push(accessory);
                     }
@@ -230,37 +230,6 @@ SynTexTuyaPlatform.prototype = {
         });
     }
 }
-
-function SynTexLightAccessory(id, name)
-{
-    this.id = id;
-    this.name = name;
-    this.services = 'led';
-    this.letters = '40';
-
-    this.service = new Service.Lightbulb(this.name);
-    /*
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.value = validateUpdate(this.mac, this.type, state);
-
-    }.bind(this));
-    */
-    this.changeHandler = (function(state)
-    {
-        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-
-        this.service.getCharacteristic(Characteristic.On).updateValue(state);
-
-    }).bind(this);
-    
-    //this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-}
-
-SynTexLightAccessory.prototype.getServices = function()
-{
-    return [this.service];
-};
 
 function SynTexTVAccessory(id, name)
 {
