@@ -85,7 +85,7 @@ SynTexTuyaPlatform.prototype = {
                     }
                     else if(device.dev_type == 'light')
                     {
-                        var accessory = new SynTexBulbAccessory(device.id, device.name);
+                        var accessory = new SynTexBulbAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
 
                         accessories.push(accessory);
                     }
