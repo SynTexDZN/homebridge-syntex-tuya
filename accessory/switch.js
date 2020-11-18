@@ -27,11 +27,11 @@ module.exports = class SynTexSwitchAccessory extends Base
         {
             logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
 
-            this.service.getCharacteristic(Characteristic.On).updateValue(state);
+            this.service[1].getCharacteristic(Characteristic.On).updateValue(state);
 
         }).bind(this);
         
-        this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
+        this.service[1].getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
     }
 
     getState(callback)
