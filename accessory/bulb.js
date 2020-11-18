@@ -15,7 +15,7 @@ module.exports = class SynTexSwitchAccessory extends Switch
         this.services = 'led';
         this.letters = '40';
 
-        this.service.push(new Service.Lightbulb(this.name));
+        this.service[1] = new Service.Lightbulb(this.name);
         
         this.changeHandler = (function(state)
         {
