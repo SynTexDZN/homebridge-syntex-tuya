@@ -2,6 +2,7 @@ let DeviceManager = require('./device-manager'), WebServer = require('./webserve
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
+const SynTexSwitchAccessory = require('./accessory/switch');
 
 module.exports = function(homebridge)
 {
@@ -77,7 +78,7 @@ SynTexTuyaPlatform.prototype = {
 
                         if(accessory == null)
                         {
-                            accessory = new SynTexSwitchAccessory(device.id, device.name);
+                            accessory = new SynTexSwitchAccessory(device.id, device.name, { Service, Characteristic });
                         }
 
                         accessories.push(accessory);
