@@ -4,8 +4,6 @@ module.exports = class SynTexBaseAccessory
 {
     constructor(accessoryConfig, Manager)
     {
-        console.log(accessoryConfig);
-
         this.service = [];
         this.id = accessoryConfig['id'];
         this.name = accessoryConfig['name'];
