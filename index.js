@@ -2,7 +2,7 @@ let DeviceManager = require('./device-manager'), WebServer = require('./webserve
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
-const SynTexSwitchAccessory = require('./accessory/switch'), SynTexBulbAccessory = require('./accessory/bulb');
+const SynTexSwitchAccessory = require('./accessory/switch'), SynTexBulbAccessory = require('./accessory/bulb'), SynTexDimmerAccessory = require('./accessory/dimmer');
 
 module.exports = function(homebridge)
 {
@@ -57,29 +57,15 @@ SynTexTuyaPlatform.prototype = {
 
                 for(const device of devices)
                 {
-                    if(device.dev_type == 'switch')
+                    if(device.dev_type == 'switch' || device.dev_type == 'outlet')
                     {
-                        var accessory = null;
+                        var accessory = new SynTexSwitchAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
 
-                        for(var i = 0; i < this.defaults.length; i++)
-                        {
-                            if(this.defaults[i].id == device.id)
-                            {
-                                if(this.defaults[i].type == 'TV')
-                                {
-                                    accessory = new SynTexTVAccessory(device.id, device.name);
-                                }
-                                else if(this.defaults[i].type == 'Speaker')
-                                {
-                                    accessory = new SynTexSpeakerAccessory(device.id, device.name);
-                                }
-                            }
-                        }
-
-                        if(accessory == null)
-                        {
-                            accessory = new SynTexSwitchAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
-                        }
+                        accessories.push(accessory);
+                    }
+                    else if(device.dev_type == 'dimmer')
+                    {
+                        var accessory = new SynTexDimmerAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
 
                         accessories.push(accessory);
                     }
@@ -230,153 +216,6 @@ SynTexTuyaPlatform.prototype = {
         });
     }
 }
-
-function SynTexTVAccessory(id, name)
-{
-    this.id = id;
-    this.name = name;
-    this.services = 'television';
-    this.letters = '40';
-
-    this.service = new Service.Television(this.name, 'tvService');
-    /*
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.value = validateUpdate(this.mac, this.type, state);
-
-    }.bind(this));
-    */
-    this.changeHandler = (function(state)
-    {
-        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-
-        this.service.getCharacteristic(Characteristic.On).updateValue(state);
-
-    }).bind(this);
-
-    this.service.getCharacteristic(Characteristic.Active).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-
-    this.service.setCharacteristic(Characteristic.ConfiguredName, this.name);
-}
-
-SynTexTVAccessory.prototype.getState = function(callback)
-{
-    DeviceManager.getDevice(this.id).then(function(state) {
-
-        if(state != null)
-        {
-            logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
-        }
-        /*
-        if(!data.online)
-        {
-            callback(new Error('Offline'));
-        }
-        */
-        callback(null, state);
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-
-        callback(e);
-    });
-};
-
-SynTexTVAccessory.prototype.setState = function(state, callback)
-{
-    DeviceManager.setDevice(this.id, state).then(function() {
-
-        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-        
-        callback();
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-
-        callback(e);
-    });
-}
-
-SynTexTVAccessory.prototype.getServices = function()
-{
-    return [this.service];
-};
-
-function SynTexSpeakerAccessory(id, name)
-{
-    this.id = id;
-    this.name = name;
-    this.services = 'speaker';
-    this.letters = '40';
-
-    this.service = new Service.Speaker(this.name, 'tvSpeakerService');
-    /*
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.value = validateUpdate(this.mac, this.type, state);
-
-    }.bind(this));
-    */
-    this.changeHandler = (function(state)
-    {
-        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-
-        this.service.getCharacteristic(Characteristic.On).updateValue(state);
-
-    }).bind(this);
-
-    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-    this.service.setCharacteristic(Characteristic.ConfiguredName, this.name);
-    this.service.setCharacteristic(Characteristic.Mute, false);
-    this.service.setCharacteristic(Characteristic.Volume, 100);
-}
-
-SynTexSpeakerAccessory.prototype.getState = function(callback)
-{
-    DeviceManager.getDevice(this.id).then(function(state) {
-
-        if(state != null)
-        {
-            logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
-        }
-        /*
-        if(!data.online)
-        {
-            callback(new Error('Offline'));
-        }
-        */
-        callback(null, state);
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-
-        callback(e);
-    });
-};
-
-SynTexSpeakerAccessory.prototype.setState = function(state, callback)
-{
-    DeviceManager.setDevice(this.id, state).then(function() {
-
-        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-        
-        callback();
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-
-        callback(e);
-    });
-}
-
-SynTexSpeakerAccessory.prototype.getServices = function()
-{
-    return [this.service];
-};
 
 function validateUpdate(mac, letters, state)
 {
