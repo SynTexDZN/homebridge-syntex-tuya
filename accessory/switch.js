@@ -3,9 +3,9 @@ var Service, Characteristic, DeviceManager, logger;
 
 module.exports = class SynTexSwitchAccessory extends Base
 {
-    constructor(id, name, Manager)
+    constructor(accessoryConfig, Manager)
     {
-        super(id, name, Manager);
+        super(accessoryConfig, Manager);
 
         Service = Manager.Service;
         Characteristic = Manager.Characteristic;
