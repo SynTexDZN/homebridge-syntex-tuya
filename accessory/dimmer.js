@@ -71,4 +71,14 @@ module.exports = class SynTexSwitchAccessory extends Switch
         */
        callback();
     }
+
+    getModel()
+    {
+        return 'Tuya Dimmer Bulb'
+    }
+
+    getVersion()
+    {
+        return '1.0.0';
+    }
 }

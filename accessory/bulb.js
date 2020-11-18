@@ -27,4 +27,14 @@ module.exports = class SynTexSwitchAccessory extends Switch
         
         this.service[1].getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
     }
+
+    getModel()
+    {
+        return 'Tuya Light Bulb'
+    }
+
+    getVersion()
+    {
+        return '1.0.0';
+    }
 }

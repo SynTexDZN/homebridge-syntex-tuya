@@ -59,19 +59,19 @@ SynTexTuyaPlatform.prototype = {
                 {
                     if(device.dev_type == 'switch' || device.dev_type == 'outlet')
                     {
-                        var accessory = new SynTexSwitchAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
+                        var accessory = new SynTexSwitchAccessory(device, { Service, Characteristic, DeviceManager, logger });
 
                         accessories.push(accessory);
                     }
                     else if(device.dev_type == 'dimmer')
                     {
-                        var accessory = new SynTexDimmerAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
+                        var accessory = new SynTexDimmerAccessory(device, { Service, Characteristic, DeviceManager, logger });
 
                         accessories.push(accessory);
                     }
                     else if(device.dev_type == 'light')
                     {
-                        var accessory = new SynTexBulbAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
+                        var accessory = new SynTexBulbAccessory(device, { Service, Characteristic, DeviceManager, logger });
 
                         accessories.push(accessory);
                     }
