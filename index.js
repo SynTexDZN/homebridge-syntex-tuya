@@ -78,7 +78,7 @@ SynTexTuyaPlatform.prototype = {
 
                         if(accessory == null)
                         {
-                            accessory = new SynTexSwitchAccessory(device.id, device.name, { Service, Characteristic });
+                            accessory = new SynTexSwitchAccessory(device.id, device.name, { Service, Characteristic, DeviceManager, logger });
                         }
 
                         accessories.push(accessory);
@@ -230,77 +230,6 @@ SynTexTuyaPlatform.prototype = {
         });
     }
 }
-
-function SynTexSwitchAccessory(id, name)
-{
-    this.id = id;
-    this.name = name;
-    this.services = 'switch';
-    this.letters = '40';
-
-    this.service = new Service.Outlet(this.name);
-    /*
-    DeviceManager.getDevice(this).then(function(state) {
-
-        this.value = validateUpdate(this.mac, this.type, state);
-
-    }.bind(this));
-    */
-    this.changeHandler = (function(state)
-    {
-        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-
-        this.service.getCharacteristic(Characteristic.On).updateValue(state);
-
-    }).bind(this);
-    
-    this.service.getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-}
-
-SynTexSwitchAccessory.prototype.getState = function(callback)
-{
-    DeviceManager.getDevice(this.id).then(function(state) {
-
-        if(state != null)
-        {
-            logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
-        }
-        /*
-        if(!data.online)
-        {
-            callback(new Error('Offline'));
-        }
-        */
-        callback(null, state);
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-
-        callback(e);
-    });
-};
-
-SynTexSwitchAccessory.prototype.setState = function(state, callback)
-{
-    DeviceManager.setDevice(this.id, state).then(function() {
-
-        logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-        
-        callback();
-
-    }.bind(this)).catch(function(e) {
-
-        logger.err(e);
-
-        callback(e);
-    });
-}
-
-SynTexSwitchAccessory.prototype.getServices = function()
-{
-    return [this.service];
-};
 
 function SynTexLightAccessory(id, name)
 {

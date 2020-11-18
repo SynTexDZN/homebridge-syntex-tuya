@@ -1,7 +1,5 @@
-const TuyaWebApi = require('../tuyawebapi');
-let DeviceManager = require('../device-manager'), logger = require('../logger');
 const Base = require('./base');
-var Service, Characteristic;
+var Service, Characteristic, DeviceManager, logger;
 
 module.exports = class SynTexSwitchAccessory extends Base
 {
@@ -11,6 +9,8 @@ module.exports = class SynTexSwitchAccessory extends Base
 
         Service = Manager.Service;
         Characteristic = Manager.Characteristic;
+        DeviceManager = Manager.DeviceManager;
+        logger = Manager.logger;
 
         this.services = 'switch';
         this.letters = '40';
@@ -49,11 +49,11 @@ module.exports = class SynTexSwitchAccessory extends Base
             }
             */
             callback(null, state);
-
+    
         }.bind(this)).catch(function(e) {
-
+    
             logger.err(e);
-
+    
             callback(e);
         });
     }
@@ -65,11 +65,11 @@ module.exports = class SynTexSwitchAccessory extends Base
             logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
             
             callback();
-
+    
         }.bind(this)).catch(function(e) {
-
+    
             logger.err(e);
-
+    
             callback(e);
         });
     }
