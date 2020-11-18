@@ -1,4 +1,3 @@
-const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 
 module.exports = class SynTexBaseAccessory
