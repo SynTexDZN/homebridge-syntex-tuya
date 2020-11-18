@@ -4,12 +4,15 @@ var Service, Characteristic;
 var tuyaWebAPI, restart = true;
 const SynTexSwitchAccessory = require('./accessory/switch'), SynTexBulbAccessory = require('./accessory/bulb'), SynTexDimmerAccessory = require('./accessory/dimmer');
 
+const pluginID = 'homebridge-syntex-tuya';
+const pluginName = 'SynTexTuya';
+
 module.exports = function(homebridge)
 {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
     
-    homebridge.registerPlatform('homebridge-syntex-tuya', 'SynTexTuya', SynTexTuyaPlatform);
+    homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform);
 };
 
 function SynTexTuyaPlatform(log, sconfig, api)
@@ -25,8 +28,8 @@ function SynTexTuyaPlatform(log, sconfig, api)
     this.logDirectory = sconfig['log_directory'] || './SynTex/log';
     this.port = sconfig['port'] || 1713;
     
-    logger = new logger('SynTexTuya', this.logDirectory, api.user.storagePath());
-    WebServer = new WebServer('SynTexTuya', logger, this.port, false);
+    logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
+    WebServer = new WebServer(pluginName, logger, this.port, false);
 
     this.api = api;
 
@@ -150,7 +153,7 @@ SynTexTuyaPlatform.prototype = {
                             name: accessories[i].name,
                             services: accessories[i].services,
                             version: '99.99.99',
-                            plugin: 'SynTexTuya'
+                            plugin: pluginName
                         };
                     }
 
@@ -176,17 +179,17 @@ SynTexTuyaPlatform.prototype = {
         
                     const { exec } = require('child_process');
                     
-                    exec('sudo npm install homebridge-syntex-tuya@' + version + ' -g', (error, stdout, stderr) => {
+                    exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
         
                         try
                         {
                             if(error || stderr.includes('ERR!'))
                             {
-                                logger.log('warn', 'bridge', 'Bridge', 'Das Plugin SynTexTuya konnte nicht aktualisiert werden! ' + (error || stderr));
+                                logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
                             }
                             else
                             {
-                                logger.log('success', 'bridge', 'Bridge', 'Das Plugin SynTexTuya wurde auf die Version [' + version + '] aktualisiert!');
+                                logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
         
                                 restart = true;
         
