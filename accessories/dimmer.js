@@ -46,7 +46,7 @@ module.exports = class SynTexSwitchAccessory extends Switch
             */
             console.log(typeof state.power);
 
-            callback(null, state != null ? state.power : false);
+            callback(null, state != null ? state.power == 'true' : false);
     
         }.bind(this)).catch(function(e) {
     
