@@ -46,7 +46,7 @@ module.exports = class SynTexSwitchAccessory extends Switch
                 callback(new Error('Offline'));
             }
             */
-            console.log(2, typeof state.power);
+            console.log(2, typeof state.power, state != null ? (state.power == 'true') : false);
 
             callback(null, state != null ? (state.power == 'true') : false);
     
