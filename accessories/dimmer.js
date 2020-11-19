@@ -112,20 +112,14 @@ module.exports = class SynTexSwitchAccessory extends Switch
             DeviceManager.setDevice(this.id, { power : this.power, brightness : this.brightness }).then(function() {
 
                 logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-                
-                callback(null);
         
             }.bind(this)).catch(function(e) {
         
                 logger.err(e);
-        
-                callback(e);
             });
         }
-        else
-        {
-            callback(null);
-        }
+
+        callback(null);
     }
 
     getModel()
