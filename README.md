@@ -32,3 +32,4 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - Switch
 - Outlet
 - LED Lights
+- Dimmable LED Lights

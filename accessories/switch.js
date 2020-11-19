@@ -58,7 +58,7 @@ module.exports = class SynTexSwitchAccessory extends Base
 
             logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
             
-            callback();
+            callback(null);
     
         }.bind(this)).catch(function(e) {
     

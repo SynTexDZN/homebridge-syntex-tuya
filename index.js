@@ -2,7 +2,7 @@ let DeviceManager = require('./device-manager'), WebServer = require('./webserve
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
-const SynTexSwitchAccessory = require('./accessory/switch'), SynTexBulbAccessory = require('./accessory/bulb'), SynTexDimmerAccessory = require('./accessory/dimmer');
+const SynTexSwitchAccessory = require('./accessories/switch'), SynTexBulbAccessory = require('./accessories/bulb'), SynTexDimmerAccessory = require('./accessories/dimmer');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
@@ -74,7 +74,7 @@ SynTexTuyaPlatform.prototype = {
                     }
                     else if(device.dev_type == 'light')
                     {
-                        var accessory = new SynTexBulbAccessory(device, { Service, Characteristic, DeviceManager, logger });
+                        var accessory = new SynTexDimmerAccessory(device, { Service, Characteristic, DeviceManager, logger });
 
                         accessories.push(accessory);
                     }
