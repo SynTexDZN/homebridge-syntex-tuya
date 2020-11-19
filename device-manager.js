@@ -26,7 +26,7 @@ function getDevice(id)
                 {
                     if(data.brightness != null)
                     {
-                        state = { power : data.state, brightness : data.brightness };
+                        state = { power : data.state, brightness : data.brightness / 2.55 };
                     }
                     
                     accessories.push({ id : id, value : state });
@@ -77,7 +77,7 @@ function refreshAccessories(a)
 
                 if(device.data.brightness != null)
                 {
-                    state = { power : device.data.state, brightness : device.data.brightness };
+                    state = { power : device.data.state, brightness : device.data.brightness / 2.55 };
                 }
 
                 console.log(device.data);
@@ -141,7 +141,7 @@ function writeTuyaAPI(id, value)
 
             if(value.brightness != null && value.power == true)
             {
-                tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value.brightness }).then(function() {
+                tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value.brightness * 2.55 }).then(function() {
 
                     resolve(true);
             
