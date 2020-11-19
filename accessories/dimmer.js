@@ -44,7 +44,9 @@ module.exports = class SynTexSwitchAccessory extends Switch
                 callback(new Error('Offline'));
             }
             */
-            callback(null, state == null ? false : (state.power || false));
+            console.log(typeof state.power);
+
+            callback(null, state != null ? state.power : false);
     
         }.bind(this)).catch(function(e) {
     
@@ -93,7 +95,7 @@ module.exports = class SynTexSwitchAccessory extends Switch
                 callback(new Error('Offline'));
             }
             */
-            callback(null, state == null ? 50 : (state.brightness || 50));
+            callback(null, state != null ? state.brightness : 50);
 
         }.bind(this)).catch(function(e) {
 
