@@ -30,6 +30,55 @@ module.exports = class SynTexSwitchAccessory extends Switch
         this.service[1].getCharacteristic(Characteristic.Brightness).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
     }
 
+    getState(callback)
+    {
+        DeviceManager.getDevice(this.id).then(function(state) {
+
+            if(state != null)
+            {
+                logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + state.power + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
+            }
+            /*
+            if(!data.online)
+            {
+                callback(new Error('Offline'));
+            }
+            */
+            callback(null, state == null ? false : (state.power || false));
+    
+        }.bind(this)).catch(function(e) {
+    
+            logger.err(e);
+    
+            callback(e);
+        });
+    }
+
+    setState(state, callback)
+    {
+        if(this.power != state)
+        {
+            this.power = state;
+
+            DeviceManager.setDevice(this.id, { power : this.power, brightness : this.brightness }).then(function() {
+
+                logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                
+                callback(null);
+        
+            }.bind(this)).catch(function(e) {
+        
+                logger.err(e);
+        
+                callback(e);
+            });
+        }
+        else
+        {
+            callback(null);
+        }
+    }
+
     getBrightness(callback)
     {
         DeviceManager.getDevice(this.id).then(function(state) {
