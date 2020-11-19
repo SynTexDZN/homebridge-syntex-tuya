@@ -54,18 +54,27 @@ module.exports = class SynTexSwitchAccessory extends Base
 
     setState(state, callback)
     {
-        DeviceManager.setDevice(this.id, state).then(function() {
+        if(this.power != powerOn)
+        {
+            this.power = powerOn;
 
-            logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
-            
+            DeviceManager.setDevice(this.id, state).then(function() {
+
+                logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
+                
+                callback(null);
+        
+            }.bind(this)).catch(function(e) {
+        
+                logger.err(e);
+        
+                callback(e);
+            });
+        }
+        else
+        {
             callback(null);
-    
-        }.bind(this)).catch(function(e) {
-    
-            logger.err(e);
-    
-            callback(e);
-        });
+        }
     }
 
     getModel()
