@@ -66,6 +66,13 @@ function refreshAccessories(a)
                     
             for(const device of devices)
             {
+                var state = device.data.state;
+
+                if(device.data.brightness != null)
+                {
+                    state = { power : device.data.state, brightness : device.data.brightness };
+                }
+
                 console.log(device.data);
 
                 var found = false;
@@ -74,7 +81,7 @@ function refreshAccessories(a)
                 {
                     if(accessories[i].id == device.id)
                     {
-                        accessories[i].value = device.data.state;
+                        accessories[i].value = state;
 
                         found = true;
                     }
@@ -82,14 +89,14 @@ function refreshAccessories(a)
 
                 if(!found)
                 {
-                    accessories.push({ id : device.id, value : device.data.state });
+                    accessories.push({ id : device.id, value : state });
                 }
 
                 for(var i = 0; i < a.length; i++)
                 {
                     if(a[i].id == device.id)
                     {
-                        a[i].changeHandler(device.data.state);
+                        a[i].changeHandler(state);
                     }
                 }
             }

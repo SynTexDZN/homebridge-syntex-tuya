@@ -19,10 +19,10 @@ module.exports = class SynTexSwitchAccessory extends Switch
         
         this.changeHandler = (function(state)
         {
-            logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + state.split(':')[0] + ', brightness: ' + state.split(':')[1] + '] ( ' + this.id + ' )');
+            logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + state.power + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
 
-            this.service[1].getCharacteristic(Characteristic.On).updateValue(state.split(':')[0]);
-            this.service[1].getCharacteristic(Characteristic.Brightness).updateValue(state.split(':')[1]);
+            this.service[1].getCharacteristic(Characteristic.On).updateValue(state.power);
+            this.service[1].getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
 
         }).bind(this);
         
