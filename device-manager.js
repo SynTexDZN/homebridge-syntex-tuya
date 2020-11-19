@@ -123,7 +123,7 @@ function writeTuyaAPI(id, value)
                 });
             }
 
-            if(value.brightness != null)
+            if(value.brightness != null && value.power == true)
             {
                 tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value.brightness }).then(function() {
 
