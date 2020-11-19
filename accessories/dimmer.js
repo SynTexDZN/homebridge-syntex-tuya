@@ -21,6 +21,8 @@ module.exports = class SynTexSwitchAccessory extends Switch
         {
             logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + state.power + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
 
+            console.log(1, typeof state.power);
+
             this.service[1].getCharacteristic(Characteristic.On).updateValue(state.power);
             this.service[1].getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
 
@@ -44,9 +46,9 @@ module.exports = class SynTexSwitchAccessory extends Switch
                 callback(new Error('Offline'));
             }
             */
-            console.log(typeof state.power);
+            console.log(2, typeof state.power);
 
-            callback(null, state != null ? state.power == 'true' : false);
+            callback(null, state != null ? (state.power == 'true') : false);
     
         }.bind(this)).catch(function(e) {
     
