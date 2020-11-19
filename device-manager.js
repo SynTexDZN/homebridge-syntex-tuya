@@ -20,12 +20,19 @@ function getDevice(id)
         {
             readTuyaAPI(id).then(function(data) {
 
+                var state = data.state;
+
                 if(data != null)
                 {
-                    accessories.push({ id : id, value : data.state });
+                    if(data.brightness != null)
+                    {
+                        state = { power : data.state, brightness : data.brightness };
+                    }
+                    
+                    accessories.push({ id : id, value : state });
                 }
 
-                resolve(data != null ? data.state : null);
+                resolve(data != null ? state : null);
             });
         }
     });
