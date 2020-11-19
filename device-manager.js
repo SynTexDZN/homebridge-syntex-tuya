@@ -109,7 +109,7 @@ function writeTuyaAPI(id, value)
 
         if(value instanceof Object)
         {
-            if(value.power)
+            if(value.power != null)
             {
                 tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value.power ? 1 : 0 }).then(function() {
 
@@ -123,7 +123,7 @@ function writeTuyaAPI(id, value)
                 });
             }
 
-            if(value.brightness)
+            if(value.brightness != null)
             {
                 tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value.brightness }).then(function() {
 
