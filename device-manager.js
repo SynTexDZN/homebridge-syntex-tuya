@@ -66,6 +66,8 @@ function refreshAccessories(a)
                     
             for(const device of devices)
             {
+                console.log(device.data);
+
                 var found = false;
 
                 for(var i = 0; i < accessories.length; i++)
