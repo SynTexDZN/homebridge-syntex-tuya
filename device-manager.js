@@ -109,6 +109,20 @@ function writeTuyaAPI(id, value)
 
         if(value instanceof Object)
         {
+            if(value.power)
+            {
+                tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value.power ? 1 : 0 }).then(function() {
+
+                    resolve(true);
+            
+                }).catch(function(e) {
+            
+                    logger.err(e);
+            
+                    resolve(false);
+                });
+            }
+
             if(value.brightness)
             {
                 tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value.brightness }).then(function() {
