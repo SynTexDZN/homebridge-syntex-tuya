@@ -75,7 +75,7 @@ module.exports = class Logger
 
     load(pluginName, group)
     {
-        return new Promise(async function(resolve) {
+        return new Promise((resolve) => {
             
             logs.load(pluginName, (err, obj) => {    
 
@@ -103,10 +103,10 @@ module.exports = class Logger
 
     list()
     {
-        return new Promise(async function(resolve) {
+        return new Promise((resolve) => {
 
-            logs.list(function(err, objects)
-            {
+            logs.list((err, objects) => {
+
                 if(!objects || err)
                 {
                     resolve([]);
@@ -120,7 +120,7 @@ module.exports = class Logger
     }
 }
 
-async function saveLog(level, mac, letters, time, message)
+function saveLog(level, mac, letters, time, message)
 {
     var queOBJ = { mac : mac, letters : letters, time : time, level : level, message : message };
 
@@ -158,7 +158,7 @@ async function saveLog(level, mac, letters, time, message)
 
                 device[mac][letters][device[mac][letters].length] = { t : time, l : level, m : message };
 
-                logs.add(device, function(err) {
+                logs.add(device, (err) => {
 
                     inWork = false;
 

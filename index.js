@@ -7,8 +7,8 @@ const SynTexSwitchAccessory = require('./accessory/switch'), SynTexBulbAccessory
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
 
-module.exports = function(homebridge)
-{
+module.exports = (homebridge) => {
+
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
     
@@ -80,7 +80,7 @@ SynTexTuyaPlatform.prototype = {
                     }
                 }
 
-                this.refreshInterval = setInterval(function() {
+                this.refreshInterval = setInterval(() => {
 
                     DeviceManager.refreshAccessories(accessories);
     
@@ -173,7 +173,7 @@ SynTexTuyaPlatform.prototype = {
                     response.end();
                 });
         
-                WebServer.addPage('/serverside/update', async (response, urlParams) => {
+                WebServer.addPage('/serverside/update', (response, urlParams) => {
         
                     var version = urlParams.version != null ? urlParams.version : 'latest';
         
@@ -208,12 +208,12 @@ SynTexTuyaPlatform.prototype = {
                     });
                 });
 
-            }.bind(this)).catch(function(e) {
+            }.bind(this)).catch((e) => {
 
                 logger.err(e);
             });
 
-        }.bind(this)).catch(function(e) {
+        }.bind(this)).catch((e) => {
 
             logger.err(e);
         });
