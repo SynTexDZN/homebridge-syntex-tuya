@@ -143,7 +143,7 @@ function writeTuyaAPI(id, value)
 
             if(value.brightness != null && value.power == true)
             {
-                tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value.brightness * 2.55 }).then(function() {
+                tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value.brightness }).then(function() {
 
                     resolve(true);
             
