@@ -27,6 +27,8 @@ function getDevice(id)
                     if(data.brightness != null)
                     {
                         state = { power : data.state, brightness : data.brightness / 2.55 };
+
+                        console.log(data.brightness);
                     }
                     
                     accessories.push({ id : id, value : state });
