@@ -4,6 +4,7 @@ var Service, Characteristic;
 var tuyaWebAPI, restart = true;
 const SynTexSwitchAccessory = require('./accessories/switch'), SynTexBulbAccessory = require('./accessories/bulb'), SynTexDimmerAccessory = require('./accessories/dimmer');
 const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform');
+const SynTexUniversalAccessory = require('./accessories/universal');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
@@ -119,7 +120,11 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                             type = 'outlet';
                         }
 
-                        this.addAccessory({ id : device.id, name : device.name, services : type });
+                        const homebridgeAccessory = this.getAccessory(device.id);
+
+                        var S = new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type }, { platform : this, logger : this.logger });
+
+                        this.addAccessory(S);
                     }
                 }
 
