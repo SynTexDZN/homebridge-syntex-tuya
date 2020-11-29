@@ -20,7 +20,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 {
     constructor(log, sconfig, api)
     {
-        super(log, sconfig, api);
+        super(sconfig, api, pluginID, pluginName);
 
         this.username = sconfig['username'];
         this.password = sconfig['password'];
