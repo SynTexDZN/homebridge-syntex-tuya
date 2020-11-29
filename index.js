@@ -134,7 +134,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 
                 this.refreshInterval = setInterval(() => {
 
-                    //DeviceManager.refreshAccessories(accessories);
+                    DeviceManager.refreshAccessories(accessories);
     
                 }, this.pollingInterval * 1000);
 

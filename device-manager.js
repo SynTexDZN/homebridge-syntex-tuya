@@ -107,7 +107,7 @@ function refreshAccessories(a)
                 {
                     if(a[i].id == device.id)
                     {
-                        a[i].changeHandler(state);
+                        a[i].service[1].changeHandler(state);
                     }
                 }
             }
