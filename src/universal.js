@@ -10,7 +10,9 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
     constructor(homebridgeAccessory, deviceConfig, manager)
     {
-        super(homebridgeAccessory, deviceConfig, manager);
+		super(homebridgeAccessory, deviceConfig, manager);
+		
+		console.log(1, deviceConfig);
 
         console.log('UNIVERSAL CONSTRUCTOR');
     }
@@ -35,6 +37,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 
 		var service = null;
 		var serviceConfig = { name : name, type : type, subtype : subtype };
+
+		console.log(2, this.deviceConfig, serviceConfig);
 
 		if(type == 'switch')
 		{
