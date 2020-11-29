@@ -12,7 +12,7 @@ module.exports = class SynTexOutletService extends OutletService
         
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        console.log(3, deviceConfig, serviceConfig);
+        console.log(3, homebridgeAccessory != null, deviceConfig, serviceConfig);
 
 		this.changeHandler = (function(state)
         {
