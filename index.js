@@ -33,7 +33,49 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
         this.logDirectory = sconfig['log_directory'] || './SynTex/log';
         this.port = sconfig['port'] || 1713;
 
-        this.addAccessory({id : 'accX', name : 'Accessory X', services : 'led'});
+        if(this.api && this.logger)
+        {
+            this.api.on('didFinishLaunching', () => {
+
+                tuyaWebAPI = new TuyaWebApi(
+                    this.username,
+                    this.password,
+                    this.countryCode,
+                    this.platform,
+                    this.logger
+                );
+
+                DeviceManager.SETUP(this.logger, tuyaWebAPI);
+
+                this.loadAccessories();
+    
+                restart = false;
+                /*
+                this.logger.debug('Initialisiere ' + pluginName + ' ...');
+    
+                var devices = ['acc1', 'acc2', 'acc3', 'acc4', 'acc5'];
+    
+                for(const id of devices)
+                {
+                    if(this.accessories.get(this.api.hap.uuid.generate(id)) != null)
+                    {
+                        //this.removeAccessory(this.accessories.get(this.api.hap.uuid.generate(id)));
+                    }
+                }
+    
+                var devices = [{id : 'acc1', name : 'Accessory 1', services : [{ type : 'outlet', name : 'Outlet 1' }, { type : 'outlet', name : 'Outlet 2' }, { type : 'outlet', name : 'Outlet 3' }, { type : 'outlet', name : 'Outlet 4' }, { type : 'outlet', name : 'Outlet 5' }]},
+                    {id : 'acc2', name : 'Accessory 2', services : ['led', 'dimmer', 'rgb', 'switch']},
+                    {id : 'acc3', name : 'Accessory 3', services : ['dimmer']},
+                    {id : 'acc4', name : 'Accessory 4', services : 'led'},
+                    {id : 'acc5', name : 'Accessory 5', services : 'contact'}];
+    
+                for(const device of devices)
+                {
+                    this.addAccessory(device);
+                }
+                */
+            });
+        }
         /*
         logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
         WebServer = new WebServer(pluginName, logger, this.port, false);
@@ -52,6 +94,52 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     
         restart = false;
         */
+    }
+
+    loadAccessories()
+    {
+        tuyaWebAPI.getOrRefreshToken().then(function(token) {
+
+            tuyaWebAPI.token = token;
+
+            tuyaWebAPI.discoverDevices().then(function(devices) {
+                
+                for(const device of devices)
+                {
+                    var type = device.dev_type;
+
+                    if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer')
+                    {
+                        if(type == 'light')
+                        {
+                            type = 'dimmer';
+                        }
+                        else if(type == 'switch')
+                        {
+                            type = 'outlet';
+                        }
+
+                        this.addAccessory({ id : device.id, name : device.name, services : type });
+                    }
+                }
+
+                this.refreshInterval = setInterval(() => {
+
+                    //DeviceManager.refreshAccessories(accessories);
+    
+                }, this.pollingInterval * 1000);
+
+                //DeviceManager.refreshAccessories(accessories);
+
+            }.bind(this)).catch((e) => {
+
+                logger.err(e);
+            });
+
+        }.bind(this)).catch((e) => {
+
+            logger.err(e);
+        });
     }
 }
 /*
