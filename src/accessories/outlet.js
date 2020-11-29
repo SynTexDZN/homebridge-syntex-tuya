@@ -12,8 +12,6 @@ module.exports = class SynTexOutletService extends OutletService
         
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        console.log(3, homebridgeAccessory != null, deviceConfig, serviceConfig);
-
 		this.changeHandler = (function(state)
         {
             this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + state + '] ( ' + this.id + ' )');
@@ -29,15 +27,17 @@ module.exports = class SynTexOutletService extends OutletService
 
             if(state != null)
             {
-                callback(state);
+                callback(null, state);
             }
             else
             {
-                DeviceManager.getDevice(this.id).then(function(state) {
+                DeviceManager.getDevice(this.id).then((state) => {
 
                     if(state != null)
                     {
                         this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
+                    
+                        super.setValue('state', state);
                     }
                     /*
                     if(!data.online)
@@ -45,11 +45,9 @@ module.exports = class SynTexOutletService extends OutletService
                         callback(new Error('Offline'));
                     }
                     */
-                    this.setValue('state', state);
-
                     callback(null, state);
             
-                }.bind({ logger : this.logger, setValue : super.setValue })).catch((e) => {
+                }).catch((e) => {
             
                     this.logger.err(e);
             
