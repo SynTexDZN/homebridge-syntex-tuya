@@ -2,9 +2,9 @@ let DeviceManager = require('./device-manager'), WebServer = require('./webserve
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
-const SynTexSwitchAccessory = require('./accessories/switch'), SynTexBulbAccessory = require('./accessories/bulb'), SynTexDimmerAccessory = require('./accessories/dimmer');
+const SynTexSwitchAccessory = require('./src/accessories/switch'), SynTexBulbAccessory = require('./src/accessories/bulb'), SynTexDimmerAccessory = require('./src/accessories/dimmer');
 const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;
-const SynTexUniversalAccessory = require('./accessories/universal');
+const SynTexUniversalAccessory = require('./src/universal');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
@@ -105,6 +105,8 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 
             tuyaWebAPI.discoverDevices().then(function(devices) {
                 
+                var accessories = [];
+
                 for(const device of devices)
                 {
                     var type = device.dev_type;
@@ -122,7 +124,9 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 
                         const homebridgeAccessory = this.getAccessory(device.id);
 
-                        var S = new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type }, { platform : this, logger : this.logger });
+                        var S = new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type }, { platform : this, logger : this.logger, DeviceManager : DeviceManager });
+
+                        accessories.push(S);
 
                         this.addAccessory(S);
                     }
@@ -134,16 +138,16 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     
                 }, this.pollingInterval * 1000);
 
-                //DeviceManager.refreshAccessories(accessories);
+                DeviceManager.refreshAccessories(accessories);
 
             }.bind(this)).catch((e) => {
 
-                logger.err(e);
+                this.logger.err(e);
             });
 
         }.bind(this)).catch((e) => {
 
-            logger.err(e);
+            this.logger.err(e);
         });
     }
 }
