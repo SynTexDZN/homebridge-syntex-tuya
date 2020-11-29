@@ -3,6 +3,7 @@ const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
 const SynTexSwitchAccessory = require('./accessories/switch'), SynTexBulbAccessory = require('./accessories/bulb'), SynTexDimmerAccessory = require('./accessories/dimmer');
+const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
