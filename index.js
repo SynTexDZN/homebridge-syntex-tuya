@@ -13,11 +13,48 @@ module.exports = (homebridge) => {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
 
-    console.log('DYNAMIC', SynTexDynamicPlatform);
-    
-    homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform);
+    homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform, true);
 };
 
+class SynTexTuyaPlatform extends SynTexDynamicPlatform
+{
+    constructor(log, sconfig, api)
+    {
+        super(log, sconfig, api);
+
+        this.username = sconfig['username'];
+        this.password = sconfig['password'];
+        this.countryCode = sconfig['countryCode'] || '49';
+        this.platform = sconfig['plat'] || 'smart_life';
+        this.pollingInterval = Math.max((sconfig['pollingInterval'] || 610), 610);
+        this.defaults = sconfig['defaults'] || [];
+        
+        this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
+        this.logDirectory = sconfig['log_directory'] || './SynTex/log';
+        this.port = sconfig['port'] || 1713;
+
+        this.addAccessory({id : 'accX', name : 'Accessory X', services : 'led'});
+        /*
+        logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
+        WebServer = new WebServer(pluginName, logger, this.port, false);
+    
+        this.api = api;
+    
+        tuyaWebAPI = new TuyaWebApi(
+            this.username,
+            this.password,
+            this.countryCode,
+            this.platform,
+            logger
+        );
+    
+        DeviceManager.SETUP(logger, tuyaWebAPI);
+    
+        restart = false;
+        */
+    }
+}
+/*
 function SynTexTuyaPlatform(log, sconfig, api)
 {
     this.username = sconfig['username'];
@@ -274,3 +311,4 @@ function typeToLetter(type)
 {
     return letters[types.indexOf(type.toLowerCase())];
 }
+*/
