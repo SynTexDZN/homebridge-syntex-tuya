@@ -12,6 +12,8 @@ module.exports = (homebridge) => {
 
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
+
+    console.log('DYNAMIC', SynTexDynamicPlatform);
     
     homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform);
 };
