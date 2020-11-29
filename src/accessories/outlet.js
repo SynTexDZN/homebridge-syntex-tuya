@@ -23,7 +23,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 	getState(callback)
     {
-        super((state) => {
+        super.getState((state) => {
 
             if(state != null)
             {
@@ -57,7 +57,7 @@ module.exports = class SynTexOutletService extends OutletService
 
     setState(state, callback)
     {
-        super(state, () => {
+        super.setState(state, () => {
 
             if(this.power != state)
             {
