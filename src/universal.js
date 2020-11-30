@@ -51,7 +51,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
     {
 		console.log(this.services);
 
-        return 'Tuya' + (this.services == 'light' ? 'Light Bulb' : this.services == 'outlet' ? 'Outlet' : '');
+        return 'Tuya ' + (this.services == 'light' ? 'Light Bulb' : this.services == 'switch' ? 'Outlet' : 'Accessory');
     }
 
     getVersion()
