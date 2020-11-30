@@ -45,10 +45,10 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 
                 DeviceManager.SETUP(this.logger, tuyaWebAPI);
 
+                this.initWebServer();
+
                 this.loadAccessories();
 
-                this.initWebserver();
-    
                 restart = false;
             });
         }
@@ -62,8 +62,6 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 
             tuyaWebAPI.discoverDevices().then(function(devices) {
                 
-                var accessories = [];
-
                 for(const device of devices)
                 {
                     var type = device.dev_type;
@@ -72,21 +70,17 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                     {
                         const homebridgeAccessory = this.getAccessory(device.id);
 
-                        var S = new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : this.manufacturer, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager });
-
-                        accessories.push(S);
-
-                        this.addAccessory(S);
+                        this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : this.manufacturer, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager }));
                     }
                 }
 
                 this.refreshInterval = setInterval(() => {
 
-                    DeviceManager.refreshAccessories(accessories);
+                    DeviceManager.refreshAccessories(this.accessories);
     
                 }, this.pollingInterval * 1000);
 
-                DeviceManager.refreshAccessories(accessories);
+                DeviceManager.refreshAccessories(this.accessories);
 
             }.bind(this)).catch((e) => {
 
@@ -99,25 +93,17 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
         });
     }
 
-    initWebserver()
+    initWebServer()
     {
         this.WebServer.addPage('/devices', async (response, urlParams) => {
 
             if(urlParams.id != null)
             {
-                var accessory = null;
-    
-                for(var i = 0; i < accessories.length; i++)
-                {
-                    if(accessories[i].id == urlParams.id)
-                    {
-                        accessory = accessories[i];
-                    }
-                }
+                var accessory = this.getAccessory(urlParams.id);
     
                 if(accessory == null)
                 {
-                    logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
+                    this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
     
                     response.write('Error');
                 }
@@ -125,24 +111,25 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 {
                     var state = null;
     
-                    if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
+                    if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, urlParams.value)) != null)
                     {
-                        DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
-    
-                        accessory.changeHandler(state);
+                        accessory.service[1].changeHandler(state);
                     }
                     else
                     {
-                        logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+                        this.logger.log('error', urlParams.id, accessory.service[1].letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
                     }
     
                     response.write(state != null ? 'Success' : 'Error');
                 }
                 else
                 {
-                    var state = await DeviceManager.getDevice(urlParams.id);
-    
-                    response.write(state != null ? state.toString() : 'Error');
+                    accessory.service[1].getState((nothing, state) => {
+
+                        console.log(state);
+
+                        response.write(state != null ? state.toString() : 'Error');
+                    });
                 }
             }
             else
@@ -156,16 +143,16 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
         this.WebServer.addPage('/accessories', (response) => {
     
             var a = [];
-    
-            for(var i = 0; i < accessories.length; i++)
+
+            for(const accessory of this.accessories)
             {
-                a[i] = {
-                    mac: accessories[i].id,
-                    name: accessories[i].name,
-                    services: accessories[i].services,
+                a.push({
+                    mac: accessory[1].id,
+                    name: accessory[1].name,
+                    services: accessory[1].services,
                     version: '99.99.99',
                     plugin: pluginName
-                };
+                });
             }
     
             response.write(JSON.stringify(a));
@@ -196,15 +183,15 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 {
                     if(error || stderr.includes('ERR!'))
                     {
-                        logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
+                        this.logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
                     }
                     else
                     {
-                        logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
+                        this.logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
     
                         restart = true;
     
-                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+                        this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
     
                         exec('sudo systemctl restart homebridge');
                     }
@@ -214,61 +201,51 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 }
                 catch(e)
                 {
-                    logger.err(e);
+                    this.logger.err(e);
                 }
             });
         });
     }
-}
 
-function validateUpdate(mac, letters, state)
-{
-    var type = letterToType(letters[0]);
-
-    if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
+    validateUpdate(mac, letters, state)
     {
-        if(state != true && state != false && state != 'true' && state != 'false')
+        var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
+        var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        var type = types[letters.indexOf(letters[0].toUpperCase())];
+
+        if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais' || type == 'outlet')
         {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+            if(state != true && state != false && state != 'true' && state != 'false')
+            {
+                this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
 
-            return null;
+                return null;
+            }
+
+            return (state == 'true' || state == true ? true : false);
         }
-
-        return (state == 'true' || state == true ? true : false);
-    }
-    else if(type === 'light' || type === 'temperature')
-    {
-        if(isNaN(state))
+        else if(type === 'light' || type === 'temperature')
         {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-        }
+            if(isNaN(state))
+            {
+                this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+            }
 
-        return !isNaN(state) ? parseFloat(state) : null;
-    }
-    else if(type === 'humidity' || type === 'airquality')
-    {
-        if(isNaN(state))
+            return !isNaN(state) ? parseFloat(state) : null;
+        }
+        else if(type === 'humidity' || type === 'airquality')
         {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+            if(isNaN(state))
+            {
+                this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+            }
+
+            return !isNaN(state) ? parseInt(state) : null;
         }
-
-        return !isNaN(state) ? parseInt(state) : null;
+        else
+        {
+            return state;
+        }
     }
-    else
-    {
-        return state;
-    }
-}
-
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
-
-function letterToType(letter)
-{
-    return types[letters.indexOf(letter.toUpperCase())];
-}
-
-function typeToLetter(type)
-{
-    return letters[types.indexOf(type.toLowerCase())];
 }
