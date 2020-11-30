@@ -1,4 +1,4 @@
-let DeviceManager = require('./device-manager'), WebServer = require('./webserver'), logger = require('./logger');
+let DeviceManager = require('./device-manager'), WebServer = require('./webserver');
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
@@ -30,7 +30,6 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
         this.pollingInterval = Math.max((sconfig['pollingInterval'] || 610), 610);
         this.defaults = sconfig['defaults'] || [];
         
-        this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
         this.logDirectory = sconfig['log_directory'] || './SynTex/log';
         this.port = sconfig['port'] || 1713;
 
@@ -77,10 +76,6 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 */
             });
         }
-        /*
-        logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
-        WebServer = new WebServer(pluginName, logger, this.port, false);
-        */
     }
 
     loadAccessories()
@@ -131,207 +126,128 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 /*
 function SynTexTuyaPlatform(log, sconfig, api)
 {
-    this.username = sconfig['username'];
-    this.password = sconfig['password'];
-    this.countryCode = sconfig['countryCode'] || '49';
-    this.platform = sconfig['plat'] || 'smart_life';
-    this.pollingInterval = Math.max((sconfig['pollingInterval'] || 610), 610);
-    this.defaults = sconfig['defaults'] || [];
-    
-    this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
-    this.logDirectory = sconfig['log_directory'] || './SynTex/log';
-    this.port = sconfig['port'] || 1713;
-    
-    logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
     WebServer = new WebServer(pluginName, logger, this.port, false);
-
-    this.api = api;
-
-    tuyaWebAPI = new TuyaWebApi(
-        this.username,
-        this.password,
-        this.countryCode,
-        this.platform,
-        logger
-    );
-
-    DeviceManager.SETUP(logger, tuyaWebAPI);
-
-    restart = false;
 }
 
 SynTexTuyaPlatform.prototype = {
     
-    accessories : function(callback)
-    {
-        tuyaWebAPI.getOrRefreshToken().then(function(token) {
+    WebServer.addPage('/devices', async (response, urlParams) => {
 
-            tuyaWebAPI.token = token;
+        if(urlParams.id != null)
+        {
+            var accessory = null;
 
-            tuyaWebAPI.discoverDevices().then(function(devices) {
-                
-                var accessories = [];
-
-                for(const device of devices)
+            for(var i = 0; i < accessories.length; i++)
+            {
+                if(accessories[i].id == urlParams.id)
                 {
-                    if(device.dev_type == 'switch' || device.dev_type == 'outlet')
-                    {
-                        var accessory = new SynTexSwitchAccessory(device, { Service, Characteristic, DeviceManager, logger });
+                    accessory = accessories[i];
+                }
+            }
 
-                        accessories.push(accessory);
-                    }
-                    else if(device.dev_type == 'dimmer')
-                    {
-                        var accessory = new SynTexDimmerAccessory(device, { Service, Characteristic, DeviceManager, logger });
+            if(accessory == null)
+            {
+                logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
 
-                        accessories.push(accessory);
-                    }
-                    else if(device.dev_type == 'light')
-                    {
-                        var accessory = new SynTexDimmerAccessory(device, { Service, Characteristic, DeviceManager, logger });
+                response.write('Error');
+            }
+            else if(urlParams.value != null)
+            {
+                var state = null;
 
-                        accessories.push(accessory);
-                    }
+                if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
+                {
+                    DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
+
+                    accessory.changeHandler(state);
+                }
+                else
+                {
+                    logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
                 }
 
-                this.refreshInterval = setInterval(() => {
+                response.write(state != null ? 'Success' : 'Error');
+            }
+            else
+            {
+                var state = await DeviceManager.getDevice(urlParams.id);
 
-                    DeviceManager.refreshAccessories(accessories);
-    
-                }, this.pollingInterval * 1000);
+                response.write(state != null ? state.toString() : 'Error');
+            }
+        }
+        else
+        {
+            response.write('Error');
+        }
 
-                DeviceManager.refreshAccessories(accessories);
+        response.end();
+    });
 
-                callback(accessories);
+    WebServer.addPage('/accessories', (response) => {
 
-                WebServer.addPage('/devices', async (response, urlParams) => {
-	
-                    if(urlParams.id != null)
-                    {
-                        var accessory = null;
-            
-                        for(var i = 0; i < accessories.length; i++)
-                        {
-                            if(accessories[i].id == urlParams.id)
-                            {
-                                accessory = accessories[i];
-                            }
-                        }
-            
-                        if(accessory == null)
-                        {
-                            logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
-            
-                            response.write('Error');
-                        }
-                        else if(urlParams.value != null)
-                        {
-                            var state = null;
-	
-                            if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
-                            {
-                                DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
+        var a = [];
 
-                                accessory.changeHandler(state);
-                            }
-                            else
-                            {
-                                logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
-                            }
-            
-                            response.write(state != null ? 'Success' : 'Error');
-                        }
-                        else
-                        {
-                            var state = await DeviceManager.getDevice(urlParams.id);
-            
-                            response.write(state != null ? state.toString() : 'Error');
-                        }
-                    }
-                    else
-                    {
-                        response.write('Error');
-                    }
-            
-                    response.end();
-                });
+        for(var i = 0; i < accessories.length; i++)
+        {
+            a[i] = {
+                mac: accessories[i].id,
+                name: accessories[i].name,
+                services: accessories[i].services,
+                version: '99.99.99',
+                plugin: pluginName
+            };
+        }
 
-                WebServer.addPage('/accessories', (response) => {
+        response.write(JSON.stringify(a));
+        response.end();
+    });
 
-                    var a = [];
+    WebServer.addPage('/serverside/version', (response) => {
 
-                    for(var i = 0; i < accessories.length; i++)
-                    {
-                        a[i] = {
-                            mac: accessories[i].id,
-                            name: accessories[i].name,
-                            services: accessories[i].services,
-                            version: '99.99.99',
-                            plugin: pluginName
-                        };
-                    }
+        response.write(require('./package.json').version);
+        response.end();
+    });
 
-                    response.write(JSON.stringify(a));
-                    response.end();
-                });
+    WebServer.addPage('/serverside/check-restart', (response) => {
 
-                WebServer.addPage('/serverside/version', (response) => {
+        response.write(restart.toString());
+        response.end();
+    });
 
-                    response.write(require('./package.json').version);
-                    response.end();
-                });
+    WebServer.addPage('/serverside/update', (response, urlParams) => {
+
+        var version = urlParams.version != null ? urlParams.version : 'latest';
+
+        const { exec } = require('child_process');
         
-                WebServer.addPage('/serverside/check-restart', (response) => {
-        
-                    response.write(restart.toString());
-                    response.end();
-                });
-        
-                WebServer.addPage('/serverside/update', (response, urlParams) => {
-        
-                    var version = urlParams.version != null ? urlParams.version : 'latest';
-        
-                    const { exec } = require('child_process');
-                    
-                    exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
-        
-                        try
-                        {
-                            if(error || stderr.includes('ERR!'))
-                            {
-                                logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
-                            }
-                            else
-                            {
-                                logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
-        
-                                restart = true;
-        
-                                logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-        
-                                exec('sudo systemctl restart homebridge');
-                            }
-        
-                            response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                            response.end();
-                        }
-                        catch(e)
-                        {
-                            logger.err(e);
-                        }
-                    });
-                });
+        exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
 
-            }.bind(this)).catch((e) => {
+            try
+            {
+                if(error || stderr.includes('ERR!'))
+                {
+                    logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
+                }
+                else
+                {
+                    logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
 
+                    restart = true;
+
+                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                    exec('sudo systemctl restart homebridge');
+                }
+
+                response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                response.end();
+            }
+            catch(e)
+            {
                 logger.err(e);
-            });
-
-        }.bind(this)).catch((e) => {
-
-            logger.err(e);
+            }
         });
-    }
+    });
 }
 
 function validateUpdate(mac, letters, state)

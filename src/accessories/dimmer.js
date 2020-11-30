@@ -134,11 +134,11 @@ module.exports = class SynTexDimmedLightBulbService extends DimmedLightBulbServi
 
                 DeviceManager.setBrightness(this.id, this.brightness).then(() => {
 
-                    logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
             
                 }).catch((e) => {
             
-                    logger.err(e);
+                    this.logger.err(e);
                 });
             }
 
