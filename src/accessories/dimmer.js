@@ -14,13 +14,13 @@ module.exports = class SynTexDimmedLightBulbService extends DimmedLightBulbServi
 
         this.changeHandler = (state) =>
         {
-            this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + JSON.stringify(state) + '] ( ' + this.id + ' )');
+            this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + state.power + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
 
             super.setValue('state', state.power);
             super.setValue('brightness', state.brightness);
 
-            homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
-            homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+            homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-' + serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
+            homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-' + serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
         };
     }
 
@@ -64,27 +64,20 @@ module.exports = class SynTexDimmedLightBulbService extends DimmedLightBulbServi
     {
         super.setState(state, () => {
 
-            if(this.power != state)
-            {
-                this.power = state;
+            this.power = state;
 
-                DeviceManager.setState(this.id, this.power).then(() => {
+            DeviceManager.setState(this.id, this.power).then(() => {
 
-                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
-                    
-                    callback();
-            
-                }).catch((e) => {
-            
-                    this.logger.err(e);
-            
-                    callback(e);
-                });
-            }
-            else
-            {
+                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                
                 callback();
-            }
+        
+            }).catch((e) => {
+        
+                this.logger.err(e);
+        
+                callback(e);
+            });
         });
     }
 
@@ -102,7 +95,7 @@ module.exports = class SynTexDimmedLightBulbService extends DimmedLightBulbServi
 
                     if(state != null)
                     {
-                        this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                        this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
                     
                         super.setValue('brightness', state);
                     }

@@ -62,27 +62,20 @@ module.exports = class SynTexOutletService extends OutletService
     {
         super.setState(state, () => {
 
-            if(this.power != state)
-            {
-                this.power = state;
+            this.power = state;
 
-                DeviceManager.setState(this.id, this.power).then(() => {
+            DeviceManager.setState(this.id, this.power).then(() => {
 
-                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
-                    
-                    callback(null);
-            
-                }).catch((e) => {
-            
-                    this.logger.err(e);
-            
-                    callback(e);
-                });
-            }
-            else
-            {
+                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
+                
                 callback(null);
-            }
+        
+            }).catch((e) => {
+        
+                this.logger.err(e);
+        
+                callback(e);
+            });
         });
     }
 }

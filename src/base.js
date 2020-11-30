@@ -1,4 +1,4 @@
-const BaseService = require('homebridge-syntex-dynamic-platform').BaseService;
+const { BaseService } = require('homebridge-syntex-dynamic-platform');
 
 module.exports = class SynTexUniversalAccessory extends BaseService
 {
