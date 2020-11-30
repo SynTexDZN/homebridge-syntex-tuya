@@ -2,7 +2,6 @@ let DeviceManager = require('./device-manager'), WebServer = require('./webserve
 const TuyaWebApi = require('./tuyawebapi');
 var Service, Characteristic;
 var tuyaWebAPI, restart = true;
-const SynTexSwitchAccessory = require('./src/accessories/switch'), SynTexBulbAccessory = require('./src/accessories/bulb'), SynTexDimmerAccessory = require('./src/accessories/dimmer');
 const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;
 const SynTexUniversalAccessory = require('./src/universal');
 

@@ -1,8 +1,8 @@
-const { DimmedLightBulbService } = require('homebridge-syntex-dynamic-platform/platform');
+const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform/platform');
 
 let Service, Characteristic, DeviceManager;
 
-module.exports = class SynTexDimmedLightBulbService extends DimmedLightBulbService
+module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -19,8 +19,8 @@ module.exports = class SynTexDimmedLightBulbService extends DimmedLightBulbServi
             super.setValue('state', state.power);
             super.setValue('brightness', state.brightness);
 
-            homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-' + serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
-            homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-' + serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+            homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
+            homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
         };
     }
 

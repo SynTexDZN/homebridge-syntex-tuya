@@ -1,6 +1,6 @@
 const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
 const OutletService = require('./accessories/outlet');
-const DimmedBulbService = require('./accessories/dimmedBulb');
+const DimmedBulbService = require('./accessories/dimmer');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -36,6 +36,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 		else if(type == 'light')
 		{
+			serviceConfig.type = 'dimmer';
+
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 
@@ -47,7 +49,9 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	
     getModel()
     {
-        return 'Test';
+		console.log(this.services);
+
+        return 'Tuya' + (this.services == 'light' ? 'Light Bulb' : this.services == 'outlet' ? 'Outlet' : '');
     }
 
     getVersion()
