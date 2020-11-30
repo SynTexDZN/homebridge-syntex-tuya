@@ -1,6 +1,5 @@
 let DeviceManager = require('./device-manager'), WebServer = require('./webserver');
 const TuyaWebApi = require('./tuyawebapi');
-var Service, Characteristic;
 var tuyaWebAPI, restart = true;
 const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;
 const SynTexUniversalAccessory = require('./src/universal');
@@ -47,32 +46,10 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 DeviceManager.SETUP(this.logger, tuyaWebAPI);
 
                 this.loadAccessories();
+
+                this.initWebserver();
     
                 restart = false;
-                /*
-                this.logger.debug('Initialisiere ' + pluginName + ' ...');
-    
-                var devices = ['acc1', 'acc2', 'acc3', 'acc4', 'acc5'];
-    
-                for(const id of devices)
-                {
-                    if(this.accessories.get(this.api.hap.uuid.generate(id)) != null)
-                    {
-                        //this.removeAccessory(this.accessories.get(this.api.hap.uuid.generate(id)));
-                    }
-                }
-    
-                var devices = [{id : 'acc1', name : 'Accessory 1', services : [{ type : 'outlet', name : 'Outlet 1' }, { type : 'outlet', name : 'Outlet 2' }, { type : 'outlet', name : 'Outlet 3' }, { type : 'outlet', name : 'Outlet 4' }, { type : 'outlet', name : 'Outlet 5' }]},
-                    {id : 'acc2', name : 'Accessory 2', services : ['led', 'dimmer', 'rgb', 'switch']},
-                    {id : 'acc3', name : 'Accessory 3', services : ['dimmer']},
-                    {id : 'acc4', name : 'Accessory 4', services : 'led'},
-                    {id : 'acc5', name : 'Accessory 5', services : 'contact'}];
-    
-                for(const device of devices)
-                {
-                    this.addAccessory(device);
-                }
-                */
             });
         }
     }
@@ -121,132 +98,127 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
             this.logger.err(e);
         });
     }
-}
-/*
-function SynTexTuyaPlatform(log, sconfig, api)
-{
-    WebServer = new WebServer(pluginName, logger, this.port, false);
-}
 
-SynTexTuyaPlatform.prototype = {
+    initWebserver()
+    {
+        this.WebServer.addPage('/devices', async (response, urlParams) => {
+
+            if(urlParams.id != null)
+            {
+                var accessory = null;
     
-    WebServer.addPage('/devices', async (response, urlParams) => {
-
-        if(urlParams.id != null)
-        {
-            var accessory = null;
-
-            for(var i = 0; i < accessories.length; i++)
-            {
-                if(accessories[i].id == urlParams.id)
+                for(var i = 0; i < accessories.length; i++)
                 {
-                    accessory = accessories[i];
+                    if(accessories[i].id == urlParams.id)
+                    {
+                        accessory = accessories[i];
+                    }
                 }
-            }
-
-            if(accessory == null)
-            {
-                logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
-
-                response.write('Error');
-            }
-            else if(urlParams.value != null)
-            {
-                var state = null;
-
-                if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
+    
+                if(accessory == null)
                 {
-                    DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
-
-                    accessory.changeHandler(state);
+                    logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
+    
+                    response.write('Error');
+                }
+                else if(urlParams.value != null)
+                {
+                    var state = null;
+    
+                    if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
+                    {
+                        DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
+    
+                        accessory.changeHandler(state);
+                    }
+                    else
+                    {
+                        logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+                    }
+    
+                    response.write(state != null ? 'Success' : 'Error');
                 }
                 else
                 {
-                    logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+                    var state = await DeviceManager.getDevice(urlParams.id);
+    
+                    response.write(state != null ? state.toString() : 'Error');
                 }
-
-                response.write(state != null ? 'Success' : 'Error');
             }
             else
             {
-                var state = await DeviceManager.getDevice(urlParams.id);
-
-                response.write(state != null ? state.toString() : 'Error');
+                response.write('Error');
             }
-        }
-        else
-        {
-            response.write('Error');
-        }
-
-        response.end();
-    });
-
-    WebServer.addPage('/accessories', (response) => {
-
-        var a = [];
-
-        for(var i = 0; i < accessories.length; i++)
-        {
-            a[i] = {
-                mac: accessories[i].id,
-                name: accessories[i].name,
-                services: accessories[i].services,
-                version: '99.99.99',
-                plugin: pluginName
-            };
-        }
-
-        response.write(JSON.stringify(a));
-        response.end();
-    });
-
-    WebServer.addPage('/serverside/version', (response) => {
-
-        response.write(require('./package.json').version);
-        response.end();
-    });
-
-    WebServer.addPage('/serverside/check-restart', (response) => {
-
-        response.write(restart.toString());
-        response.end();
-    });
-
-    WebServer.addPage('/serverside/update', (response, urlParams) => {
-
-        var version = urlParams.version != null ? urlParams.version : 'latest';
-
-        const { exec } = require('child_process');
-        
-        exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
-
-            try
-            {
-                if(error || stderr.includes('ERR!'))
-                {
-                    logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
-                }
-                else
-                {
-                    logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
-
-                    restart = true;
-
-                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                    exec('sudo systemctl restart homebridge');
-                }
-
-                response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                response.end();
-            }
-            catch(e)
-            {
-                logger.err(e);
-            }
+    
+            response.end();
         });
-    });
+    
+        this.WebServer.addPage('/accessories', (response) => {
+    
+            var a = [];
+    
+            for(var i = 0; i < accessories.length; i++)
+            {
+                a[i] = {
+                    mac: accessories[i].id,
+                    name: accessories[i].name,
+                    services: accessories[i].services,
+                    version: '99.99.99',
+                    plugin: pluginName
+                };
+            }
+    
+            response.write(JSON.stringify(a));
+            response.end();
+        });
+    
+        this.WebServer.addPage('/serverside/version', (response) => {
+    
+            response.write(require('./package.json').version);
+            response.end();
+        });
+    
+        this.WebServer.addPage('/serverside/check-restart', (response) => {
+    
+            response.write(restart.toString());
+            response.end();
+        });
+    
+        this.WebServer.addPage('/serverside/update', (response, urlParams) => {
+    
+            var version = urlParams.version != null ? urlParams.version : 'latest';
+    
+            const { exec } = require('child_process');
+            
+            exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
+    
+                try
+                {
+                    if(error || stderr.includes('ERR!'))
+                    {
+                        logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
+                    }
+                    else
+                    {
+                        logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
+    
+                        restart = true;
+    
+                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+    
+                        exec('sudo systemctl restart homebridge');
+                    }
+    
+                    response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                    response.end();
+                }
+                catch(e)
+                {
+                    logger.err(e);
+                }
+            });
+        });
+    }
 }
 
 function validateUpdate(mac, letters, state)
@@ -300,4 +272,3 @@ function typeToLetter(type)
 {
     return letters[types.indexOf(type.toLowerCase())];
 }
-*/
