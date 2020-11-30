@@ -8,7 +8,12 @@ function refreshAccessories(a)
                     
             for(const device of devices)
             {
-                var state = JSON.parse(device.data.state);
+                var state = device.data.state;
+
+                if(device.data.state != null)
+                {
+                    state = JSON.parse(device.data.state);
+                }
 
                 if(device.data.brightness != null)
                 {
