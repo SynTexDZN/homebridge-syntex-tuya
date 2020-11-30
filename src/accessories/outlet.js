@@ -32,7 +32,7 @@ module.exports = class SynTexOutletService extends OutletService
             }
             else
             {
-                DeviceManager.getDevice(this.id).then((state) => {
+                DeviceManager.getState(this.id).then((state) => {
 
                     if(state != null)
                     {
@@ -66,13 +66,13 @@ module.exports = class SynTexOutletService extends OutletService
             {
                 this.power = state;
 
-                DeviceManager.setDevice(this.id, this.power).then(function() {
+                DeviceManager.setState(this.id, this.power).then(() => {
 
                     this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
                     
                     callback(null);
             
-                }.bind(this)).catch((e) => {
+                }).catch((e) => {
             
                     this.logger.err(e);
             

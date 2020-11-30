@@ -1,125 +1,149 @@
-const Switch = require('./switch');
-var Service, Characteristic, DeviceManager, logger;
+const { DimmedLightBulbService } = require('homebridge-syntex-dynamic-platform/platform');
 
-module.exports = class SynTexSwitchAccessory extends Switch
+let Service, Characteristic, DeviceManager;
+
+module.exports = class SynTexDimmedLightBulbService extends DimmedLightBulbService
 {
-    constructor(accessoryConfig, Manager)
-    {
-        super(accessoryConfig, Manager);
-
-        Service = Manager.Service;
-        Characteristic = Manager.Characteristic;
-        DeviceManager = Manager.DeviceManager;
-        logger = Manager.logger;
-
-        this.services = 'dimmer';
-        this.letters = '40';
-
-        this.service[1] = new Service.Lightbulb(this.name);
+	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
+	{
+		Characteristic = manager.platform.api.hap.Characteristic;
+        Service = manager.platform.api.hap.Service;
+        DeviceManager = manager.DeviceManager;
         
-        this.changeHandler = (function(state)
+        super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+
+        this.changeHandler = (state) =>
         {
-            logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + state.power + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
+            this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + JSON.stringify(state) + '] ( ' + this.id + ' )');
 
-            this.service[1].getCharacteristic(Characteristic.On).updateValue(state.power);
-            this.service[1].getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+            super.setValue('state', state.power);
+            super.setValue('brightness', state.brightness);
 
-        }).bind(this);
-        
-        this.service[1].getCharacteristic(Characteristic.On).on('get', this.getState.bind(this)).on('set', this.setState.bind(this));
-        this.service[1].getCharacteristic(Characteristic.Brightness).on('get', this.getBrightness.bind(this)).on('set', this.setBrightness.bind(this));
+            homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
+            homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+        };
     }
 
     getState(callback)
     {
-        DeviceManager.getDevice(this.id).then(function(state) {
+        super.getState((state) => {
 
             if(state != null)
             {
-                logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + state.power + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
+                callback(null, state);
             }
-            /*
-            if(!data.online)
+            else
             {
-                callback(new Error('Offline'));
+                DeviceManager.getState(this.id).then((state) => {
+
+                    if(state != null)
+                    {
+                        this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
+                    
+                        super.setValue('state', state.power);
+                    }
+                    /*
+                    if(!data.online)
+                    {
+                        callback(new Error('Offline'));
+                    }
+                    */
+                    callback(null, state != null ? state : false);
+            
+                }).catch((e) => {
+            
+                    this.logger.err(e);
+            
+                    callback(e);
+                });
             }
-            */
-            callback(null, state != null ? JSON.parse(state.power) : false);
-    
-        }.bind(this)).catch(function(e) {
-    
-            logger.err(e);
-    
-            callback(e);
         });
     }
 
     setState(state, callback)
     {
-        if(this.power != state)
-        {
-            this.power = state;
+        super.setState(state, () => {
 
-            DeviceManager.setDevice(this.id, { power : this.power, brightness : this.brightness }).then(function() {
+            if(this.power != state)
+            {
+                this.power = state;
 
-                logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-                
-                callback(null);
-        
-            }.bind(this)).catch(function(e) {
-        
-                logger.err(e);
-        
-                callback(e);
-            });
-        }
-        else
-        {
-            callback(null);
-        }
+                DeviceManager.setState(this.id, this.power).then(() => {
+
+                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
+                    
+                    callback();
+            
+                }).catch((e) => {
+            
+                    this.logger.err(e);
+            
+                    callback(e);
+                });
+            }
+            else
+            {
+                callback();
+            }
+        });
     }
 
     getBrightness(callback)
     {
-        DeviceManager.getDevice(this.id).then(function(state) {
+        super.getBrightness((state) => {
 
             if(state != null)
             {
-                logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + state.power + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
+                callback(null, state);
             }
-            /*
-            if(!data.online)
+            else
             {
-                callback(new Error('Offline'));
+                DeviceManager.getBrightness(this.id).then((state) => {
+
+                    if(state != null)
+                    {
+                        this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                    
+                        super.setValue('brightness', state);
+                    }
+                    /*
+                    if(!data.online)
+                    {
+                        callback(new Error('Offline'));
+                    }
+                    */
+                    callback(null, state != null ? state : 50);
+
+                }).catch((e) => {
+
+                    this.logger.err(e);
+
+                    callback(e);
+                });
             }
-            */
-            callback(null, state != null ? state.brightness : 50);
-
-        }.bind(this)).catch(function(e) {
-
-            logger.err(e);
-
-            callback(e);
         });
     }
 
-    setBrightness(level, callback)
+    setBrightness(state, callback)
     {
-        if(this.brightness != level)
-        {
-            this.brightness = level;
+        super.setBrightness(state, () => {
 
-            DeviceManager.setDevice(this.id, { power : this.brightness == 0 ? false : true, brightness : this.brightness }).then(function() {
+            if(this.brightness != state)
+            {
+                this.brightness = state;
 
-                logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-        
-            }.bind(this)).catch(function(e) {
-        
-                logger.err(e);
-            });
-        }
+                DeviceManager.setBrightness(this.id, this.brightness).then(() => {
 
-        callback(null);
+                    logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+            
+                }).catch((e) => {
+            
+                    logger.err(e);
+                });
+            }
+
+            callback();
+        });
     }
 
     getModel()

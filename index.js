@@ -80,20 +80,6 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
         /*
         logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
         WebServer = new WebServer(pluginName, logger, this.port, false);
-    
-        this.api = api;
-    
-        tuyaWebAPI = new TuyaWebApi(
-            this.username,
-            this.password,
-            this.countryCode,
-            this.platform,
-            logger
-        );
-    
-        DeviceManager.SETUP(logger, tuyaWebAPI);
-    
-        restart = false;
         */
     }
 
@@ -113,18 +99,9 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 
                     if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer')
                     {
-                        if(type == 'light')
-                        {
-                            type = 'dimmer';
-                        }
-                        else if(type == 'switch')
-                        {
-                            type = 'outlet';
-                        }
-
                         const homebridgeAccessory = this.getAccessory(device.id);
 
-                        var S = new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type }, { platform : this, logger : this.logger, DeviceManager : DeviceManager });
+                        var S = new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : this.manufacturer, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager });
 
                         accessories.push(S);
 

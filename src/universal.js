@@ -1,10 +1,6 @@
 const UniversalAccessory = require('homebridge-syntex-dynamic-platform').UniversalAccessory;
-const SwitchService = require('homebridge-syntex-dynamic-platform').SwitchService;
 const OutletService = require('./accessories/outlet');
-const LightBulbService = require('homebridge-syntex-dynamic-platform').LightBulbService;
-const DimmedBulbService = require('homebridge-syntex-dynamic-platform').DimmedBulbService;
-const ColoredBulbService = require('homebridge-syntex-dynamic-platform').ColoredBulbService;
-const ContactService = require('homebridge-syntex-dynamic-platform').ContactService;
+const DimmedBulbService = require('./accessories/dimmedBulb');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -34,34 +30,28 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		var service = null;
 		var serviceConfig = { name : name, type : type, subtype : subtype };
 
-		if(type == 'switch')
-		{
-			service = new SwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-		else if(type == 'outlet')
+		if(type == 'switch' || type == 'outlet')
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'led')
-		{
-			service = new LightBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-		else if(type == 'dimmer')
+		else if(type == 'light')
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-		else if(type == 'rgb')
-		{
-			service = new ColoredBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-		else if(type == 'contact')
-		{
-			service = new ContactService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 
 		if(service != null)
 		{
 			this.service.push(service);
 		}
+	}
+	
+    getModel()
+    {
+        return 'Test';
+    }
+
+    getVersion()
+    {
+        return '1.0.9';
     }
 };
