@@ -1,4 +1,4 @@
-const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform/platform');
+const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
 let Service, Characteristic, DeviceManager;
 

@@ -1,4 +1,4 @@
-let DeviceManager = require('./device-manager'), WebServer = require('./webserver');
+let DeviceManager = require('./device-manager');
 const TuyaWebApi = require('./tuyawebapi');
 var tuyaWebAPI, restart = true;
 const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;

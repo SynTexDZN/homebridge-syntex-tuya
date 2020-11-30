@@ -1,4 +1,4 @@
-const { OutletService } = require('homebridge-syntex-dynamic-platform/platform');
+const { OutletService } = require('homebridge-syntex-dynamic-platform');
 
 let Service, Characteristic, DeviceManager;
 
