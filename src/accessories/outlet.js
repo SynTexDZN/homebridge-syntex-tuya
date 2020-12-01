@@ -12,7 +12,7 @@ module.exports = class SynTexOutletService extends OutletService
         
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        this.changeHandler = async (state) =>
+        this.changeHandler = async (state, refreshDevices) =>
         {
             if(state.power != null)
             {

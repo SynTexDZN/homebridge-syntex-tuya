@@ -133,12 +133,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 }
                 else
                 {
-                    accessory.service[1].getState((nothing, state) => {
-
-                        console.log(state);
-
-                        response.write(state != null ? state.toString() : 'Error');
-                    });
+                    accessory.service[1].getState((nothing, state) => response.write(state != null ? state.toString() : 'Error'));
                 }
             }
             else

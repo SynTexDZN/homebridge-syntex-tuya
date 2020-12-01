@@ -22,14 +22,10 @@ function refreshAccessories(accessories)
 
                 console.log(device.data);
 
-                console.log(state);
-
                 for(const accessory of accessories)
                 {
                     if(accessory[1].id == device.id)
                     {
-                        console.log('CHANGE HANDLER', device.id);
-
                         accessory[1].service[1].changeHandler(state, false);
                     }
                 }
