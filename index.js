@@ -122,7 +122,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                             state.brightness = JSON.parse(urlParams.brightness);
                         }
 
-                        accessory.service[1].changeHandler(state);
+                        accessory.service[1].changeHandler(state, true);
                     }
                     else
                     {

@@ -30,7 +30,7 @@ function refreshAccessories(accessories)
                     {
                         console.log('CHANGE HANDLER', device.id);
 
-                        accessory[1].service[1].changeHandler(state);
+                        accessory[1].service[1].changeHandler(state, false);
                     }
                 }
             }
