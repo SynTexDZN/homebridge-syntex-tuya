@@ -14,15 +14,15 @@ module.exports = class SynTexOutletService extends OutletService
 
         this.changeHandler = (state) =>
         {
-            super.setValue('state', state);
-
             this.power = state;
+
+            super.setValue('state', this.power);
 
             DeviceManager.setState(this.id, this.power).then(() => {
 
                 this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
         
-                homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state);
+                homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
 
             }).catch((e) => {
         
@@ -37,7 +37,9 @@ module.exports = class SynTexOutletService extends OutletService
 
             if(state != null)
             {
-                callback(null, state);
+                this.power = state;
+
+                callback(null, this.power);
             }
             else
             {
@@ -45,9 +47,11 @@ module.exports = class SynTexOutletService extends OutletService
 
                     if(state != null)
                     {
-                        this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + state + '] ( ' + this.id + ' )');
+                        this.power = state;
+
+                        this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.power + '] ( ' + this.id + ' )');
                     
-                        super.setValue('state', state);
+                        super.setValue('state', this.power);
                     }
                     /*
                     if(!data.online)
@@ -55,7 +59,7 @@ module.exports = class SynTexOutletService extends OutletService
                         callback(new Error('Offline'));
                     }
                     */
-                    callback(null, state);
+                    callback(null, state != null ? state : false);
             
                 }).catch((e) => {
             
@@ -69,22 +73,22 @@ module.exports = class SynTexOutletService extends OutletService
 
     setState(state, callback)
     {
-        super.setState(state, () => {
+        this.power = state;
 
-            this.power = state;
+        DeviceManager.setState(this.id, this.power).then(() => {
 
-            DeviceManager.setState(this.id, this.power).then(() => {
+            super.setState(state, () => {
 
                 this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
-                
-                callback(null);
-        
-            }).catch((e) => {
-        
-                this.logger.err(e);
-        
-                callback(e);
+            
+                callback();
             });
+            
+        }).catch((e) => {
+    
+            this.logger.err(e);
+    
+            callback(e);
         });
     }
 }

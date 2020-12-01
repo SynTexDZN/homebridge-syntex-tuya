@@ -113,6 +113,11 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     
                     if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, urlParams.value)) != null)
                     {
+                        if(urlParams.brightness != null)
+                        {
+                            state = { power : state, brightness : JSON.parse(urlParams.brightness) };
+                        }
+
                         accessory.service[1].changeHandler(state);
                     }
                     else
