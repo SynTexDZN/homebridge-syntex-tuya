@@ -85,6 +85,8 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
             }.bind(this)).catch((e) => {
 
                 this.logger.err(e);
+
+                setTimeout(() => this.loadAccessories(), 70000);
             });
 
         }.bind(this)).catch((e) => {
@@ -113,9 +115,11 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     
                     if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, urlParams.value)) != null)
                     {
+                        state = { power : state };
+
                         if(urlParams.brightness != null)
                         {
-                            state = { power : state, brightness : JSON.parse(urlParams.brightness) };
+                            state.brightness = JSON.parse(urlParams.brightness);
                         }
 
                         accessory.service[1].changeHandler(state);

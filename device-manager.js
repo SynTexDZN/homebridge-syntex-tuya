@@ -1,6 +1,6 @@
 var logger, tuyaWebAPI;
 
-function refreshAccessories(a)
+function refreshAccessories(accessories)
 {
     return new Promise(resolve => {
 
@@ -12,21 +12,25 @@ function refreshAccessories(a)
 
                 if(device.data.state != null)
                 {
-                    state = JSON.parse(device.data.state);
+                    state = { power : JSON.parse(device.data.state) };
                 }
 
                 if(device.data.brightness != null)
                 {
-                    state = { power : JSON.parse(device.data.state), brightness : JSON.parse(device.data.brightness) / 2.55 };
+                    state.brightness = JSON.parse(device.data.brightness) / 2.55;
                 }
 
                 console.log(device.data);
 
-                for(var i = 0; i < a.length; i++)
+                console.log(state);
+
+                for(const accessory of accessories)
                 {
-                    if(a[i].id == device.id)
+                    if(accessory[1].id == device.id)
                     {
-                        a[i].service[1].changeHandler(state);
+                        console.log('CHANGE HANDLER', device.id);
+
+                        accessory[1].service[1].changeHandler(state);
                     }
                 }
             }

@@ -12,22 +12,28 @@ module.exports = class SynTexOutletService extends OutletService
         
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        this.changeHandler = (state) =>
+        this.changeHandler = async (state) =>
         {
-            this.power = state;
+            if(state.power != null)
+            {
+                var success = true;
 
-            super.setValue('state', this.power);
+                if(refreshDevices)
+                {
+                    success = await DeviceManager.setState(this.id, state.power).catch((e) => this.logger.err(e));
+                }
 
-            DeviceManager.setState(this.id, this.power).then(() => {
+                if(success)
+                {
+                    this.power = state.power;
 
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
-        
-                homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+                    super.setValue('state', this.power);
 
-            }).catch((e) => {
-        
-                this.logger.err(e);
-            });
+                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
+                    
+                    homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+                }
+            }
         };
 	}
 

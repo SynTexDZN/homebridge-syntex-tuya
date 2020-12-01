@@ -12,42 +12,46 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
         
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        this.changeHandler = (state) =>
+        this.changeHandler = async (state, refreshDevices) =>
         {
             if(state.power != null)
             {
-                this.power = state.power;
+                var success = true;
 
-                super.setValue('state', this.power);
+                if(refreshDevices)
+                {
+                    success = await DeviceManager.setState(this.id, state.power).catch((e) => this.logger.err(e));
+                }
 
-                DeviceManager.setState(this.id, this.power).then(() => {
+                if(success)
+                {
+                    this.power = state.power;
+
+                    super.setValue('state', this.power);
 
                     this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-            
+                    
                     homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
-    
-                }).catch((e) => {
-            
-                    this.logger.err(e);
-                });
+                }
             }
 
             if(state.brightness != null)
             {
-                this.brightness = state.brightness;
+                var success = true;
 
-                super.setValue('brightness', this.brightness);
+                if(refreshDevices)
+                {
+                    success = await DeviceManager.setBrightness(this.id, state.brightness).catch((e) => this.logger.err(e));
+                }
 
-                DeviceManager.setBrightness(this.id, this.brightness).then(() => {
+                if(success)
+                {
+                    this.brightness = state.brightness;
 
-                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-            
+                    super.setValue('brightness', this.brightness);
+
                     homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
-    
-                }).catch((e) => {
-            
-                    this.logger.err(e);
-                });
+                }
             }
         };
     }
