@@ -213,43 +213,50 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 
     validateUpdate(mac, letters, state)
     {
-        var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
-        var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-
-        var type = types[letters.indexOf(letters[0].toUpperCase())];
-
-        if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais' || type == 'outlet')
+        try
         {
-            if(state != true && state != false && state != 'true' && state != 'false')
+            var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
+            var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+            var type = types[letters.indexOf(letters[0].toUpperCase())];
+            var parsedState = JSON.parse(state);
+
+            if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais' || type == 'outlet' || type == 'rgb' || type == 'led' || type == 'dimmer')
             {
-                this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+                if(typeof parsedState == 'boolean')
+                {
+                    return state;
+                }
+                else
+                {
+                    this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + parsedState + '] ist keine boolsche Variable! ( ' + mac + ' )');
 
-                return null;
+                    return null;
+                }
             }
-
-            return (state == 'true' || state == true ? true : false);
-        }
-        else if(type === 'light' || type === 'temperature')
-        {
-            if(isNaN(state))
+            else if(type === 'light' || type === 'temperature' || type === 'humidity' || type === 'airquality')
             {
-                this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-            }
+                if(typeof parsedState == 'number')
+                {
+                    return state;
+                }
+                else
+                {
+                    this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + parsedState + '] ist keine numerische Variable! ( ' + mac + ' )');
 
-            return !isNaN(state) ? parseFloat(state) : null;
-        }
-        else if(type === 'humidity' || type === 'airquality')
-        {
-            if(isNaN(state))
+                    return null;
+                }
+            }
+            else
             {
-                this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
+                return parsedState;
             }
-
-            return !isNaN(state) ? parseInt(state) : null;
         }
-        else
+        catch(e)
         {
-            return state;
+            this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+
+            return null;
         }
     }
 }

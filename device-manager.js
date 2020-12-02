@@ -8,16 +8,23 @@ function refreshAccessories(accessories)
                     
             for(const device of devices)
             {
-                var state = device.data.state;
+                var state = { power : device.data.state };
 
-                if(device.data.state != null)
+                try
                 {
-                    state = { power : JSON.parse(device.data.state) };
+                    if(device.data.state != null)
+                    {
+                        state.power = JSON.parse(device.data.state);
+                    }
+
+                    if(device.data.brightness != null)
+                    {
+                        state.brightness = JSON.parse(device.data.brightness) / 2.55;
+                    }
                 }
-
-                if(device.data.brightness != null)
+                catch(e)
                 {
-                    state.brightness = JSON.parse(device.data.brightness) / 2.55;
+                    logger.err(e);
                 }
 
                 console.log(device.data);
