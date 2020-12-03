@@ -35,8 +35,6 @@ module.exports = class DeviceManager
                         logger.err(e);
                     }
 
-                    console.log(device.data);
-
                     for(const accessory of accessories)
                     {
                         if(accessory[1].id == device.id)
