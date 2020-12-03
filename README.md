@@ -28,8 +28,26 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 ```
 
 
+## Update HTTP Devices
+1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
+2. Insert the `Bridge IP` and `Device ID`
+3. For the `New Value` you can type this pattern:
+- For all devices: `true` / `false` ( *outlet, switch, light, dimmable light* )
+- For dimmable lights add `&brightness=`  **New Brightness** ( *has to be a number* )
+
+**Example:**  `http://homebridge.local/devices?id=ABCDEF1234567890&value=true&brightness=100`\
+( *Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example* )
+
+
+## Read HTTP Device Values
+1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device ID**
+2. Insert the `Bridge IP` and `Device ID`
+
+**Example:**  `http://homebridge.local/devices?id=ABCDEF1234567890`\
+( *Reads the value of `ABCDEF1234567890` as example* )
+
+
 ## Currently Supported
-- Switch
-- Outlet
+- Outlets
 - LED Lights
 - Dimmable LED Lights

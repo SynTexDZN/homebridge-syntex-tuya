@@ -1,54 +1,59 @@
-let DeviceManager = require('./device-manager'), WebServer = require('./webserver'), logger = require('./logger');
+let DeviceManager = require('./device-manager');
+
 const TuyaWebApi = require('./tuyawebapi');
-var Service, Characteristic;
-var tuyaWebAPI, restart = true;
-const SynTexSwitchAccessory = require('./accessories/switch'), SynTexBulbAccessory = require('./accessories/bulb'), SynTexDimmerAccessory = require('./accessories/dimmer');
+const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;
+const SynTexUniversalAccessory = require('./src/universal');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
 
+var tuyaWebAPI, restart = true;
+
 module.exports = (homebridge) => {
 
-    Service = homebridge.hap.Service;
-    Characteristic = homebridge.hap.Characteristic;
-    
-    homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform);
+    homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform, true);
 };
 
-function SynTexTuyaPlatform(log, sconfig, api)
+class SynTexTuyaPlatform extends SynTexDynamicPlatform
 {
-    this.username = sconfig['username'];
-    this.password = sconfig['password'];
-    this.countryCode = sconfig['countryCode'] || '49';
-    this.platform = sconfig['plat'] || 'smart_life';
-    this.pollingInterval = Math.max((sconfig['pollingInterval'] || 610), 610);
-    this.defaults = sconfig['defaults'] || [];
-    
-    this.cacheDirectory = sconfig['cache_directory'] || './SynTex';
-    this.logDirectory = sconfig['log_directory'] || './SynTex/log';
-    this.port = sconfig['port'] || 1713;
-    
-    logger = new logger(pluginName, this.logDirectory, api.user.storagePath());
-    WebServer = new WebServer(pluginName, logger, this.port, false);
+    constructor(log, config, api)
+    {
+        super(config, api, pluginID, pluginName);
 
-    this.api = api;
+        this.username = config['username'];
+        this.password = config['password'];
+        this.countryCode = config['countryCode'] || '49';
+        this.platform = config['plat'] || 'smart_life';
+        this.pollingInterval = Math.max((config['pollingInterval'] || 610), 610);
+        this.defaults = config['defaults'] || [];
+        
+        this.logDirectory = config['log_directory'] || './SynTex/log';
+        this.port = config['port'] || 1713;
 
-    tuyaWebAPI = new TuyaWebApi(
-        this.username,
-        this.password,
-        this.countryCode,
-        this.platform,
-        logger
-    );
+        if(this.api && this.logger)
+        {
+            this.api.on('didFinishLaunching', () => {
 
-    DeviceManager.SETUP(logger, tuyaWebAPI);
+                tuyaWebAPI = new TuyaWebApi(
+                    this.username,
+                    this.password,
+                    this.countryCode,
+                    this.platform,
+                    this.logger
+                );
 
-    restart = false;
-}
+                DeviceManager = new DeviceManager(this.logger, tuyaWebAPI);
 
-SynTexTuyaPlatform.prototype = {
-    
-    accessories : function(callback)
+                this.initWebServer();
+
+                this.loadAccessories();
+
+                restart = false;
+            });
+        }
+    }
+
+    loadAccessories()
     {
         tuyaWebAPI.getOrRefreshToken().then(function(token) {
 
@@ -56,218 +61,199 @@ SynTexTuyaPlatform.prototype = {
 
             tuyaWebAPI.discoverDevices().then(function(devices) {
                 
-                var accessories = [];
-
                 for(const device of devices)
                 {
-                    if(device.dev_type == 'switch' || device.dev_type == 'outlet')
-                    {
-                        var accessory = new SynTexSwitchAccessory(device, { Service, Characteristic, DeviceManager, logger });
+                    var type = device.dev_type;
 
-                        accessories.push(accessory);
-                    }
-                    else if(device.dev_type == 'dimmer')
+                    if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer')
                     {
-                        var accessory = new SynTexDimmerAccessory(device, { Service, Characteristic, DeviceManager, logger });
+                        const homebridgeAccessory = this.getAccessory(device.id);
 
-                        accessories.push(accessory);
-                    }
-                    else if(device.dev_type == 'light')
-                    {
-                        var accessory = new SynTexDimmerAccessory(device, { Service, Characteristic, DeviceManager, logger });
-
-                        accessories.push(accessory);
+                        this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : this.manufacturer, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager }));
                     }
                 }
 
+                DeviceManager.refreshAccessories(this.accessories);
+
                 this.refreshInterval = setInterval(() => {
 
-                    DeviceManager.refreshAccessories(accessories);
+                    DeviceManager.refreshAccessories(this.accessories);
     
                 }, this.pollingInterval * 1000);
 
-                DeviceManager.refreshAccessories(accessories);
-
-                callback(accessories);
-
-                WebServer.addPage('/devices', async (response, urlParams) => {
-	
-                    if(urlParams.id != null)
-                    {
-                        var accessory = null;
-            
-                        for(var i = 0; i < accessories.length; i++)
-                        {
-                            if(accessories[i].id == urlParams.id)
-                            {
-                                accessory = accessories[i];
-                            }
-                        }
-            
-                        if(accessory == null)
-                        {
-                            logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
-            
-                            response.write('Error');
-                        }
-                        else if(urlParams.value != null)
-                        {
-                            var state = null;
-	
-                            if((state = validateUpdate(urlParams.id, accessory.letters, urlParams.value)) != null)
-                            {
-                                DeviceManager.setDevice(urlParams.id, state); // TODO : Concat RGB Light Services
-
-                                accessory.changeHandler(state);
-                            }
-                            else
-                            {
-                                logger.log('error', urlParams.id, accessory.letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
-                            }
-            
-                            response.write(state != null ? 'Success' : 'Error');
-                        }
-                        else
-                        {
-                            var state = await DeviceManager.getDevice(urlParams.id);
-            
-                            response.write(state != null ? state.toString() : 'Error');
-                        }
-                    }
-                    else
-                    {
-                        response.write('Error');
-                    }
-            
-                    response.end();
-                });
-
-                WebServer.addPage('/accessories', (response) => {
-
-                    var a = [];
-
-                    for(var i = 0; i < accessories.length; i++)
-                    {
-                        a[i] = {
-                            mac: accessories[i].id,
-                            name: accessories[i].name,
-                            services: accessories[i].services,
-                            version: '99.99.99',
-                            plugin: pluginName
-                        };
-                    }
-
-                    response.write(JSON.stringify(a));
-                    response.end();
-                });
-
-                WebServer.addPage('/serverside/version', (response) => {
-
-                    response.write(require('./package.json').version);
-                    response.end();
-                });
-        
-                WebServer.addPage('/serverside/check-restart', (response) => {
-        
-                    response.write(restart.toString());
-                    response.end();
-                });
-        
-                WebServer.addPage('/serverside/update', (response, urlParams) => {
-        
-                    var version = urlParams.version != null ? urlParams.version : 'latest';
-        
-                    const { exec } = require('child_process');
-                    
-                    exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
-        
-                        try
-                        {
-                            if(error || stderr.includes('ERR!'))
-                            {
-                                logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
-                            }
-                            else
-                            {
-                                logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
-        
-                                restart = true;
-        
-                                logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-        
-                                exec('sudo systemctl restart homebridge');
-                            }
-        
-                            response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                            response.end();
-                        }
-                        catch(e)
-                        {
-                            logger.err(e);
-                        }
-                    });
-                });
-
             }.bind(this)).catch((e) => {
 
-                logger.err(e);
+                this.logger.err(e);
+
+                setTimeout(() => this.loadAccessories(), 70 * 1000);
             });
 
         }.bind(this)).catch((e) => {
 
-            logger.err(e);
+            this.logger.err(e);
+
+            setTimeout(() => this.loadAccessories(), 70 * 1000);
         });
     }
-}
 
-function validateUpdate(mac, letters, state)
-{
-    var type = letterToType(letters[0]);
-
-    if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais')
+    initWebServer()
     {
-        if(state != true && state != false && state != 'true' && state != 'false')
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
+        this.WebServer.addPage('/devices', async (response, urlParams) => {
 
-            return null;
+            if(urlParams.id != null)
+            {
+                var accessory = this.getAccessory(urlParams.id);
+    
+                if(accessory == null)
+                {
+                    this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
+    
+                    response.write('Error');
+                }
+                else if(urlParams.value != null)
+                {
+                    var state = { power : urlParams.value };
+
+                    if(urlParams.brightness != null)
+                    {
+                        state.brightness = urlParams.brightness;
+                    }
+    
+                    if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, state)) != null)
+                    {
+                        accessory.service[1].changeHandler(state, true);
+                    }
+                    else
+                    {
+                        this.logger.log('error', urlParams.id, accessory.service[1].letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.id + ' )');
+                    }
+    
+                    response.write(state != null ? 'Success' : 'Error');
+                }
+                else
+                {
+                    var state = accessory.homebridgeAccessory.context.data[accessory.service[1].letters];
+
+                    response.write(state != null ? JSON.stringify(state) : 'Error');
+                }
+            }
+            else
+            {
+                response.write('Error');
+            }
+    
+            response.end();
+        });
+    
+        this.WebServer.addPage('/accessories', (response) => {
+    
+            var a = [];
+
+            for(const accessory of this.accessories)
+            {
+                a.push({
+                    mac: accessory[1].id,
+                    name: accessory[1].name,
+                    services: accessory[1].services,
+                    version: '99.99.99',
+                    plugin: pluginName
+                });
+            }
+    
+            response.write(JSON.stringify(a));
+            response.end();
+        });
+    
+        this.WebServer.addPage('/serverside/version', (response) => {
+    
+            response.write(require('./package.json').version);
+            response.end();
+        });
+    
+        this.WebServer.addPage('/serverside/check-restart', (response) => {
+    
+            response.write(restart.toString());
+            response.end();
+        });
+    
+        this.WebServer.addPage('/serverside/update', (response, urlParams) => {
+    
+            var version = urlParams.version != null ? urlParams.version : 'latest';
+    
+            const { exec } = require('child_process');
+            
+            exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
+    
+                response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
+                response.end();
+
+                if(error || (stderr && stderr.includes('ERR!')))
+                {
+                    this.logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
+                }
+                else
+                {
+                    this.logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
+
+                    restart = true;
+
+                    this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                    exec('sudo systemctl restart homebridge');
+                }
+            });
+        });
+    }
+
+    validateUpdate(id, letters, state)
+    {
+        var data = {
+            A : { type : 'contact', format : 'boolean' },
+            B : { type : 'motion', format : 'boolean' },
+            C : { type : 'temperature', format : 'number' },
+            D : { type : 'humidity', format : 'number' },
+            E : { type : 'rain', format : 'boolean' },
+            F : { type : 'light', format : 'number' },
+            0 : { type : 'occupancy', format : 'boolean' },
+            1 : { type : 'smoke', format : 'boolean' },
+            2 : { type : 'airquality', format : 'number' },
+            3 : { type : 'rgb', format : { power : 'boolean', brightness : 'number', saturation : 'number', hue : 'number' } },
+            4 : { type : 'switch', format : 'boolean' },
+            5 : { type : 'relais', format : 'boolean' },
+            6 : { type : 'statelessswitch', format : 'number' },
+            7 : { type : 'outlet', format : 'boolean' },
+            8 : { type : 'led', format : 'boolean' },
+            9 : { type : 'dimmer', format : { power : 'boolean', brightness : 'number' } }
+        };
+
+        for(const i in state)
+        {
+            try
+            {
+                state[i] = JSON.parse(state[i]);
+            }
+            catch(e)
+            {
+                this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] konnte nicht gelesen werden! ( ' + id + ' )');
+
+                return null;
+            }
+
+            var format = data[letters[0].toUpperCase()].format;
+
+            if(format instanceof Object)
+            {
+                format = format[i];
+            }
+
+            if(typeof state[i] != format)
+            {
+                this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] ist keine ' + (format == 'boolean' ? 'boolsche' : format == 'number' ? 'numerische' : 'korrekte') + ' Variable! ( ' + id + ' )');
+
+                return null;
+            }
         }
 
-        return (state == 'true' || state == true ? true : false);
-    }
-    else if(type === 'light' || type === 'temperature')
-    {
-        if(isNaN(state))
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-        }
-
-        return !isNaN(state) ? parseFloat(state) : null;
-    }
-    else if(type === 'humidity' || type === 'airquality')
-    {
-        if(isNaN(state))
-        {
-            logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine numerische Variable! ( ' + mac + ' )');
-        }
-
-        return !isNaN(state) ? parseInt(state) : null;
-    }
-    else
-    {
         return state;
     }
-}
-
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
-
-function letterToType(letter)
-{
-    return types[letters.indexOf(letter.toUpperCase())];
-}
-
-function typeToLetter(type)
-{
-    return letters[types.indexOf(type.toLowerCase())];
 }
