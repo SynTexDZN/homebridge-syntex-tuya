@@ -1,36 +1,34 @@
 let DeviceManager = require('./device-manager');
+
 const TuyaWebApi = require('./tuyawebapi');
-var tuyaWebAPI, restart = true;
 const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;
 const SynTexUniversalAccessory = require('./src/universal');
-const { parse } = require('path');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
 
-module.exports = (homebridge) => {
+var tuyaWebAPI, restart = true;
 
-    Service = homebridge.hap.Service;
-    Characteristic = homebridge.hap.Characteristic;
+module.exports = (homebridge) => {
 
     homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform, true);
 };
 
 class SynTexTuyaPlatform extends SynTexDynamicPlatform
 {
-    constructor(log, sconfig, api)
+    constructor(log, config, api)
     {
-        super(sconfig, api, pluginID, pluginName);
+        super(config, api, pluginID, pluginName);
 
-        this.username = sconfig['username'];
-        this.password = sconfig['password'];
-        this.countryCode = sconfig['countryCode'] || '49';
-        this.platform = sconfig['plat'] || 'smart_life';
-        this.pollingInterval = Math.max((sconfig['pollingInterval'] || 610), 610);
-        this.defaults = sconfig['defaults'] || [];
+        this.username = config['username'];
+        this.password = config['password'];
+        this.countryCode = config['countryCode'] || '49';
+        this.platform = config['plat'] || 'smart_life';
+        this.pollingInterval = Math.max((config['pollingInterval'] || 610), 610);
+        this.defaults = config['defaults'] || [];
         
-        this.logDirectory = sconfig['log_directory'] || './SynTex/log';
-        this.port = sconfig['port'] || 1713;
+        this.logDirectory = config['log_directory'] || './SynTex/log';
+        this.port = config['port'] || 1713;
 
         if(this.api && this.logger)
         {
@@ -132,7 +130,9 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 }
                 else
                 {
-                    accessory.service[1].getState((nothing, state) => response.write(state != null ? state.toString() : 'Error'));
+                    // TODO : Send all States
+
+                    accessory.service[1].getState((nothing, state) => response.write(state != null ? JSON.stringify(state) : 'Error'));
                 }
             }
             else
@@ -182,29 +182,22 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
             
             exec('sudo npm install ' + pluginID + '@' + version + ' -g', (error, stdout, stderr) => {
     
-                try
+                response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
+                response.end();
+
+                if(error || (stderr && stderr.includes('ERR!')))
                 {
-                    if(error || stderr.includes('ERR!'))
-                    {
-                        this.logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
-                    }
-                    else
-                    {
-                        this.logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
-    
-                        restart = true;
-    
-                        this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-    
-                        exec('sudo systemctl restart homebridge');
-                    }
-    
-                    response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                    response.end();
+                    this.logger.log('warn', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' konnte nicht aktualisiert werden! ' + (error || stderr));
                 }
-                catch(e)
+                else
                 {
-                    this.logger.err(e);
+                    this.logger.log('success', 'bridge', 'Bridge', 'Das Plugin ' + pluginName + ' wurde auf die Version [' + version + '] aktualisiert!');
+
+                    restart = true;
+
+                    this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                    exec('sudo systemctl restart homebridge');
                 }
             });
         });
