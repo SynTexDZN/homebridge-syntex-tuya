@@ -3,6 +3,7 @@ const TuyaWebApi = require('./tuyawebapi');
 var tuyaWebAPI, restart = true;
 const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;
 const SynTexUniversalAccessory = require('./src/universal');
+const { parse } = require('path');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
@@ -111,22 +112,20 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 }
                 else if(urlParams.value != null)
                 {
-                    var state = null;
-    
-                    if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, urlParams.value)) != null)
+                    var state = { power : urlParams.value };
+
+                    if(urlParams.brightness != null)
                     {
-                        state = { power : state };
-
-                        if(urlParams.brightness != null)
-                        {
-                            state.brightness = JSON.parse(urlParams.brightness);
-                        }
-
+                        state.brightness = urlParams.brightness;
+                    }
+    
+                    if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, state)) != null)
+                    {
                         accessory.service[1].changeHandler(state, true);
                     }
                     else
                     {
-                        this.logger.log('error', urlParams.id, accessory.service[1].letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.mac + ' )');
+                        this.logger.log('error', urlParams.id, accessory.service[1].letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.id + ' )');
                     }
     
                     response.write(state != null ? 'Success' : 'Error');
@@ -211,52 +210,55 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
         });
     }
 
-    validateUpdate(mac, letters, state)
+    validateUpdate(id, letters, state)
     {
-        try
+        var data = {
+            A : { type : 'contact', format : 'boolean' },
+            B : { type : 'motion', format : 'boolean' },
+            C : { type : 'temperature', format : 'number' },
+            D : { type : 'humidity', format : 'number' },
+            E : { type : 'rain', format : 'boolean' },
+            F : { type : 'light', format : 'number' },
+            0 : { type : 'occupancy', format : 'boolean' },
+            1 : { type : 'smoke', format : 'boolean' },
+            2 : { type : 'airquality', format : 'number' },
+            3 : { type : 'rgb', format : { power : 'boolean', brightness : 'number', saturation : 'number', hue : 'number' } },
+            4 : { type : 'switch', format : 'boolean' },
+            5 : { type : 'relais', format : 'boolean' },
+            6 : { type : 'statelessswitch', format : 'number' },
+            7 : { type : 'outlet', format : 'boolean' },
+            8 : { type : 'led', format : 'boolean' },
+            9 : { type : 'dimmer', format : { power : 'boolean', brightness : 'number' } }
+        };
+
+        for(const i in state)
         {
-            var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
-            var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-
-            var type = types[letters.indexOf(letters[0].toUpperCase())];
-            var parsedState = JSON.parse(state);
-
-            if(type === 'motion' || type === 'rain' || type === 'smoke' || type === 'occupancy' || type === 'contact' || type == 'switch' || type == 'relais' || type == 'outlet' || type == 'rgb' || type == 'led' || type == 'dimmer')
+            try
             {
-                if(typeof parsedState == 'boolean')
-                {
-                    return state;
-                }
-                else
-                {
-                    this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + parsedState + '] ist keine boolsche Variable! ( ' + mac + ' )');
-
-                    return null;
-                }
+                state[i] = JSON.parse(state[i]);
             }
-            else if(type === 'light' || type === 'temperature' || type === 'humidity' || type === 'airquality')
+            catch(e)
             {
-                if(typeof parsedState == 'number')
-                {
-                    return state;
-                }
-                else
-                {
-                    this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + parsedState + '] ist keine numerische Variable! ( ' + mac + ' )');
+                this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] konnte nicht gelesen werden! ( ' + id + ' )');
 
-                    return null;
-                }
+                return null;
             }
-            else
+
+            var format = data[letters[0].toUpperCase()].format;
+
+            if(format instanceof Object)
             {
-                return parsedState;
+                format = format[i];
+            }
+
+            if(typeof state[i] != format)
+            {
+                this.logger.log('warn', id, letters, 'Konvertierungsfehler: [' + state[i] + '] ist keine ' + (format == 'boolean' ? 'boolsche' : format == 'number' ? 'numerische' : 'korrekte') + ' Variable! ( ' + id + ' )');
+
+                return null;
             }
         }
-        catch(e)
-        {
-            this.logger.log('warn', mac, letters, 'Konvertierungsfehler: [' + state + '] ist keine boolsche Variable! ( ' + mac + ' )');
 
-            return null;
-        }
+        return state;
     }
 }

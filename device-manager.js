@@ -60,7 +60,7 @@ function setState(id, value)
         }).catch((e) => {
     
             logger.err(e);
-    
+
             resolve(false);
         });
     });

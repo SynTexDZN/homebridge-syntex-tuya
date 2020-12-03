@@ -20,7 +20,7 @@ module.exports = class SynTexOutletService extends OutletService
 
                 if(refreshDevices)
                 {
-                    success = await DeviceManager.setState(this.id, state.power).catch((e) => this.logger.err(e));
+                    success = await DeviceManager.setState(this.id, state.power);
                 }
 
                 if(success)
@@ -66,12 +66,6 @@ module.exports = class SynTexOutletService extends OutletService
                     }
                     */
                     callback(null, state != null ? state : false);
-            
-                }).catch((e) => {
-            
-                    this.logger.err(e);
-            
-                    callback(e);
                 });
             }
         });
@@ -81,20 +75,17 @@ module.exports = class SynTexOutletService extends OutletService
     {
         this.power = state;
 
-        DeviceManager.setState(this.id, this.power).then(() => {
+        DeviceManager.setState(this.id, this.power).then((success) => {
 
-            super.setState(state, () => {
+            if(success)
+            {
+                super.setState(state, () => {
 
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
-            
-                callback();
-            });
-            
-        }).catch((e) => {
-    
-            this.logger.err(e);
-    
-            callback(e);
+                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
+                
+                    callback();
+                });
+            }
         });
     }
 }

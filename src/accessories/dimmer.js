@@ -20,7 +20,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
                 if(refreshDevices)
                 {
-                    success = await DeviceManager.setState(this.id, state.power).catch((e) => this.logger.err(e));
+                    success = await DeviceManager.setState(this.id, state.power);
                 }
 
                 if(success)
@@ -41,7 +41,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
                 if(refreshDevices)
                 {
-                    success = await DeviceManager.setBrightness(this.id, state.brightness).catch((e) => this.logger.err(e));
+                    success = await DeviceManager.setBrightness(this.id, state.brightness);
                 }
 
                 if(success)
@@ -85,12 +85,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
                     }
                     */
                     callback(null, state != null ? state : false);
-            
-                }).catch((e) => {
-            
-                    this.logger.err(e);
-            
-                    callback(e);
                 });
             }
         });
@@ -100,20 +94,17 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
     {
         this.power = state;
 
-        DeviceManager.setState(this.id, this.power).then(() => {
+        DeviceManager.setState(this.id, this.power).then((success) => {
 
-            super.setState(state, () => {
+            if(success)
+            {
+                super.setState(state, () => {
 
-                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-            
-                callback();
-            });
-    
-        }).catch((e) => {
-    
-            this.logger.err(e);
-    
-            callback(e);
+                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+                
+                    callback();
+                });
+            }
         });
     }
 
@@ -146,12 +137,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
                     }
                     */
                     callback(null, state != null ? state : 50);
-
-                }).catch((e) => {
-
-                    this.logger.err(e);
-
-                    callback(e);
                 });
             }
         });
@@ -161,18 +146,17 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
     {
         this.brightness = state;
 
-        DeviceManager.setBrightness(this.id, this.brightness).then(() => {
+        DeviceManager.setBrightness(this.id, this.brightness).then((success) => {
 
-            super.setBrightness(state, () => {
+            if(success)
+            {
+                super.setBrightness(state, () => {
 
-                //this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-    
-                callback();
-            });
-    
-        }).catch((e) => {
-    
-            this.logger.err(e);
+                    //this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+        
+                    callback();
+                });
+            }
         });
     }
 }
