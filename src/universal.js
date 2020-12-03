@@ -51,9 +51,4 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
     {
         return 'Tuya ' + (this.services == 'light' ? 'Light Bulb' : this.services == 'switch' ? 'Outlet' : 'Accessory');
     }
-
-    getVersion()
-    {
-        return '1.0.9';
-    }
 };

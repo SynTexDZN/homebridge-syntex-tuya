@@ -1,133 +1,127 @@
 var logger, tuyaWebAPI;
 
-function refreshAccessories(accessories)
+module.exports = class DeviceManager
 {
-    return new Promise(resolve => {
+    constructor(log, api)
+    {
+        logger = log;
+        tuyaWebAPI = api;
+    }
 
-        tuyaWebAPI.getAllDeviceStates().then((devices) => {
-                    
-            for(const device of devices)
-            {
-                var state = { power : device.data.state };
+    refreshAccessories(accessories)
+    {
+        return new Promise(resolve => {
 
-                try
+            tuyaWebAPI.getAllDeviceStates().then((devices) => {
+                        
+                for(const device of devices)
                 {
-                    if(device.data.state != null)
+                    var state = { power : device.data.state };
+
+                    try
                     {
-                        state.power = JSON.parse(device.data.state);
+                        if(device.data.state != null)
+                        {
+                            state.power = JSON.parse(device.data.state);
+                        }
+
+                        if(device.data.brightness != null)
+                        {
+                            state.brightness = JSON.parse(device.data.brightness) / 2.55;
+                        }
+                    }
+                    catch(e)
+                    {
+                        logger.err(e);
                     }
 
-                    if(device.data.brightness != null)
+                    console.log(device.data);
+
+                    for(const accessory of accessories)
                     {
-                        state.brightness = JSON.parse(device.data.brightness) / 2.55;
+                        if(accessory[1].id == device.id)
+                        {
+                            accessory[1].service[1].changeHandler(state, false);
+                        }
                     }
                 }
-                catch(e)
-                {
-                    logger.err(e);
-                }
 
-                console.log(device.data);
+                resolve(true);
 
-                for(const accessory of accessories)
-                {
-                    if(accessory[1].id == device.id)
-                    {
-                        accessory[1].service[1].changeHandler(state, false);
-                    }
-                }
-            }
+            }).catch((e) => {
 
-            resolve(true);
+                logger.err(e);
 
-        }).catch((e) => {
-
-            logger.err(e);
-
-            resolve(false);
+                resolve(false);
+            });
         });
-    });
-}
+    }
 
-function setState(id, value)
-{
-    return new Promise((resolve) => {
+    setState(id, value)
+    {
+        return new Promise((resolve) => {
 
-        tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value ? 1 : 0 }).then(() => {
+            tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value ? 1 : 0 }).then(() => {
 
-            resolve(true);
-    
-        }).catch((e) => {
-    
-            logger.err(e);
+                resolve(true);
+        
+            }).catch((e) => {
+        
+                logger.err(e);
 
-            resolve(false);
+                resolve(false);
+            });
         });
-    });
-}
+    }
 
-function setBrightness(id, value)
-{
-    return new Promise((resolve) => {
+    setBrightness(id, value)
+    {
+        return new Promise((resolve) => {
 
-        tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value }).then(() => {
+            tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value }).then(() => {
 
-            resolve(true);
-    
-        }).catch((e) => {
-    
-            logger.err(e);
-    
-            resolve(false);
+                resolve(true);
+        
+            }).catch((e) => {
+        
+                logger.err(e);
+        
+                resolve(false);
+            });
         });
-    });
-}
+    }
 
-function getState(id)
-{
-    return new Promise((resolve) => {
+    getState(id)
+    {
+        return new Promise((resolve) => {
 
-        tuyaWebAPI.getDeviceState(id).then((data) => {
-            
-            resolve(data != null ? data.state : null);
-    
-        }).catch((e) => {
-    
-            logger.err(e);
-    
-            resolve(null);
+            tuyaWebAPI.getDeviceState(id).then((data) => {
+                
+                resolve(data != null ? data.state : null);
+        
+            }).catch((e) => {
+        
+                logger.err(e);
+        
+                resolve(null);
+            });
         });
-    });
-}
+    }
 
-function getBrightness(id)
-{
-    return new Promise((resolve) => {
+    getBrightness(id)
+    {
+        return new Promise((resolve) => {
 
-        tuyaWebAPI.getDeviceState(id).then((data) => {
-            
-            resolve(data != null ? data.brightness / 2.55 : null);
-    
-        }).catch((e) => {
-    
-            logger.err(e);
-    
-            resolve(null);
+            tuyaWebAPI.getDeviceState(id).then((data) => {
+                
+                resolve(data != null ? data.brightness / 2.55 : null);
+        
+            }).catch((e) => {
+        
+                logger.err(e);
+        
+                resolve(null);
+            });
         });
-    });
+    }
 }
-
-function SETUP(log, api)
-{
-    logger = log;
-    tuyaWebAPI = api;
-}
-
-module.exports = {
-    getState,
-    getBrightness,
-    setState,
-    setBrightness,
-    refreshAccessories,
-    SETUP
-};

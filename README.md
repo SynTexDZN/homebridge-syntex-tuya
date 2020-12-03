@@ -29,7 +29,6 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 
 
 ## Currently Supported
-- Switch
-- Outlet
+- Outlets
 - LED Lights
 - Dimmable LED Lights

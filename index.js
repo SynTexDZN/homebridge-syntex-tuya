@@ -42,7 +42,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                     this.logger
                 );
 
-                DeviceManager.SETUP(this.logger, tuyaWebAPI);
+                DeviceManager = new DeviceManager(this.logger, tuyaWebAPI);
 
                 this.initWebServer();
 
@@ -73,24 +73,26 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                     }
                 }
 
+                DeviceManager.refreshAccessories(this.accessories);
+
                 this.refreshInterval = setInterval(() => {
 
                     DeviceManager.refreshAccessories(this.accessories);
     
                 }, this.pollingInterval * 1000);
 
-                DeviceManager.refreshAccessories(this.accessories);
-
             }.bind(this)).catch((e) => {
 
                 this.logger.err(e);
 
-                setTimeout(() => this.loadAccessories(), 70000);
+                setTimeout(() => this.loadAccessories(), 70 * 1000);
             });
 
         }.bind(this)).catch((e) => {
 
             this.logger.err(e);
+
+            setTimeout(() => this.loadAccessories(), 70 * 1000);
         });
     }
 
@@ -131,6 +133,10 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 else
                 {
                     // TODO : Send all States
+
+                    console.log(accessory.context);
+
+                    console.log(accessory.context.data[accessory.service[1].letters]);
 
                     accessory.service[1].getState((nothing, state) => response.write(state != null ? JSON.stringify(state) : 'Error'));
                 }
