@@ -29,8 +29,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
                     super.setValue('state', this.power);
 
-                    this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-                    
                     homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
                 }
             }
@@ -52,6 +50,11 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
                     homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
                 }
+            }
+
+            if(success)
+            {
+                this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
             }
         };
     }
@@ -78,12 +81,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
                     
                         super.setValue('state', this.power);
                     }
-                    /*
-                    if(!data.online)
-                    {
-                        callback(new Error('Offline'));
-                    }
-                    */
+                    
                     callback(null, state != null ? state : false);
                 });
             }
@@ -104,6 +102,10 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
                 
                     callback();
                 });
+            }
+            else
+            {
+                callback(new Error('Offline'));
             }
         });
     }
@@ -126,16 +128,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
                     {
                         this.brightness = state;
 
-                        //this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-                    
                         super.setValue('brightness', this.brightness);
                     }
-                    /*
-                    if(!data.online)
-                    {
-                        callback(new Error('Offline'));
-                    }
-                    */
+                    
                     callback(null, state != null ? state : 50);
                 });
             }
@@ -152,10 +147,12 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
             {
                 super.setBrightness(state, () => {
 
-                    //this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-        
                     callback();
                 });
+            }
+            else
+            {
+                callback(new Error('Offline'));
             }
         });
     }

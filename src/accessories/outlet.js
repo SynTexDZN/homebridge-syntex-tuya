@@ -12,6 +12,8 @@ module.exports = class SynTexOutletService extends OutletService
         
         super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+        console.log(this.letters);
+
         this.changeHandler = async (state, refreshDevices) =>
         {
             if(state.power != null)
@@ -59,12 +61,7 @@ module.exports = class SynTexOutletService extends OutletService
                     
                         super.setValue('state', this.power);
                     }
-                    /*
-                    if(!data.online)
-                    {
-                        callback(new Error('Offline'));
-                    }
-                    */
+                    
                     callback(null, state != null ? state : false);
                 });
             }
@@ -85,6 +82,10 @@ module.exports = class SynTexOutletService extends OutletService
                 
                     callback();
                 });
+            }
+            else
+            {
+                callback(new Error('Offline'));
             }
         });
     }

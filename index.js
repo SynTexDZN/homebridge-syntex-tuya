@@ -132,13 +132,9 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 }
                 else
                 {
-                    // TODO : Send all States
+                    var state = accessory.homebridgeAccessory.context.data[accessory.service[1].letters];
 
-                    console.log(accessory.context);
-
-                    console.log(accessory.context.data[accessory.service[1].letters]);
-
-                    accessory.service[1].getState((nothing, state) => response.write(state != null ? JSON.stringify(state) : 'Error'));
+                    response.write(state != null ? JSON.stringify(state) : 'Error');
                 }
             }
             else
