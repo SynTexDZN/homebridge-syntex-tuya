@@ -61,42 +61,42 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
     getState(callback)
     {
-        super.getState((state) => {
+        super.getState((value) => {
 
-            if(state != null)
+            if(value != null)
             {
-                this.power = state;
+                this.power = value;
 
                 callback(null, this.power);
             }
             else
             {
-                DeviceManager.getState(this.id).then((state) => {
+                DeviceManager.getState(this.id).then((value) => {
 
-                    if(state != null)
+                    if(value != null)
                     {
-                        this.power = state;
+                        this.power = value;
 
                         this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
                     
                         super.setValue('state', this.power);
                     }
                     
-                    callback(null, state != null ? state : false);
+                    callback(null, value != null ? value : false);
                 });
             }
         });
     }
 
-    setState(state, callback)
+    setState(value, callback)
     {
-        this.power = state;
+        this.power = value;
 
         DeviceManager.setState(this.id, this.power).then((success) => {
 
             if(success)
             {
-                super.setState(state, () => {
+                super.setState(value, () => {
 
                     this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
                 
@@ -112,40 +112,40 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
     getBrightness(callback)
     {
-        super.getBrightness((state) => {
+        super.getBrightness((value) => {
 
-            if(state != null)
+            if(value != null)
             {
-                this.brightness = state;
+                this.brightness = value;
 
                 callback(null, this.brightness);
             }
             else
             {
-                DeviceManager.getBrightness(this.id).then((state) => {
+                DeviceManager.getBrightness(this.id).then((value) => {
 
-                    if(state != null)
+                    if(value != null)
                     {
-                        this.brightness = state;
+                        this.brightness = value;
 
                         super.setValue('brightness', this.brightness);
                     }
                     
-                    callback(null, state != null ? state : 50);
+                    callback(null, value != null ? value : 50);
                 });
             }
         });
     }
 
-    setBrightness(state, callback)
+    setBrightness(value, callback)
     {
-        this.brightness = state;
+        this.brightness = value;
 
         DeviceManager.setBrightness(this.id, this.brightness).then((success) => {
 
             if(success)
             {
-                super.setBrightness(state, () => {
+                super.setBrightness(value, () => {
 
                     callback();
                 });
