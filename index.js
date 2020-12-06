@@ -27,9 +27,6 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
         this.pollingInterval = Math.max((config['pollingInterval'] || 610), 610);
         this.defaults = config['defaults'] || [];
         
-        this.logDirectory = config['log_directory'] || './SynTex/log';
-        this.port = config['port'] || 1713;
-
         if(this.api && this.logger)
         {
             this.api.on('didFinishLaunching', () => {
