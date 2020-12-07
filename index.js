@@ -122,7 +122,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                     }
                     else
                     {
-                        this.logger.log('error', urlParams.id, accessory.service[1].letters, '[' + urlParams.value + '] ist kein gültiger Wert! ( ' + urlParams.id + ' )');
+                        this.logger.log('error', urlParams.id, accessory.service[1].letters, '[' + accessory.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
                     }
     
                     response.write(state != null ? 'Success' : 'Error');
