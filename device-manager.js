@@ -55,6 +55,40 @@ module.exports = class DeviceManager
         });
     }
 
+    getState(id)
+    {
+        return new Promise((resolve) => {
+
+            tuyaWebAPI.getDeviceState(id).then((data) => {
+                
+                resolve(data != null ? JSON.parse(data.state) : null);
+        
+            }).catch((e) => {
+        
+                logger.err(e);
+        
+                resolve(null);
+            });
+        });
+    }
+
+    getBrightness(id)
+    {
+        return new Promise((resolve) => {
+
+            tuyaWebAPI.getDeviceState(id).then((data) => {
+                
+                resolve(data != null ? JSON.parse(data.brightness) / 2.55 : null);
+        
+            }).catch((e) => {
+        
+                logger.err(e);
+        
+                resolve(null);
+            });
+        });
+    }
+
     setState(id, value)
     {
         return new Promise((resolve) => {
@@ -85,40 +119,6 @@ module.exports = class DeviceManager
                 logger.err(e);
         
                 resolve(false);
-            });
-        });
-    }
-
-    getState(id)
-    {
-        return new Promise((resolve) => {
-
-            tuyaWebAPI.getDeviceState(id).then((data) => {
-                
-                resolve(data != null ? data.state : null);
-        
-            }).catch((e) => {
-        
-                logger.err(e);
-        
-                resolve(null);
-            });
-        });
-    }
-
-    getBrightness(id)
-    {
-        return new Promise((resolve) => {
-
-            tuyaWebAPI.getDeviceState(id).then((data) => {
-                
-                resolve(data != null ? data.brightness / 2.55 : null);
-        
-            }).catch((e) => {
-        
-                logger.err(e);
-        
-                resolve(null);
             });
         });
     }
