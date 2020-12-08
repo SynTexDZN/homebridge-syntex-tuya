@@ -39,7 +39,7 @@ module.exports = class DeviceManager
                     {
                         if(accessory[1].id == device.id)
                         {
-                            accessory[1].service[1].changeHandler(state, false);
+                            accessory[1].service[1].updateState(state);
                         }
                     }
                 }

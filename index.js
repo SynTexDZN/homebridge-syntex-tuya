@@ -118,7 +118,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     
                     if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, state)) != null)
                     {
-                        accessory.service[1].changeHandler(state, true);
+                        accessory.service[1].changeHandler(state);
                     }
                     else
                     {

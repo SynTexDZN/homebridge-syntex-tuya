@@ -156,4 +156,35 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
             }
         });
     }
+
+    updateState(state)
+	{
+        var changed = false;
+
+        if(state.power != null && this.power != state.power)
+        {
+            this.power = state.power;
+
+            this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
+
+            changed = true;
+        }
+
+        if(state.brightness != null && this.brightness != state.brightness)
+        {
+            this.brightness = state.brightness;
+
+            this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+
+            changed = true;
+        }
+        
+        super.setState(state.power, () => {});
+        super.setBrightness(state.brightness, () => {});
+
+        if(changed)
+        {
+            this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+        }
+	}
 }
