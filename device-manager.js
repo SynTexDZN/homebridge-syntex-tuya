@@ -10,6 +10,8 @@ module.exports = class DeviceManager
 
     refreshAccessories(accessories)
     {
+        this.logger.debug('Geräte Status aktualisieren ..');
+
         return new Promise(resolve => {
 
             tuyaWebAPI.getAllDeviceStates().then((devices) => {
