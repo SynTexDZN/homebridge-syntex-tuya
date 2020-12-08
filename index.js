@@ -127,6 +127,15 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     
                     response.write(state != null ? 'Success' : 'Error');
                 }
+                else if(urlParams.remove != null)
+				{
+					if(urlParams.remove == 'CONFIRM')
+					{
+						this.removeAccessory(accessory);
+					}
+
+					response.write(urlParams.remove == 'CONFIRM' ? 'Success' : 'Error');
+				}
                 else
                 {
                     var state = accessory.homebridgeAccessory.context.data[accessory.service[1].letters];
@@ -144,11 +153,11 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     
         this.WebServer.addPage('/accessories', (response) => {
     
-            var a = [];
+            var accessories = [];
 
             for(const accessory of this.accessories)
             {
-                a.push({
+                accessories.push({
                     mac: accessory[1].id,
                     name: accessory[1].name,
                     services: accessory[1].services,
@@ -157,7 +166,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
                 });
             }
     
-            response.write(JSON.stringify(a));
+            response.write(JSON.stringify(accessories));
             response.end();
         });
     
