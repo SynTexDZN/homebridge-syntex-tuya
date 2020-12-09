@@ -20,6 +20,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 	"platform": "SynTexTuya",
 	"log_directory": "./SynTex/log",
 	"port": 1713,
+	"debug": false,
 	"options": {
 		"username": "xxxxx@mail.com",
 		"password": "xxxxxxxxxx",
