@@ -17,13 +17,16 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 
 ```
 {
-    "platform": "SynTexTuya",
-    "log_directory": "./SynTex/log",
-    "port": 1713,
-    "username": "xxxxx@mail.com",
-    "password": "xxxxxxxxxx",
-    "countryCode": "xx",
-    "plat": "smart_life"
+	"platform": "SynTexTuya",
+	"log_directory": "./SynTex/log",
+	"port": 1713,
+	"options": {
+		"username": "xxxxx@mail.com",
+		"password": "xxxxxxxxxx",
+		"countryCode": "xx",
+		"platform": "smart_life",
+		"pollingInterval": 1200
+	}
 }
 ```
 

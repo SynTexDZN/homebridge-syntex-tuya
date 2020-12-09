@@ -20,12 +20,14 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
     {
         super(config, api, pluginID, pluginName);
 
-        this.username = config['username'];
-        this.password = config['password'];
-        this.countryCode = config['countryCode'] || '49';
-        this.platform = config['plat'] || 'smart_life';
-        this.pollingInterval = Math.max((config['pollingInterval'] || 610), 610);
-        this.defaults = config['defaults'] || [];
+        if(this.options != null)
+        {
+            this.username = config.options['username'];
+            this.password = config.options['password'];
+            this.countryCode = config.options['countryCode'] || '49';
+            this.platform = config.options['platform'] || 'smart_life';
+            this.pollingInterval = Math.max((config.options['pollingInterval'] || 610), 610);
+        }
         
         if(this.api && this.logger)
         {

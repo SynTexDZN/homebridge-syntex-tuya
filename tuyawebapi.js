@@ -188,8 +188,8 @@ class TuyaWebApi
 				{
 					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
 				}
-			},
-			(error) => {
+				
+			}, (error) => {
 
 				reject(error);
 			});
@@ -204,15 +204,13 @@ class TuyaWebApi
 			{
 				throw new Error('No username configured');
 			}
-			else if(!this.password)
+			
+			if(!this.password)
 			{
 				throw new Error('No password configured');
 			}
-			else if(!this.countryCode)
-			{
-				throw new Error('No country code configured');
-			}
-			else
+
+			if(this.username && this.password)
 			{
 				const form = {
 					userName: this.username,
