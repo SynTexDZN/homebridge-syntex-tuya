@@ -30,6 +30,12 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 }
 ```
 
+- `username` Required. The username for the account that is registered in the Android/iOS App.
+- `password` Required. The password for the account that is registered in the Android/iOS App.
+- `countryCode` Required. Your account country code, e.g., 1 for USA or 86 for China.
+- `Platform` Optional. The App where you registered your account. tuya for Tuya Smart, smart_life for Smart Life, jinvoo_smart for Jinvoo Smart. Defaults to tuya.
+- `pollingInterval` Optional. Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes).
+
 
 ## Update HTTP Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
