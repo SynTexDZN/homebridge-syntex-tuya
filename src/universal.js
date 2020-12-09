@@ -4,12 +4,12 @@ const DimmedBulbService = require('./accessories/dimmer');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
-    constructor(homebridgeAccessory, deviceConfig, manager)
-    {
+	constructor(homebridgeAccessory, deviceConfig, manager)
+	{
 		super(homebridgeAccessory, deviceConfig, manager);
-    }
-    
-    setService(config, subtype)
+	}
+	
+	setService(config, subtype)
 	{
 		var name = this.name;
 		var type = config;
@@ -47,8 +47,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 	}
 	
-    getModel()
-    {
-        return 'Tuya ' + (this.services == 'light' ? 'Light Bulb' : this.services == 'switch' ? 'Outlet' : 'Accessory');
-    }
+	getModel()
+	{
+		return 'Tuya ' + (this.services == 'light' ? 'Light Bulb' : this.services == 'switch' ? 'Outlet' : 'Accessory');
+	}
 };
