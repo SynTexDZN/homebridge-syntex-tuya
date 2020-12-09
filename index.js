@@ -20,7 +20,7 @@ class SynTexTuyaPlatform extends SynTexDynamicPlatform
 	{
 		super(config, api, pluginID, pluginName);
 
-		if(this.options != null)
+		if(config.options != null)
 		{
 			this.username = config.options['username'];
 			this.password = config.options['password'];
