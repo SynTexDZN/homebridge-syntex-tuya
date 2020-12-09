@@ -91,8 +91,8 @@ class TuyaWebApi
 				{
 					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
 				}
-			},
-			(error) => {
+
+			}, (error) => {
 
 				reject(error);
 			});
@@ -140,8 +140,8 @@ class TuyaWebApi
 				{
 					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
 				}
-			},
-			(error) => {
+
+			}, (error) => {
 
 				reject(error);
 			});
@@ -210,7 +210,7 @@ class TuyaWebApi
 				throw new Error('No password configured');
 			}
 
-			if(this.username && this.password)
+			if(this.username && this.password && this.countryCode)
 			{
 				const form = {
 					userName: this.username,
@@ -300,8 +300,8 @@ class TuyaWebApi
 					this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
 
 					resolve(this.session);
-				},
-				(error) => {
+
+				}, (error) => {
 
 					reject(error);
 				});
@@ -345,8 +345,8 @@ class TuyaWebApi
 			{
 				callbackError(new Error(`Could not parse json. Body: ${body}`, error));
 			}
-		},
-		(error) => {
+			
+		}, (error) => {
 
 			callbackError(error);
 		});
