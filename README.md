@@ -7,7 +7,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex-tuya`
 3. Update your `config.json` file. See snippet below.
-4. Restart the Homebridge Service with `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`.
+4. Restart the Homebridge Service with: `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`.
 
 
 ## Example Config
@@ -30,6 +30,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 	}
 }
 ```
+
 - `username` Required. The username for the account that is registered in the Android/iOS App.
 - `password` Required. The password for the account that is registered in the Android/iOS App.
 - `countryCode` Required. Your account country code, e.g., `1` for USA or `86` for China.
@@ -44,7 +45,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - For all devices: `true` / `false` ( *outlet, switch, light, dimmable light* )
 - For dimmable lights add `&brightness=`  **New Brightness** ( *has to be a number* )
 
-**Example:**  `http://homebridge.local/devices?id=ABCDEF1234567890&value=true&brightness=100`\
+**Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&value=true&brightness=100`\
 ( *Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example* )
 
 
@@ -52,7 +53,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 
-**Example:**  `http://homebridge.local/devices?id=ABCDEF1234567890`\
+**Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890`\
 ( *Reads the value of `ABCDEF1234567890` as example* )
 
 
@@ -60,7 +61,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
 2. Insert the `Bridge IP` and `Device ID`
 
-**Example:**  `http://homebridge.local/devices?id=ABCDEF1234567890&remove=CONFIRM`\
+**Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&remove=CONFIRM`\
 ( *Removes `ABCDEF1234567890` from the home app* )
 
 
