@@ -37,7 +37,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - `pollingInterval` Optional. Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
 
 
-## Update HTTP Devices
+## Update Tuya Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
@@ -48,12 +48,20 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 ( *Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example* )
 
 
-## Read HTTP Device Values
-1. Open `http://`  **Bridge IP**  `/devices?mac=`  **Device ID**
+## Read Tuya Device Values
+1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local/devices?id=ABCDEF1234567890`\
 ( *Reads the value of `ABCDEF1234567890` as example* )
+
+
+## Remove Tuya Device
+1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
+2. Insert the `Bridge IP` and `Device ID`
+
+**Example:**  `http://homebridge.local/devices?id=ABCDEF1234567890&remove=CONFIRM`\
+( *Removes `ABCDEF1234567890` from the home app* )
 
 
 ## Currently Supported
