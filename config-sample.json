@@ -1,0 +1,17 @@
+{
+	"platforms": [
+		{
+			"platform": "SynTexTuya",
+			"log_directory": "./SynTex/log",
+			"port": 1713,
+			"debug": false,
+			"options": {
+				"username": "xxxxx@mail.com",
+				"password": "xxxxxxxxxx",
+				"countryCode": "xx",
+				"platform": "smart_life",
+				"pollingInterval": 1200
+			}
+		}
+	]
+}
