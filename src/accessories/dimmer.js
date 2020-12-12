@@ -1,13 +1,12 @@
-const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
+let Characteristic, DeviceManager;
 
-let Service, Characteristic, DeviceManager;
+const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
 module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
 		Characteristic = manager.platform.api.hap.Characteristic;
-		Service = manager.platform.api.hap.Service;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -27,9 +26,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				{
 					this.power = state.power;
 
-					super.setValue('state', this.power);
+					super.setState(this.power, () => {});
 
-					homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+					this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
 				}
 			}
 
@@ -46,9 +45,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				{
 					this.brightness = state.brightness;
 
-					super.setValue('brightness', this.brightness);
+					super.setBrightness(this.brightness, () => {});
 
-					homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+					this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
 				}
 			}
 
@@ -67,6 +66,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.power = value;
 
+				this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+
 				callback(null, this.power);
 			}
 			else
@@ -79,7 +80,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 						this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					
-						super.setValue('state', this.power);
+						super.setState(this.power, () => {});
 					}
 					
 					callback(null, value != null ? value : false);
@@ -128,7 +129,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						this.brightness = value;
 
-						super.setValue('brightness', this.brightness);
+						super.setBrightness(this.brightness, () => {});
 					}
 					
 					callback(null, value != null ? value : 50);
@@ -145,10 +146,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(success)
 			{
-				super.setBrightness(value, () => {
-
-					callback();
-				});
+				super.setBrightness(value, () => callback());
 			}
 			else
 			{

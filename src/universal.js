@@ -1,4 +1,5 @@
 const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
+
 const OutletService = require('./accessories/outlet');
 const DimmedBulbService = require('./accessories/dimmer');
 

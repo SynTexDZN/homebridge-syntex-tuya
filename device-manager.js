@@ -1,16 +1,16 @@
-var logger, tuyaWebAPI;
+var tuyaWebAPI;
 
 module.exports = class DeviceManager
 {
 	constructor(log, api)
 	{
-		logger = log;
+		this.logger = log;
 		tuyaWebAPI = api;
 	}
 
 	refreshAccessories(accessories)
 	{
-		logger.debug('Geräte Status aktualisieren ..');
+		this.logger.debug('Geräte Status aktualisieren ..');
 
 		return new Promise(resolve => {
 
@@ -34,7 +34,7 @@ module.exports = class DeviceManager
 					}
 					catch(e)
 					{
-						logger.err(e);
+						this.logger.err(e);
 					}
 
 					for(const accessory of accessories)
@@ -50,7 +50,7 @@ module.exports = class DeviceManager
 
 			}).catch((e) => {
 
-				logger.err(e);
+				this.logger.err(e);
 
 				resolve(false);
 			});
@@ -67,7 +67,7 @@ module.exports = class DeviceManager
 		
 			}).catch((e) => {
 		
-				logger.err(e);
+				this.logger.err(e);
 		
 				resolve(null);
 			});
@@ -84,7 +84,7 @@ module.exports = class DeviceManager
 		
 			}).catch((e) => {
 		
-				logger.err(e);
+				this.logger.err(e);
 		
 				resolve(null);
 			});
@@ -101,7 +101,7 @@ module.exports = class DeviceManager
 		
 			}).catch((e) => {
 		
-				logger.err(e);
+				this.logger.err(e);
 
 				resolve(false);
 			});
@@ -118,7 +118,7 @@ module.exports = class DeviceManager
 		
 			}).catch((e) => {
 		
-				logger.err(e);
+				this.logger.err(e);
 		
 				resolve(false);
 			});

@@ -1,8 +1,9 @@
 let DeviceManager = require('./device-manager');
 
-const TuyaWebApi = require('./tuyawebapi');
-const SynTexDynamicPlatform = require('homebridge-syntex-dynamic-platform').DynamicPlatform;
+const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
+
 const SynTexUniversalAccessory = require('./src/universal');
+const TuyaWebApi = require('./tuyawebapi');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
@@ -14,7 +15,7 @@ module.exports = (homebridge) => {
 	homebridge.registerPlatform(pluginID, pluginName, SynTexTuyaPlatform, true);
 };
 
-class SynTexTuyaPlatform extends SynTexDynamicPlatform
+class SynTexTuyaPlatform extends DynamicPlatform
 {
 	constructor(log, config, api)
 	{

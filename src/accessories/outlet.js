@@ -1,13 +1,12 @@
-const { OutletService } = require('homebridge-syntex-dynamic-platform');
+let Characteristic, DeviceManager;
 
-let Service, Characteristic, DeviceManager;
+const { OutletService } = require('homebridge-syntex-dynamic-platform');
 
 module.exports = class SynTexOutletService extends OutletService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
 		Characteristic = manager.platform.api.hap.Characteristic;
-		Service = manager.platform.api.hap.Service;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -20,11 +19,11 @@ module.exports = class SynTexOutletService extends OutletService
 				{
 					this.power = state.power;
 
-					super.setValue('state', this.power);
+					super.setState(this.power, () => {});
 
 					this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
 					
-					homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+					this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
 				}
 			}
 		};
@@ -38,6 +37,8 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				this.power = value;
 
+				this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.power + '] ( ' + this.id + ' )');
+
 				callback(null, this.power);
 			}
 			else
@@ -50,7 +51,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 						this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.power + '] ( ' + this.id + ' )');
 					
-						super.setValue('state', this.power);
+						super.setState(this.power, () => {});
 					}
 					
 					callback(null, value != null ? value : false);
@@ -83,18 +84,15 @@ module.exports = class SynTexOutletService extends OutletService
 
 	updateState(state)
 	{
-		if(state.power != null)
+		if(state.power != null && this.power != state.power)
 		{
-			if(this.power != state.power)
-			{
-				this.power = state.power;
+			this.power = state.power;
 
-				this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
 
-				this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
-			}
-			
-			super.setState(state.power, () => {});
+			this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
 		}
+		
+		super.setState(state.power, () => {});
 	}
 }
