@@ -8,7 +8,7 @@ const TuyaWebApi = require('./tuyawebapi');
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
 
-var tuyaWebAPI, restart = true;
+var restart = true;
 
 module.exports = (homebridge) => {
 
@@ -34,7 +34,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 		{
 			this.api.on('didFinishLaunching', () => {
 
-				tuyaWebAPI = new TuyaWebApi(
+				this.tuyaWebAPI = new TuyaWebApi(
 					this.username,
 					this.password,
 					this.countryCode,
@@ -42,7 +42,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					this.logger
 				);
 
-				DeviceManager = new DeviceManager(this.logger, tuyaWebAPI);
+				DeviceManager = new DeviceManager(this.logger, this.tuyaWebAPI);
 
 				this.initWebServer();
 
@@ -55,11 +55,11 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 	loadAccessories()
 	{
-		tuyaWebAPI.getOrRefreshToken().then(function(token) {
+		this.tuyaWebAPI.getOrRefreshToken().then(function(token) {
 
-			tuyaWebAPI.token = token;
+			this.tuyaWebAPI.token = token;
 
-			tuyaWebAPI.discoverDevices().then(function(devices) {
+			this.tuyaWebAPI.discoverDevices().then(function(devices) {
 				
 				for(const device of devices)
 				{

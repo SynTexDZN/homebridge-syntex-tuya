@@ -1,11 +1,9 @@
-var tuyaWebAPI;
-
 module.exports = class DeviceManager
 {
-	constructor(log, api)
+	constructor(logger, tuyaWebAPI)
 	{
-		this.logger = log;
-		tuyaWebAPI = api;
+		this.logger = logger;
+		this.tuyaWebAPI = tuyaWebAPI;
 	}
 
 	refreshAccessories(accessories)
@@ -14,7 +12,7 @@ module.exports = class DeviceManager
 
 		return new Promise(resolve => {
 
-			tuyaWebAPI.getAllDeviceStates().then((devices) => {
+			this.tuyaWebAPI.getAllDeviceStates().then((devices) => {
 
 				for(const device of devices)
 				{
@@ -61,7 +59,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			tuyaWebAPI.getDeviceState(id).then((data) => {
+			this.tuyaWebAPI.getDeviceState(id).then((data) => {
 				
 				resolve(data != null ? JSON.parse(data.state) : null);
 		
@@ -78,7 +76,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			tuyaWebAPI.getDeviceState(id).then((data) => {
+			this.tuyaWebAPI.getDeviceState(id).then((data) => {
 				
 				resolve(data != null ? JSON.parse(data.brightness) / 2.55 : null);
 		
@@ -95,7 +93,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
+			this.tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
 
 				resolve(true);
 		
@@ -112,7 +110,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value : value }).then(() => {
+			this.tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value : value }).then(() => {
 
 				resolve(true);
 		
