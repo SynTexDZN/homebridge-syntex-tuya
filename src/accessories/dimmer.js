@@ -26,50 +26,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				this.setBrightness(state.brightness, () => {});
 			}
-			/*
-			if(state.power != null)
-			{
-				var success = true;
-
-				if(refreshDevices)
-				{
-					success = await DeviceManager.setState(this.id, state.power);
-				}
-
-				if(success)
-				{
-					this.power = state.power;
-
-					super.setState(this.power, () => {});
-
-					this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
-				}
-			}
-
-			if(state.brightness != null)
-			{
-				var success = true;
-
-				if(refreshDevices)
-				{
-					success = await DeviceManager.setBrightness(this.id, state.brightness);
-				}
-
-				if(success)
-				{
-					this.brightness = state.brightness;
-
-					super.setBrightness(this.brightness, () => {});
-
-					this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
-				}
-			}
-
-			if(success)
-			{
-				this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-			}
-			*/
 		};
 	}
 
