@@ -16,7 +16,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.power = power || false;
 			this.brightness = brightness || 100;
 
-		}, true), true);
+			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+
+		}));
 
 		this.changeHandler = (state) =>
 		{
