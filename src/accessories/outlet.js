@@ -61,7 +61,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 	setState(value, callback)
 	{
-		DeviceManager.setState(this.id, this.power).then((success) => {
+		DeviceManager.setState(this.id, value).then((success) => {
 
 			if(success)
 			{
