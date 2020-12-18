@@ -106,63 +106,88 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			if(urlParams.id != null)
 			{
 				var accessory = this.getAccessory(urlParams.id);
-	
+
 				if(accessory == null)
 				{
 					this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
-	
+
 					response.write('Error');
-				}
-				else if(urlParams.value != null)
-				{
-					var state = { power : urlParams.value };
-
-					if(urlParams.brightness != null)
-					{
-						state.brightness = urlParams.brightness;
-					}
-	
-					if((state = this.validateUpdate(urlParams.id, accessory.service[1].letters, state)) != null)
-					{
-						accessory.service[1].changeHandler(state);
-					}
-					else
-					{
-						this.logger.log('error', urlParams.id, accessory.service[1].letters, '[' + accessory.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
-					}
-	
-					response.write(state != null ? 'Success' : 'Error');
-				}
-				else if(urlParams.remove != null)
-				{
-					if(urlParams.remove == 'CONFIRM')
-					{
-						this.removeAccessory(accessory.homebridgeAccessory);
-					}
-
-					response.write(urlParams.remove == 'CONFIRM' ? 'Success' : 'Error');
 				}
 				else
 				{
-					var state = null;
-					
-					if(accessory.homebridgeAccessory != null
-						&& accessory.homebridgeAccessory.context != null
-						&& accessory.homebridgeAccessory.context.data != null
-						&& accessory.service[1] != null
-						&& accessory.service[1].letters != null)
+					if(accessory.service != null)
 					{
-						state = accessory.homebridgeAccessory.context.data[accessory.service[1].letters];
+						var service = accessory.service[1];
+						
+						for(var j = 0; j < accessory.service.length; j++)
+						{
+							if(accessory.service[j].id != null && accessory.service[j].letters != null)
+							{
+								if((urlParams.type == null || accessory.service[j].letters[0] == TypeManager.typeToLetter(urlParams.type)) && (urlParams.counter == null || accessory.service[j].letters[1] == urlParams.counter))
+								{
+									service = accessory.service[j];
+								}
+							}
+						}
 					}
+					
+					if(service == null && urlParams.remove == null)
+					{
+						this.logger.log('error', urlParams.id, '', 'Es wurde kein passendes Gerät in der Config gefunden! ( ' + urlParams.id + ' )');
 
-					response.write(state != null ? JSON.stringify(state) : 'Error');
+						response.write('Error');
+					}
+					else if(urlParams.value != null)
+					{
+						var state = { power : urlParams.value };
+
+						if(urlParams.brightness != null)
+						{
+							state.brightness = urlParams.brightness;
+						}
+
+						if((state = this.validateUpdate(urlParams.id, service.letters, state)) != null)
+						{
+							service.changeHandler(state);
+						}
+						else
+						{
+							this.logger.log('error', urlParams.id, service.letters, '[' + service.name + '] konnte nicht aktualisiert werden! ( ' + urlParams.id + ' )');
+						}
+
+						response.write(state != null ? 'Success' : 'Error');
+					}
+					else if(urlParams.remove != null)
+					{
+						if(urlParams.remove == 'CONFIRM')
+						{
+							this.removeAccessory(accessory.homebridgeAccessory != null ? accessory.homebridgeAccessory : accessory);
+						}
+
+						response.write(urlParams.remove == 'CONFIRM' ? 'Success' : 'Error');
+					}
+					else
+					{
+						var state = null;
+						
+						if(accessory.homebridgeAccessory != null
+							&& accessory.homebridgeAccessory.context != null
+							&& accessory.homebridgeAccessory.context.data != null
+							&& service != null
+							&& service.letters != null)
+						{
+							state = accessory.homebridgeAccessory.context.data[service.letters];
+						}
+
+						response.write(state != null ? JSON.stringify(state) : 'Error');
+					}
 				}
 			}
 			else
 			{
 				response.write('Error');
 			}
-	
+
 			response.end();
 		});
 	

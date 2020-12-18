@@ -95,7 +95,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value: value ? 1 : 0 }).then(() => {
+			tuyaWebAPI.setDeviceState(id, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
 
 				resolve(true);
 		
@@ -112,7 +112,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value: value }).then(() => {
+			tuyaWebAPI.setDeviceState(id, 'brightnessSet', { value : value }).then(() => {
 
 				resolve(true);
 		

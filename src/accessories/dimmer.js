@@ -11,8 +11,22 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.changeHandler = async (state, refreshDevices) =>
+		this.changeHandler = (state) =>
 		{
+			if(state.power != null)
+			{
+				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
+
+				this.setState(state.power, () => {});
+			}
+
+			if(state.brightness != null)
+			{
+				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+
+				this.setBrightness(state.brightness, () => {});
+			}
+			/*
 			if(state.power != null)
 			{
 				var success = true;
@@ -55,6 +69,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 			}
+			*/
 		};
 	}
 
@@ -91,18 +106,12 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setState(value, callback)
 	{
-		this.power = value;
+		this.setToCurrentBrightness({ power : value }, (offline) => {
 
-		DeviceManager.setState(this.id, this.power).then((success) => {
-
-			if(success)
+			if(!offline)
 			{
-				super.setState(value, () => {
-
-					this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-				
-					callback();
-				});
+				super.setState(value,
+					() => callback(null));
 			}
 			else
 			{
@@ -140,13 +149,12 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setBrightness(value, callback)
 	{
-		this.brightness = value;
+		this.setToCurrentBrightness({ brightness : value }, (offline) => {
 
-		DeviceManager.setBrightness(this.id, this.brightness).then((success) => {
-
-			if(success)
+			if(!offline)
 			{
-				super.setBrightness(value, () => callback());
+				super.setBrightness(value,
+					() => callback(null));
 			}
 			else
 			{
@@ -183,6 +191,95 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		if(changed)
 		{
 			this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+		}
+	}
+
+	setToCurrentBrightness(state, callback)
+	{
+		if(state.power != null && this.power != state.power)
+		{
+			this.power = state.power;
+
+			this.changedPower = true;
+		}
+
+		if(state.brightness != null && this.brightness != state.brightness)
+		{
+			this.brightness = state.brightness;
+
+			this.changedBrightness = true;
+		}
+
+		if(this.changedPower || this.changedBrightness)
+		{
+			setTimeout(async () => {
+
+				if(!this.running)
+				{
+					this.running = true;
+
+					if(this.changedPower)
+					{
+						DeviceManager.setState(this.id, this.power).then((success) => {
+
+							if(success)
+							{
+								this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+							}
+
+							this.offline = !success;
+
+							if(callback)
+							{
+								callback(this.offline);
+							}
+
+							this.changedPower = false;
+	
+							this.running = false;
+						});
+					}
+					else if(this.changedBrightness)
+					{
+						DeviceManager.setBrightness(this.id, this.brightness).then((success) => {
+
+							if(success)
+							{
+								this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+							}
+	
+							this.offline = !success;
+
+							if(callback)
+							{
+								callback(this.offline);
+							}
+
+							this.changedBrightness = false;
+	
+							this.running = false;
+						});
+					}
+					else
+					{
+						if(callback)
+						{
+							callback(this.offline);
+						}
+
+						this.running = false;
+					}
+				}
+				else if(callback)
+				{
+					callback(this.offline);
+				}
+
+			}, 100);
+		}
+		else if(callback)
+		{
+			callback(this.offline);
 		}
 	}
 }
