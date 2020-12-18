@@ -11,6 +11,12 @@ module.exports = class SynTexOutletService extends OutletService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		super.getState((value) => {
+
+			this.power = value || false;
+
+		}, true);
+
 		this.changeHandler = (state) =>
 		{
 			if(state.power != null)
