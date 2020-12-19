@@ -16,7 +16,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 			this.power = value || false;
 
-			this.homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
 
 		}, true);
 
@@ -24,7 +24,7 @@ module.exports = class SynTexOutletService extends OutletService
 		{
 			if(state.power != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
+				this.service.getCharacteristic(Characteristic.On).updateValue(state.power);
 
 				this.setState(state.power, () => {});
 			}
@@ -90,7 +90,7 @@ module.exports = class SynTexOutletService extends OutletService
 		{
 			this.power = state.power;
 
-			this.homebridgeAccessory.getServiceById(Service.Outlet, '0').getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
 
 			this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
 		}

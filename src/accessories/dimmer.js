@@ -17,8 +17,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.power = power || false;
 			this.brightness = brightness || 50;
 
-			this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
-			this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
 
 			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
@@ -28,14 +28,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			if(state.power != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(state.power);
+				this.service.getCharacteristic(Characteristic.On).updateValue(state.power);
 
 				this.setState(state.power, () => {});
 			}
 
 			if(state.brightness != null)
 			{
-				this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+				this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
 
 				this.setBrightness(state.brightness, () => {});
 			}
@@ -140,7 +140,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			this.power = state.power;
 
-			this.homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-0').getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
 
 			changed = true;
 		}
@@ -149,7 +149,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			this.brightness = state.brightness;
 
-			this.homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-0').getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+			this.service.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
 
 			changed = true;
 		}
