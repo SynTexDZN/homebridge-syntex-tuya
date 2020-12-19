@@ -115,10 +115,12 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				}
 				else
 				{
+					var service = null;
+
 					if(accessory.service != null)
 					{
-						var service = accessory.service[1];
-						
+						service = accessory.service[1];
+						/*
 						for(var j = 0; j < accessory.service.length; j++)
 						{
 							if(accessory.service[j].id != null && accessory.service[j].letters != null)
@@ -129,6 +131,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 								}
 							}
 						}
+						*/
 					}
 					
 					if(service == null && urlParams.remove == null)
