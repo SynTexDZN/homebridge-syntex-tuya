@@ -136,7 +136,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			this.power = state.power;
 
-			this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-0').getCharacteristic(Characteristic.On).updateValue(this.power);
 
 			changed = true;
 		}
@@ -145,7 +145,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			this.brightness = state.brightness;
 
-			this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+			this.homebridgeAccessory.getServiceById(Service.Lightbulb, 'dimmer-0').getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
 
 			changed = true;
 		}

@@ -87,7 +87,7 @@ module.exports = class SynTexOutletService extends OutletService
 		{
 			this.power = state.power;
 
-			this.homebridgeAccessory.services[1].getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.homebridgeAccessory.getServiceById(Service.Outlet, '0').getCharacteristic(Characteristic.On).updateValue(this.power);
 
 			this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
 		}
