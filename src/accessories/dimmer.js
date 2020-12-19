@@ -1,4 +1,4 @@
-let Characteristic, DeviceManager;
+let Service, Characteristic, DeviceManager;
 
 const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
@@ -6,6 +6,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
+		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 		DeviceManager = manager.DeviceManager;
 		
