@@ -16,6 +16,8 @@ module.exports = class SynTexOutletService extends OutletService
 
 			this.power = value || false;
 
+			this.homebridgeAccessory.getServiceById(Service.Outlet, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+
 		}, true);
 
 		this.changeHandler = (state) =>
@@ -54,7 +56,7 @@ module.exports = class SynTexOutletService extends OutletService
 						super.setState(this.power, () => {});
 					}
 					
-					callback(null, value != null ? value : false);
+					callback(null, this.power);
 				});
 			}
 		});

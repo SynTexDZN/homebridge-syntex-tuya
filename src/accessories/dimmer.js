@@ -15,7 +15,10 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		super.getState((power) => super.getBrightness((brightness) => {
 
 			this.power = power || false;
-			this.brightness = brightness || 100;
+			this.brightness = brightness || 50;
+
+			this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.homebridgeAccessory.getServiceById(Service.Lightbulb, serviceConfig.subtype).getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
 
 			this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
@@ -64,7 +67,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 						super.setState(this.power, () => {});
 					}
 					
-					callback(null, value != null ? value : false);
+					callback(null, this.power);
 				});
 			}
 		});
@@ -107,7 +110,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 						super.setBrightness(this.brightness, () => {});
 					}
 					
-					callback(null, value != null ? value : 50);
+					callback(null, this.brightness);
 				});
 			}
 		});
