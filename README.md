@@ -4,8 +4,8 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-tuya?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex-tuya)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-tuya/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex-tuya)
-[![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex-tuya?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex-tuya/issues)
-[![npm](https://badgen.net/npm/dt/homebridge-syntex-tuya?color=purple)](https://www.npmjs.com/package/homebridge-syntex-tuya)
+[![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex-tuya?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex-tuya/commits)
+[![NPM Downloads](https://badgen.net/npm/dt/homebridge-syntex-tuya?color=purple)](https://www.npmjs.com/package/homebridge-syntex-tuya)
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-tuya?color=0af)](https://github.com/SynTexDZN/homebridge-syntex-tuya)
 
 <br>
