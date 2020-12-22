@@ -35,7 +35,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'light')
+		else if(type == 'light' || type == 'dimmer')
 		{
 			serviceConfig.type = 'dimmer';
 

@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager;
+let Characteristic, DeviceManager;
 
 const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
@@ -6,7 +6,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 		DeviceManager = manager.DeviceManager;
 		
@@ -181,7 +180,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		if(this.changedPower || this.changedBrightness)
 		{
-			setTimeout(async () => {
+			setTimeout(() => {
 
 				if(!this.running)
 				{

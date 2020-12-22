@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager;
+let Characteristic, DeviceManager;
 
 const { OutletService } = require('homebridge-syntex-dynamic-platform');
 
@@ -6,7 +6,6 @@ module.exports = class SynTexOutletService extends OutletService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 		DeviceManager = manager.DeviceManager;
 		
