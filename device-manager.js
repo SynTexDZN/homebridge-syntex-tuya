@@ -16,30 +16,46 @@ module.exports = class DeviceManager
 
 				for(const device of devices)
 				{
-					var state = { power : device.data.state };
+					var type = device.dev_type;
 
-					try
+					if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer')
 					{
-						if(device.data.state != null)
+						var state = { power : device.data.state };
+
+						try
 						{
-							state.power = JSON.parse(device.data.state);
+							if(device.data.state != null)
+							{
+								state.power = JSON.parse(device.data.state);
+							}
+
+							if(device.data.brightness != null)
+							{
+								if(device.data.color_mode == 'white')
+								{
+									state.brightness = JSON.parse(device.data.brightness) / 2.55;
+								}
+								else if(device.data.color_mode == 'colour')
+								{
+									state.brightness = JSON.parse(device.data.brightness) / 5;
+								}
+								else
+								{
+									state.brightness = JSON.parse(device.data.brightness);
+								}
+							}
+						}
+						catch(e)
+						{
+							this.logger.err(e);
 						}
 
-						if(device.data.brightness != null)
+						for(const accessory of accessories)
 						{
-							state.brightness = JSON.parse(device.data.brightness) / 2.55;
-						}
-					}
-					catch(e)
-					{
-						this.logger.err(e);
-					}
-
-					for(const accessory of accessories)
-					{
-						if(accessory[1].id == device.id)
-						{
-							accessory[1].service[1].updateState(state);
+							if(accessory[1].id == device.id)
+							{
+								accessory[1].service[1].updateState(state);
+							}
 						}
 					}
 				}
