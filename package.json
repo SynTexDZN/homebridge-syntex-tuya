@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"request": "^2.88.0",
-		"homebridge-syntex-dynamic-platform": "1.0.1-b22"
+		"homebridge-syntex-dynamic-platform": "1.0.1-b23"
 	},
 	"keywords": [
 		"syntex",
