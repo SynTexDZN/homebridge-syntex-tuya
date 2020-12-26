@@ -21,11 +21,11 @@ module.exports = class SynTexOutletService extends OutletService
 
 		this.changeHandler = (state) =>
 		{
-			if(state.power != null)
+			if(state.value != null)
 			{
-				this.service.getCharacteristic(Characteristic.On).updateValue(state.power);
+				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
 
-				this.setState(state.power, () => {});
+				this.setState(state.value, () => {});
 			}
 		};
 	}
