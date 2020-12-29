@@ -24,20 +24,22 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - `sudo chmod 777 -R homebridge ./SynTex/` *( permissions for many processes )*
 
 ```
-{
-    "platform": "SynTexTuya",
-    "log_directory": "./SynTex/log",
-    "port": 1713,
-    "language": "us",
-    "debug": false,
-    "options": {
-        "username": "xxxxx@mail.com",
-        "password": "xxxxxxxxxx",
-        "countryCode": "xx",
-        "platform": "smart_life",
-        "polling_interval": 1200
+"platforms": [
+    {
+        "platform": "SynTexTuya",
+        "log_directory": "./SynTex/log",
+        "port": 1713,
+        "language": "us",
+        "debug": false,
+        "options": {
+            "username": "xxxxx@mail.com",
+            "password": "xxxxxxxxxx",
+            "countryCode": "xx",
+            "platform": "smart_life",
+            "polling_interval": 1200
+        }
     }
-}
+]
 ```
 ### Required Parameters
 - `platform` is always `SynTexTuya`
