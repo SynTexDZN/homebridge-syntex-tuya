@@ -47,9 +47,9 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - `countryCode` Your account country code, e.g., `1` for USA or `86` for China.
 
 ### Optional Parameters
-- If you want to control your accessory over HTTP calls you have to add a `port` to your config.
-- For the `language` you can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
-- If you need further information for troubleshooting and bug reports you can enable the `debug` attribute.
+- `port` To control your accessory over HTTP calls.
+- `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
+- `debug` For further information because of troubleshooting and bug reports.
 - `platform` The App where you registered your account. `tuya` for Tuya Smart, `smart_life` for Smart Life, `jinvoo_smart` for Jinvoo Smart. Defaults to `tuya`
 - `polling_interval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
 
