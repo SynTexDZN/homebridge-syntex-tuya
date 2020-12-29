@@ -20,8 +20,8 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 
 ## Example Config
 **Info:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
-- `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
-- `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
+- `sudo chown -R homebridge ./SynTex/` *( permissions only for homebridge )*
+- `sudo chmod 777 -R homebridge ./SynTex/` *( permissions for many processes )*
 
 ```
 {
@@ -39,25 +39,33 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 	}
 }
 ```
-- For the `language` you can use your country initials ( *Currently supported: `us`, `en`, `de`* )
-- If you need further information for troubleshooting and bug reports you can enable the `debug` attribute
+### Required Parameters
+- `platform` is always `SynTexTuya`
+- `log_directory` The path where your logs are stored.
+- `username` The username for the account that is registered in the Android / iOS App.
+- `password` The password for the account that is registered in the Android / iOS App.
+- `countryCode` Your account country code, e.g., `1` for USA or `86` for China.
+
+### Optional Parameters
+- If you want to control your accessory over HTTP calls you have to add a `port` to your config.
+- For the `language` you can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
+- If you need further information for troubleshooting and bug reports you can enable the `debug` attribute.
+- `platform` The App where you registered your account. `tuya` for Tuya Smart, `smart_life` for Smart Life, `jinvoo_smart` for Jinvoo Smart. Defaults to `tuya`
+- `polling_interval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
+
+
 ---
-- `username` Required. The username for the account that is registered in the Android / iOS App.
-- `password` Required. The password for the account that is registered in the Android / iOS App.
-- `countryCode` Required. Your account country code, e.g., `1` for USA or `86` for China.
-- `Platform` Optional. The App where you registered your account. `tuya` for Tuya Smart, `smart_life` for Smart Life, `jinvoo_smart` for Jinvoo Smart. Defaults to `tuya`.
-- `polling_interval` Optional. Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
 
 
 ## Update Tuya Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
-- For all devices: `true` / `false` ( *outlet, switch, light, dimmable light* )
-- For dimmable lights add `&brightness=`  **New Brightness** ( *has to be a number* )
+- For all devices: `true` / `false` *( outlet, switch, light, dimmable light )*
+- For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&value=true&brightness=100`\
-( *Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example* )
+*( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example )*
 
 
 ## Read Tuya Device Values
@@ -65,7 +73,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890`\
-( *Reads the value of `ABCDEF1234567890` as example* )
+*( Reads the value of `ABCDEF1234567890` as example )*
 
 
 ## Remove Tuya Device
@@ -73,7 +81,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&remove=CONFIRM`\
-( *Removes `ABCDEF1234567890` from the home app* )
+*( Removes `ABCDEF1234567890` from the home app )*
 
 
 ## Currently Supported
