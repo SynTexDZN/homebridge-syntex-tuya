@@ -38,7 +38,7 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				this.power = value;
 
-				this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.power + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.power + '] ( ' + this.id + ' )');
 
 				callback(null, this.power);
 			}
@@ -50,7 +50,7 @@ module.exports = class SynTexOutletService extends OutletService
 					{
 						this.power = value;
 
-						this.logger.log('read', this.id, this.letters, 'HomeKit Status für [' + this.name + '] ist [' + this.power + '] ( ' + this.id + ' )');
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.power + '] ( ' + this.id + ' )');
 					
 						super.setState(this.power, () => {});
 					}
@@ -71,7 +71,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 				super.setState(this.power, () => {
 
-					this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )');
 				
 					callback();
 				});
@@ -91,7 +91,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
 
-			this.logger.log('update', this.id, this.letters, 'HomeKit Status für [' + this.name + '] geändert zu [' + this.power + '] ( ' + this.id + ' )');
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )');
 		}
 		
 		super.setState(state.power, () => {});

@@ -28,22 +28,25 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 	"platform": "SynTexTuya",
 	"log_directory": "./SynTex/log",
 	"port": 1713,
+	"language": "us",
 	"debug": false,
 	"options": {
 		"username": "xxxxx@mail.com",
 		"password": "xxxxxxxxxx",
 		"countryCode": "xx",
 		"platform": "smart_life",
-		"pollingInterval": 1200
+		"polling_interval": 1200
 	}
 }
 ```
-
-- `username` Required. The username for the account that is registered in the Android/iOS App.
-- `password` Required. The password for the account that is registered in the Android/iOS App.
+- For the `language` you can use your country initials ( *Currently supported: `us`, `en`, `de`* )
+- If you need further information for troubleshooting and bug reports you can enable the `debug` attribute
+---
+- `username` Required. The username for the account that is registered in the Android / iOS App.
+- `password` Required. The password for the account that is registered in the Android / iOS App.
 - `countryCode` Required. Your account country code, e.g., `1` for USA or `86` for China.
 - `Platform` Optional. The App where you registered your account. `tuya` for Tuya Smart, `smart_life` for Smart Life, `jinvoo_smart` for Jinvoo Smart. Defaults to `tuya`.
-- `pollingInterval` Optional. Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
+- `polling_interval` Optional. Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
 
 
 ## Update Tuya Devices

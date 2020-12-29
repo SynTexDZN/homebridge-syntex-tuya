@@ -8,7 +8,7 @@ module.exports = class DeviceManager
 
 	refreshAccessories(accessories)
 	{
-		this.logger.debug('Geräte Status aktualisieren ..');
+		this.logger.debug('%device_refresh% ..');
 
 		return new Promise(resolve => {
 
