@@ -42,8 +42,10 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'scene' && this.platform.discoverScenes)
+		else if(type == 'scene' && this.platform.discoverScenes == true)
 		{
+			console.log('DISCOVER SCENES', this.platform.discoverScenes, typeof this.platform.discoverScenes);
+
 			serviceConfig.type = 'switch';
 
 			service = new SceneSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
