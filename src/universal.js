@@ -32,6 +32,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		var service = null;
 		var serviceConfig = { name : name, type : type, subtype : subtype };
 
+		console.log(1, 'INIT DEVICES', type, this.platform.discoverScenes, typeof this.platform.discoverScenes);
+
 		if(type == 'switch' || type == 'outlet')
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
@@ -44,7 +46,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 		else if(type == 'scene' && this.platform.discoverScenes == true)
 		{
-			console.log('DISCOVER SCENES', this.platform.discoverScenes, typeof this.platform.discoverScenes);
+			console.log(2, 'DISCOVER SCENES', this.platform.discoverScenes, typeof this.platform.discoverScenes);
 
 			serviceConfig.type = 'switch';
 
