@@ -25,7 +25,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.platform = config.options['platform'] || 'smart_life';
 			this.polling_interval = config.options['polling_interval'] == 0 ? 0 : Math.max((config.options['polling_interval'] || 610), 610);
 		}
-		
+
 		if(this.api && this.logger)
 		{
 			this.api.on('didFinishLaunching', () => {
@@ -54,12 +54,12 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.tuyaWebAPI.token = token;
 
 			this.tuyaWebAPI.discoverDevices().then(function(devices) {
-				
+
 				for(const device of devices)
 				{
 					var type = device.dev_type;
 
-					if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer')
+					if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || type == 'scene')
 					{
 						const homebridgeAccessory = this.getAccessory(device.id);
 

@@ -2,6 +2,7 @@ const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
 
 const OutletService = require('./accessories/outlet');
 const DimmedBulbService = require('./accessories/dimmer');
+const SceneSwitchService = require('./accessories/sceneSwitch');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -40,6 +41,12 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			serviceConfig.type = 'dimmer';
 
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(type == 'scene')
+		{
+			serviceConfig.type = 'switch';
+
+			service = new SceneSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 
 		if(service != null)
