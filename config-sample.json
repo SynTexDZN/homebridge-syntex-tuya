@@ -2,7 +2,7 @@
 	"platforms": [
 		{
 			"platform": "SynTexTuya",
-			"log_directory": "./SynTex/log",
+			"logDirectory": "./SynTex/log",
 			"port": 1713,
 			"language": "us",
 			"debug": false,
@@ -11,8 +11,8 @@
 				"password": "xxxxxxxxxx",
 				"countryCode": "xx",
 				"platform": "smart_life",
-				"polling_interval": 1200,
-				"discover_scenes": false
+				"pollingInterval": 1200,
+				"discoverScenes": false
 			}
 		}
 	]

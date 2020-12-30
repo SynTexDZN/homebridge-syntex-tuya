@@ -19,7 +19,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 
 
 ## Example Config
-**Info:** If the `log_directory` for the storage can't be created you have to do it by yourself and give it full write permissions!
+**Info:** If the `logDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
 - `sudo chown -R homebridge ./SynTex/` *( permissions only for homebridge )*
 - `sudo chmod 777 -R homebridge ./SynTex/` *( permissions for many processes )*
 
@@ -27,7 +27,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 "platforms": [
     {
         "platform": "SynTexTuya",
-        "log_directory": "./SynTex/log",
+        "logDirectory": "./SynTex/log",
         "port": 1713,
         "language": "us",
         "debug": false,
@@ -36,15 +36,15 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
             "password": "xxxxxxxxxx",
             "countryCode": "xx",
             "platform": "smart_life",
-            "polling_interval": 1200,
-            "discover_scenes": false
+            "pollingInterval": 1200,
+            "discoverScenes": false
         }
     }
 ]
 ```
 ### Required Parameters
 - `platform` is always `SynTexTuya`
-- `log_directory` The path where your logs are stored.
+- `logDirectory` The path where your logs are stored.
 - `username` The username for the account that is registered in the Android / iOS App.
 - `password` The password for the account that is registered in the Android / iOS App.
 - `countryCode` Your account country code, e.g., `1` for USA or `86` for China.
@@ -54,8 +54,8 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
 - `platform` The App where you registered your account. `tuya` for Tuya Smart, `smart_life` for Smart Life, `jinvoo_smart` for Jinvoo Smart. Defaults to `tuya`
-- `polling_interval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
-- `discover_scenes` Adds switches to control your Tuya scenes.
+- `pollingInterval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
+- `discoverScenes` Adds switches to control your Tuya scenes.
 
 
 ---

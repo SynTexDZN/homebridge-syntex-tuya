@@ -23,8 +23,8 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.password = config.options['password'];
 			this.countryCode = config.options['countryCode'] || '49';
 			this.platform = config.options['platform'] || 'smart_life';
-			this.polling_interval = config.options['polling_interval'] == 0 ? 0 : Math.max((config.options['polling_interval'] || 610), 610);
-			this.discover_scenes = config.options['discover_scenes'] || false;
+			this.pollingInterval = config.options['pollingInterval'] == 0 ? 0 : Math.max((config.options['pollingInterval'] || 610), 610);
+			this.discoverScenes = config.options['discoverScenes'] || false;
 		}
 
 		if(this.api && this.logger)
@@ -70,13 +70,13 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 				DeviceManager.refreshAccessories(this.accessories);
 
-				if(this.polling_interval != 0)
+				if(this.pollingInterval != 0)
 				{
 					this.refreshInterval = setInterval(() => {
 
 						DeviceManager.refreshAccessories(this.accessories);
 		
-					}, this.polling_interval * 1000);
+					}, this.pollingInterval * 1000);
 				}
 
 			}.bind(this)).catch((e) => {
