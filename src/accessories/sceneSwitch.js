@@ -33,7 +33,7 @@ module.exports = class SynTexOutletService extends SwitchService
 
 			if(success)
 			{
-				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + value + '] ( ' + this.id + ' )');
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [triggered] ( ' + this.id + ' )');
 				
 				callback();
 
@@ -44,19 +44,5 @@ module.exports = class SynTexOutletService extends SwitchService
 				callback(new Error('Offline'));
 			}
 		});
-	}
-
-	updateState(state)
-	{
-		if(state.power != null && this.power != state.power)
-		{
-			this.power = state.power;
-
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
-
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )');
-		}
-		
-		super.setState(state.power, () => {});
 	}
 }

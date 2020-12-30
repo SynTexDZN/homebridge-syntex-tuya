@@ -24,6 +24,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.countryCode = config.options['countryCode'] || '49';
 			this.platform = config.options['platform'] || 'smart_life';
 			this.polling_interval = config.options['polling_interval'] == 0 ? 0 : Math.max((config.options['polling_interval'] || 610), 610);
+			this.discover_scenes = config.options['discover_scenes'] || false;
 		}
 
 		if(this.api && this.logger)

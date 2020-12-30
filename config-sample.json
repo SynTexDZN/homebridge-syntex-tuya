@@ -11,7 +11,8 @@
 				"password": "xxxxxxxxxx",
 				"countryCode": "xx",
 				"platform": "smart_life",
-				"polling_interval": 1200
+				"polling_interval": 1200,
+				"discover_scenes": false
 			}
 		}
 	]
