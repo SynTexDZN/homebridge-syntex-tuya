@@ -60,7 +60,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				{
 					var type = device.dev_type;
 
-					if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || type == 'scene')
+					if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || (type == 'scene' && this.platform.discoverScenes))
 					{
 						const homebridgeAccessory = this.getAccessory(device.id);
 
