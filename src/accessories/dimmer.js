@@ -193,24 +193,48 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 					if(this.changedPower)
 					{
-						DeviceManager.setState(this.id, this.power).then((success) => {
+						if(this.power == false)
+						{
+							DeviceManager.setState(this.id, this.power).then((success) => {
 
-							if(success)
-							{
-								this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-							}
-
-							this.offline = !success;
-
-							if(callback)
-							{
-								callback(this.offline);
-							}
-
-							this.changedPower = false;
+								if(success)
+								{
+									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+								}
 	
-							this.running = false;
-						});
+								this.offline = !success;
+	
+								if(callback)
+								{
+									callback(this.offline);
+								}
+	
+								this.changedPower = false;
+		
+								this.running = false;
+							});
+						}
+						else
+						{
+							DeviceManager.setBrightness(this.id, this.brightness).then((success) => {
+
+								if(success)
+								{
+									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+								}
+		
+								this.offline = !success;
+	
+								if(callback)
+								{
+									callback(this.offline);
+								}
+	
+								this.changedBrightness = false;
+		
+								this.running = false;
+							});
+						}
 					}
 					else if(this.changedBrightness)
 					{
