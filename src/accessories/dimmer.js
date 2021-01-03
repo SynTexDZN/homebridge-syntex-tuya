@@ -23,21 +23,26 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		}));
 
-		this.changeHandler = (state) =>
-		{
-			if(state.value != null)
-			{
-				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+		this.changeHandler = (state) => {
 
-				this.setState(state.value, () => {});
-			}
+			state.power = state.value;
 
-			if(state.brightness != null)
-			{
-				this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+			this.setToCurrentBrightness(state, () => {
 
-				this.setBrightness(state.brightness, () => {});
-			}
+				if(state.value != null)
+				{
+					this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+
+					super.setState(state.value, () => {});
+				}
+
+				if(state.brightness != null)
+				{
+					this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+
+					super.setBrightness(state.brightness, () => {});
+				}
+			});
 		};
 	}
 
