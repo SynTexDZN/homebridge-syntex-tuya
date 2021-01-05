@@ -85,10 +85,11 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&remove=CONFIRM`\
-*( Removes `ABCDEF1234567890` from the home app )*
+*( Removes `ABCDEF1234567890` from the Home app )*
 
 
 ## Currently Supported
 - Outlets
 - LED Lights
 - Dimmable LED Lights
+- Scenes *( From the Tuya app )*
