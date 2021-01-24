@@ -1,4 +1,4 @@
-let Characteristic, DeviceManager;
+let Characteristic, DeviceManager, AutomationSystem;
 
 const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
@@ -8,6 +8,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	{
 		Characteristic = manager.platform.api.hap.Characteristic;
 		DeviceManager = manager.DeviceManager;
+		AutomationSystem = manager.AutomationSystem;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
@@ -235,6 +236,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 								this.running = false;
 							});
 						}
+
+						AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
 					}
 					else if(this.changedBrightness)
 					{
@@ -256,6 +259,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	
 							this.running = false;
 						});
+
+						AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
 					}
 					else
 					{

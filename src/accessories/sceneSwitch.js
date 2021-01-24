@@ -1,4 +1,4 @@
-let Characteristic, DeviceManager;
+let Characteristic, DeviceManager, AutomationSystem;
 
 const { SwitchService } = require('homebridge-syntex-dynamic-platform');
 
@@ -8,6 +8,7 @@ module.exports = class SynTexOutletService extends SwitchService
 	{
 		Characteristic = manager.platform.api.hap.Characteristic;
 		DeviceManager = manager.DeviceManager;
+		AutomationSystem = manager.AutomationSystem;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
@@ -44,5 +45,7 @@ module.exports = class SynTexOutletService extends SwitchService
 				callback(new Error('Offline'));
 			}
 		});
+
+		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
 	}
 }

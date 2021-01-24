@@ -1,4 +1,4 @@
-let DeviceManager = require('./device-manager');
+let DeviceManager = require('./device-manager'), AutomationSystem = require('syntex-automation');
 
 const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
 
@@ -40,8 +40,10 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				);
 
 				DeviceManager = new DeviceManager(this.logger, this.tuyaWebAPI);
+				AutomationSystem = new AutomationSystem(this.logger, this.automationDirectory, this, pluginName, this.api.user.storagePath());
 
 				this.loadAccessories();
+				this.initWebServer();
 
 				this.finishInit();
 			});
@@ -64,7 +66,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					{
 						const homebridgeAccessory = this.getAccessory(device.id);
 
-						this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : this.manufacturer, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager }));
+						this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : this.manufacturer, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem }));
 					}
 				}
 
@@ -91,6 +93,15 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.logger.err(e);
 
 			setTimeout(() => this.loadAccessories(), 70 * 1000);
+		});
+	}
+
+	initWebServer()
+	{
+		this.WebServer.addPage('/reload-automation', async (response) => {
+
+			response.write(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
+			response.end();
 		});
 	}
 }
