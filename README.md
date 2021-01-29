@@ -88,6 +88,109 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 *( Removes `ABCDEF1234567890` from the Home app )*
 
 
+---
+
+
+## Automation
+To enable the automation module you have to create a file named `automation.json` in your `automationDirectory` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
+**Example:**  For manual configuration update your `automation.json` file. See snippet below.   
+
+```
+{
+  "id": "automation",
+  "automation": [
+    {
+      "id": 0,
+      "name": "Demo Automation",
+      "active": true,
+      "trigger": [
+        {
+          "id": "multi2",
+          "name": "Multi Device",
+          "letters": "F0",
+          "plugin": "SynTexWebHooks",
+          "operation": "<",
+          "value": "1000"
+        }
+      ],
+      "condition": [
+        {
+          "id": "multi1",
+          "name": "Multi Switch",
+          "letters": "41",
+          "plugin": "SynTexWebHooks",
+          "operation": "=",
+          "value": "false"
+        }
+      ],
+      "result": [
+        {
+          "id": "58747302d8afc008d0dc",
+          "name": "Kitchen Dimmable LED",
+          "letters": "90",
+          "plugin": "SynTexTuya",
+          "operation": "=",
+          "value": "true",
+          "brightness": "75"
+        },
+        {
+          "url": "http://192.168.178.100:1713/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
+        }
+      ]
+    }
+  }
+}
+```
+### Required Parameters
+- `id` is the same like in your config file *( or in your log )*
+- `name` The name of the accessory.
+- `letters` See letter configuration below.
+- `operation` Use the logical operands *( `>`, `<`, `=` )*
+- `value` The state of your accessory.
+
+
+### Optional Parameters
+- `plugin` Use the platform name of the plugin *( see supported plugins below )*
+- `brightness` is used for dimmable lights.
+
+
+### Letter Configuration
+The letters are split into two parts *( numbers )*
+
+**1. Service Type**
+- A : Contact
+- B : Motion
+- C : Temperature
+- D : Humidity
+- E : Rain
+- F : Light
+- 0 : Occupancy
+- 1 : Smoke
+- 2 : Airquality
+- 3 : RGB
+- 4 : Switch
+- 5 : Relais
+- 6 : Stateless Switch
+- 7 : Outlet
+- 8 : LED
+- 9 : Dimmer
+
+**2. Duplicate Counter**
+- If there are more services of the same type the counter indicates which is which
+- Simply count from top to bottom.
+
+**Example:**  The first switch in your config has the letters `40`, the second `41` and so on ..
+
+
+### Supported Plugins
+- SynTexMagicHome *( `homebridge-syntex-magichome` )*
+- SynTexTuya *( `homebridge-syntex-tuya` )*
+- SynTexWebHooks *( `homebridge-syntex-webhooks` )*
+
+
+---
+
+
 ## Currently Supported
 - Outlets
 - LED Lights
