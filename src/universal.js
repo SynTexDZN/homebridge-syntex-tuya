@@ -8,6 +8,19 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
+		if(deviceConfig.services == 'switch')
+		{
+			deviceConfig.services = 'outlet';
+		}
+		else if(deviceConfig.services == 'light' || deviceConfig.services == 'dimmer')
+		{
+			deviceConfig.services = 'dimmer';
+		}
+		else if(deviceConfig.services == 'scene' && manager.platform.discoverScenes)
+		{
+			deviceConfig.services = 'switch';
+		}
+
 		super(homebridgeAccessory, deviceConfig, manager);
 	}
 	
@@ -32,20 +45,16 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		var service = null;
 		var serviceConfig = { name : name, type : type, subtype : subtype };
 
-		if(type == 'switch' || type == 'outlet')
+		if(type == 'outlet')
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'light' || type == 'dimmer')
+		else if(type == 'dimmer')
 		{
-			serviceConfig.type = 'dimmer';
-
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(type == 'scene' && this.platform.discoverScenes)
 		{
-			serviceConfig.type = 'switch';
-
 			service = new SceneSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 
@@ -57,6 +66,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	
 	getModel()
 	{
-		return 'Tuya ' + (this.services == 'light' ? 'Light Bulb' : this.services == 'switch' ? 'Outlet' : 'Accessory');
+		return 'Tuya ' + (this.services == 'dimmer' ? 'Light Bulb' : this.services == 'relais' ? 'Outlet' : this.services == 'switch' ? 'Scene' : 'Accessory');
 	}
 };

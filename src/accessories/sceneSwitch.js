@@ -9,7 +9,7 @@ module.exports = class SynTexOutletService extends SwitchService
 		Characteristic = manager.platform.api.hap.Characteristic;
 		DeviceManager = manager.DeviceManager;
 		AutomationSystem = manager.AutomationSystem;
-		
+
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
 		this.changeHandler = (state) =>

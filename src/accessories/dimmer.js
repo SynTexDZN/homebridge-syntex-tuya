@@ -9,7 +9,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		Characteristic = manager.platform.api.hap.Characteristic;
 		DeviceManager = manager.DeviceManager;
 		AutomationSystem = manager.AutomationSystem;
-		
+
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
 		super.getState((power) => super.getBrightness((brightness) => {
