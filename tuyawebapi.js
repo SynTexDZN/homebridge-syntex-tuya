@@ -260,10 +260,10 @@ class TuyaWebApi
 							}
 							else
 							{
-								// Received token
+								// NOTE: Received token
 								this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
 								
-								// Change url based on areacode in accesstoken first two chars
+								// NOTE: Change url based on areacode in accesstoken first two chars
 								this.session.areaCode = 'EU';
 
 								if(obj.access_token)
