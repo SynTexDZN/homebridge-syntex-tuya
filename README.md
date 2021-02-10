@@ -23,7 +23,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - `sudo chown -R homebridge ./SynTex/` *( permissions only for homebridge )*
 - `sudo chmod 777 -R homebridge ./SynTex/` *( permissions for many processes )*
 
-```
+```json
 "platforms": [
     {
         "platform": "SynTexTuya",
@@ -95,7 +95,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 To enable the automation module you have to create a file named `automation.json` in your `automationDirectory` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
 **Example:**  For manual configuration update your `automation.json` file. See snippet below.   
 
-```
+```json
 {
   "id": "automation",
   "automation": [
