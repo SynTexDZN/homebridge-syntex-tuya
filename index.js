@@ -66,7 +66,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					{
 						const homebridgeAccessory = this.getAccessory(device.id);
 
-						this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : this.manufacturer, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem }));
+						this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : pluginName, model : this.model, version : this.version }, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem }));
 					}
 				}
 
