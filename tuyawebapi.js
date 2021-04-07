@@ -41,7 +41,7 @@ class Session
 	}
 }
 
-class TuyaWebApi
+module.exports = class TuyaWebApi
 {
 	constructor(username, password, countryCode, tuyaPlatform = 'tuya', logger)
 	{
@@ -230,23 +230,14 @@ class TuyaWebApi
 							'Content-Length': contentLength,
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						uri : this.authBaseUrl + '/homeassistant/auth.do',
+						url : this.authBaseUrl + '/homeassistant/auth.do',
 						data : formData,
 						method : 'POST'
 					};
 
 					axios(theRequest).then((response) => {
 
-						let obj;
-
-						try
-						{
-							obj = JSON.parse(response.data);
-						}
-						catch(error)
-						{
-							reject(new Error(`Could not parse json. Body: ${response.data}`, error));
-						}
+						let obj = response.data;
 
 						if(obj.responseStatus === 'error')
 						{
@@ -316,24 +307,6 @@ class TuyaWebApi
 
 	sendRequestJson(url, body, method, callbackSuccess, callbackError)
 	{
-		this.sendRequest(url, body, method, (response, body) => {
-
-			try
-			{
-				const obj = JSON.parse(body);
-
-				callbackSuccess(response, obj);
-			}
-			catch(error)
-			{
-				callbackError(new Error(`Could not parse json. Body: ${body}`, error));
-			}
-			
-		}, (error) => {
-
-			callbackError(error);
-		});
+		this.sendRequest(url, body, method, (response, body) => callbackSuccess(response, body), (error) => callbackError(error));
 	}
 }
-
-module.exports = TuyaWebApi;
