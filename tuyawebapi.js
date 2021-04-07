@@ -1,4 +1,4 @@
-const request = require('request');
+const axios = require('axios');
 const querystring = require('querystring');
 
 class Session
@@ -226,68 +226,62 @@ class TuyaWebApi
 				return new Promise((resolve, reject) => {
 
 					var theRequest = {
-						headers: {
+						headers : {
 							'Content-Length': contentLength,
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						uri: this.authBaseUrl + '/homeassistant/auth.do',
-						body: formData,
-						method: 'POST'
-					}
+						uri : this.authBaseUrl + '/homeassistant/auth.do',
+						data : formData,
+						method : 'POST'
+					};
 
-					request(theRequest, (err, res, body) => {
+					axios(theRequest).then((response) => {
 
-						if(err)
+						let obj;
+
+						try
 						{
-							reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err)));
+							obj = JSON.parse(response.data);
+						}
+						catch(error)
+						{
+							reject(new Error(`Could not parse json. Body: ${response.data}`, error));
+						}
+
+						if(obj.responseStatus === 'error')
+						{
+							reject(new Error('Authentication fault: ' + obj.errorMsg));
 						}
 						else
 						{
-							let obj;
+							// NOTE: Received token
+							this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
+							
+							// NOTE: Change url based on areacode in accesstoken first two chars
+							this.session.areaCode = 'EU';
 
-							try
+							if(obj.access_token)
 							{
-								obj = JSON.parse(body);
+								this.session.areaCode = obj.access_token.substr(0, 2);
 							}
-							catch(error)
+
+							switch(this.session.areaCode)
 							{
-								reject(new Error(`Could not parse json. Body: ${body}`, error));
+								case 'AY':
+									this.session.areaBaseUrl = 'https://px1.tuyacn.com';
+									break;
+								case 'EU':
+									this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
+									break;
+								case 'US':
+								default:
+									this.session.areaBaseUrl = 'https://px1.tuyaus.com';
 							}
 
-							if(obj.responseStatus === 'error')
-							{
-								reject(new Error('Authentication fault: ' + obj.errorMsg));
-							}
-							else
-							{
-								// NOTE: Received token
-								this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
-								
-								// NOTE: Change url based on areacode in accesstoken first two chars
-								this.session.areaCode = 'EU';
-
-								if(obj.access_token)
-								{
-									this.session.areaCode = obj.access_token.substr(0, 2);
-								}
-
-								switch(this.session.areaCode)
-								{
-									case 'AY':
-										this.session.areaBaseUrl = 'https://px1.tuyacn.com';
-										break;
-									case 'EU':
-										this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
-										break;
-									case 'US':
-									default:
-										this.session.areaBaseUrl = 'https://px1.tuyaus.com';
-								}
-
-								resolve(this.session);
-							}
+							resolve(this.session);
 						}
-					});
+
+					}).catch((err) => reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err))));
 				});
 			}
 		}
@@ -312,23 +306,12 @@ class TuyaWebApi
 	sendRequest(url, body, method, callbackSuccess, callbackError)
 	{
 		var theRequest = {
-			url: url,
-			body: body,
-			method: method,
-			rejectUnauthorized: false
+			url : url,
+			data : body,
+			method : method
 		};
 
-		request(theRequest, (error, response, body) => {
-
-			if(error)
-			{
-				callbackError(error);
-			}
-			else
-			{
-				callbackSuccess(response, body)
-			}
-		});
+		axios(theRequest).then((response) => callbackSuccess(response, response.data)).catch((error) => callbackError(error));
 	}
 
 	sendRequestJson(url, body, method, callbackSuccess, callbackError)
