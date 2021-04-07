@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require('axios'), https = require('https');
 const querystring = require('querystring');
 
 class Session
@@ -77,7 +77,7 @@ module.exports = class TuyaWebApi
 
 		return new Promise((resolve, reject) => {
 
-			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', JSON.stringify(data), 'GET', (response, obj) => {
+			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', data, 'GET', (response, obj) => {
 
 				if(obj.header && obj.header.code == 'SUCCESS' && obj.payload && obj.payload.devices)
 				{
@@ -126,7 +126,7 @@ module.exports = class TuyaWebApi
 
 		return new Promise((resolve, reject) => {
 
-			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', JSON.stringify(data), 'GET', (response, obj) => {
+			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', data, 'GET', (response, obj) => {
 
 				if(obj.header && obj.header.code == 'SUCCESS' && obj.payload && obj.payload.data)
 				{
@@ -174,7 +174,7 @@ module.exports = class TuyaWebApi
 
 		return new Promise((resolve, reject) => {
 
-			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', JSON.stringify(data), 'POST', (response, obj) => {
+			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', data, 'POST', (response, obj) => {
 
 				if(obj.header && obj.header.code == 'SUCCESS')
 				{
@@ -299,7 +299,8 @@ module.exports = class TuyaWebApi
 		var theRequest = {
 			url : url,
 			data : body,
-			method : method
+			method : method,
+			httpsAgent : new https.Agent({ rejectUnauthorized: false })
 		};
 
 		axios(theRequest).then((response) => callbackSuccess(response, response.data)).catch((error) => callbackError(error));
