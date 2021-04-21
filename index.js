@@ -44,8 +44,6 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 				this.loadAccessories();
 				this.initWebServer();
-
-				this.finishInit();
 			});
 		}
 	}
