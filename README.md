@@ -61,6 +61,14 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 ---
 
 
+## SynTex UI
+Control and set up your devices by installing `homebridge-syntex`<br>
+This plugin is made for plugin management, automation system and device control.<br><br>
+
+Check out the GitHub page for more information:<br>
+https://github.com/SynTexDZN/homebridge-syntex
+
+
 ## Update Tuya Devices
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
