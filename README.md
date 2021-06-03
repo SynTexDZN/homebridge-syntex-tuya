@@ -20,14 +20,14 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 
 ## Example Config
 **Info:** If the `logDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
-- `sudo chown -R homebridge ./SynTex/` *( permissions only for homebridge )*
-- `sudo chmod 777 -R homebridge ./SynTex/` *( permissions for many processes )*
+- `sudo chown -R homebridge /var/homebridge/SynTex/` *( permissions only for homebridge )*
+- `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` *( permissions for many processes )*
 
 ```json
 "platforms": [
     {
         "platform": "SynTexTuya",
-        "logDirectory": "./SynTex/log",
+        "logDirectory": "/var/homebridge/SynTex/log",
         "port": 1713,
         "language": "us",
         "debug": false,

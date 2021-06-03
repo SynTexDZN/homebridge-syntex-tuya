@@ -2,7 +2,7 @@
 	"platforms": [
 		{
 			"platform": "SynTexTuya",
-			"logDirectory": "./SynTex/log",
+			"logDirectory": "/var/homebridge/SynTex/log",
 			"port": 1713,
 			"language": "us",
 			"debug": false,
