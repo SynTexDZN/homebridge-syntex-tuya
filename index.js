@@ -1,6 +1,6 @@
 let DeviceManager = require('./device-manager'), AutomationSystem = require('syntex-automation');
 
-const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
+const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
 const SynTexUniversalAccessory = require('./src/universal');
 const TuyaWebApi = require('./tuyawebapi');
@@ -64,7 +64,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					{
 						const homebridgeAccessory = this.getAccessory(device.id);
 
-						this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : pluginName }, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem }));
+						this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : pluginName }, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem, ContextManager : ContextManager }));
 					}
 				}
 
