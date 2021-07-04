@@ -63,7 +63,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				DeviceManager.getState(this.id).then((value) => {
 
-					if(value != null)
+					if(value != null && !isNaN(value))
 					{
 						this.power = value;
 
@@ -108,7 +108,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				DeviceManager.getBrightness(this.id).then((value) => {
 
-					if(value != null)
+					if(value != null && !isNaN(value))
 					{
 						this.brightness = value;
 

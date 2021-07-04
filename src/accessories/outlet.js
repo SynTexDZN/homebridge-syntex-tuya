@@ -47,7 +47,7 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				DeviceManager.getState(this.id).then((value) => {
 
-					if(value != null)
+					if(value != null && !isNaN(value))
 					{
 						this.power = value;
 
