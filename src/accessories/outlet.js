@@ -88,7 +88,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 	updateState(state)
 	{
-		if(state.power != null && this.power != state.power)
+		if(state.power != null && !isNaN(state.power) && this.power != state.power)
 		{
 			this.power = state.power;
 

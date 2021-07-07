@@ -141,7 +141,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	{
 		var changed = false;
 
-		if(state.power != null && this.power != state.power)
+		if(state.power != null && !isNaN(state.power) && this.power != state.power)
 		{
 			this.power = state.power;
 
@@ -150,7 +150,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			changed = true;
 		}
 
-		if(state.brightness != null && this.brightness != state.brightness)
+		if(state.brightness != null && !isNaN(state.brightness) && this.brightness != state.brightness)
 		{
 			this.brightness = state.brightness;
 
