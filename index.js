@@ -96,10 +96,13 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 	initWebServer()
 	{
-		this.WebServer.addPage('/reload-automation', async (response) => {
+		if(this.port != null)
+		{
+			this.WebServer.addPage('/reload-automation', async (response) => {
 
-			response.write(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
-			response.end();
-		});
+				response.write(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
+				response.end();
+			});
+		}
 	}
 }
