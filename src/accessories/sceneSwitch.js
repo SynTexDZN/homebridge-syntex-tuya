@@ -12,13 +12,15 @@ module.exports = class SynTexOutletService extends SwitchService
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		this.service.getCharacteristic(Characteristic.On).updateValue(false);
+
+		this.setState(false, () => {});
+
 		this.changeHandler = (state) =>
 		{
 			if(state.value == true)
 			{
 				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
-
-				this.setState(state.value, () => {});
 			}
 		};
 	}
