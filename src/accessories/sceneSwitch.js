@@ -14,13 +14,15 @@ module.exports = class SynTexOutletService extends SwitchService
 
 		this.service.getCharacteristic(Characteristic.On).updateValue(false);
 
-		this.setState(false, () => {});
+		super.setState(false, () => {});
 
 		this.changeHandler = (state) =>
 		{
 			if(state.value == true)
 			{
 				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+			
+				this.setState(state.value, () => {});
 			}
 		};
 	}
