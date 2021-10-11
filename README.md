@@ -27,7 +27,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 "platforms": [
     {
         "platform": "SynTexTuya",
-        "logDirectory": "/var/homebridge/SynTex/log",
+        "baseDirectory": "/var/homebridge/SynTex",
         "port": 1713,
         "language": "us",
         "debug": false,
@@ -100,7 +100,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 
 
 ## Automation
-To enable the automation module you have to create a file named `automation.json` in your `automationDirectory` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
+To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
 **Example:**  For manual configuration update your `automation.json` file. See snippet below.   
 
 ```json
