@@ -40,7 +40,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				);
 
 				DeviceManager = new DeviceManager(this.logger, this.tuyaWebAPI);
-				AutomationSystem = new AutomationSystem(this.logger, this.automationDirectory, this, pluginName, this.api.user.storagePath());
+				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 
 				this.loadAccessories();
 				this.initWebServer();
