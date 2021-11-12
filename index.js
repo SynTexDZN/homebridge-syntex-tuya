@@ -1,9 +1,9 @@
-let DeviceManager = require('./device-manager'), AutomationSystem = require('syntex-automation');
+let DeviceManager = require('./src/device-manager'), AutomationSystem = require('syntex-automation');
 
 const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
 const SynTexUniversalAccessory = require('./src/universal');
-const TuyaWebApi = require('./tuyawebapi');
+const TuyaWebApi = require('./src/tuya-interface');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
