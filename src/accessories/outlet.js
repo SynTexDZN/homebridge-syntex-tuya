@@ -45,7 +45,7 @@ module.exports = class SynTexOutletService extends OutletService
 			}
 			else
 			{
-				DeviceManager.getState(this.id).then((value) => {
+				DeviceManager.getState(this).then((value) => {
 
 					if(value != null && !isNaN(value))
 					{
@@ -64,7 +64,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 	setState(value, callback)
 	{
-		DeviceManager.setState(this.id, value).then((success) => {
+		DeviceManager.setState(this, value).then((success) => {
 
 			if(success)
 			{

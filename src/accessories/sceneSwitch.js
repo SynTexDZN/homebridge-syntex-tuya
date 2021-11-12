@@ -34,7 +34,7 @@ module.exports = class SynTexOutletService extends SwitchService
 
 	setState(value, callback)
 	{
-		DeviceManager.setState(this.id, value).then((success) => {
+		DeviceManager.setState(this, value).then((success) => {
 
 			if(success)
 			{

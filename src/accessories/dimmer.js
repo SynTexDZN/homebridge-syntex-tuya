@@ -61,7 +61,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 			else
 			{
-				DeviceManager.getState(this.id).then((value) => {
+				DeviceManager.getState(this).then((value) => {
 
 					if(value != null && !isNaN(value))
 					{
@@ -106,7 +106,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 			else
 			{
-				DeviceManager.getBrightness(this.id).then((value) => {
+				DeviceManager.getBrightness(this).then((value) => {
 
 					if(value != null && !isNaN(value))
 					{
@@ -196,7 +196,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						if(this.power == false)
 						{
-							DeviceManager.setState(this.id, this.power).then((success) => {
+							DeviceManager.setState(this, this.power).then((success) => {
 
 								if(success)
 								{
@@ -217,7 +217,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 						}
 						else
 						{
-							DeviceManager.setBrightness(this.id, this.brightness).then((success) => {
+							DeviceManager.setBrightness(this, this.brightness).then((success) => {
 
 								if(success)
 								{
@@ -241,7 +241,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					}
 					else if(this.changedBrightness)
 					{
-						DeviceManager.setBrightness(this.id, this.brightness).then((success) => {
+						DeviceManager.setBrightness(this, this.brightness).then((success) => {
 
 							if(success)
 							{
