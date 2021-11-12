@@ -94,14 +94,14 @@ module.exports = class DeviceManager
 
 					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
 					{
-						service.updateState(state);
+						resolve(state.power);
 					}
 					else
 					{
+						resolve(null);
+
 						this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
 					}
-
-					resolve(state?.power);
 				}
 				catch(e)
 				{
@@ -157,14 +157,14 @@ module.exports = class DeviceManager
 
 					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
 					{
-						service.updateState(state);
+						resolve(state.brightness);
 					}
 					else
 					{
+						resolve(null);
+
 						this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
 					}
-
-					resolve(state?.brightness);
 				}
 				catch(e)
 				{
