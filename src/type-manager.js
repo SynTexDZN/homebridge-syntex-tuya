@@ -33,22 +33,34 @@ module.exports = class TypeManager
 				return letter;
 			}
 		}
+
+		return null;
 	}
 
 	letterToType(letter)
 	{
-		return this.data[letter.toUpperCase()].type;
+		if(letter != null && this.data[letter.toUpperCase()] != null)
+		{
+			return this.data[letter.toUpperCase()].type;
+		}
+
+		return null;
 	}
 
 	getDataType(type)
 	{
-		return this.data[this.typeToLetter(type)].format;
+		var letter = this.typeToLetter(type);
+
+		if(letter != null && this.data[letter] != null)
+		{
+			return this.data[letter].format;
+		}
+
+		return null;
 	}
 	
 	validateUpdate(id, letters, state)
 	{
-		console.log(id, letters, state);
-
 		for(const i in state)
 		{
 			try
@@ -71,8 +83,6 @@ module.exports = class TypeManager
 
 			if(typeof state[i] != format)
 			{
-				console.log(i, state[i], typeof state[i], format, this.data[letters[0].toUpperCase()]);
-
 				this.logger.log('warn', id, letters, '%conversion_error_format[0]%: [' + state[i] + '] %conversion_error_format[1]% ' + (format == 'boolean' ? '%conversion_error_format[2]%' : format == 'number' ? '%conversion_error_format[3]%' : '%conversion_error_format[4]%') + ' %conversion_error_format[5]%! ( ' + id + ' )');
 
 				return null;

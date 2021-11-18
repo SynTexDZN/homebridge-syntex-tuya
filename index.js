@@ -27,7 +27,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.discoverScenes = config.options['discoverScenes'] || false;
 		}
 
-		if(this.api && this.logger)
+		if(this.api != null && this.logger != null && this.files != null && this.username != null && this.password != null && this.countryCode != null)
 		{
 			this.api.on('didFinishLaunching', () => {
 
@@ -45,6 +45,10 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				this.loadAccessories();
 				this.initWebServer();
 			});
+		}
+		else
+		{
+			throw new Error('Minimal parameters not configurated. Please check the README! https://github.com/SynTexDZN/homebridge-syntex-tuya/blob/master/README.md');
 		}
 	}
 
@@ -70,7 +74,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 				DeviceManager.refreshAccessories(this.accessories);
 
-				if(this.pollingInterval != 0)
+				if(this.pollingInterval > 0)
 				{
 					this.refreshInterval = setInterval(() => {
 
