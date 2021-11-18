@@ -2,14 +2,24 @@
 A plugin to control Tuya devices based on the `tuyawebapi`<br>
 This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge
 
-[![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-tuya?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex-tuya)
-[![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-tuya/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex-tuya)
-[![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex-tuya?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex-tuya/commits)
-[![NPM Downloads](https://badgen.net/npm/dt/homebridge-syntex-tuya?color=purple)](https://www.npmjs.com/package/homebridge-syntex-tuya)
-[![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-tuya?color=0af)](https://github.com/SynTexDZN/homebridge-syntex-tuya)
-[![Discord](https://img.shields.io/discord/442095224953634828?color=728ED5&label=discord)](https://discord.gg/XUqghtw4DE)
+[![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-tuya?label=release&color=brightgree&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-tuya)
+[![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-tuya/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-tuya)
+[![NPM Downloads](https://img.shields.io/npm/dt/homebridge-syntex-tuya?color=9944ee&&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-tuya)
+[![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex-tuya/1.0.0?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya/commits)
+[![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-tuya?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya)
+
 
 <br>
+
+## Troubleshooting
+#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
+- `Report` us your `Issues`
+- `Join` our `Discord Server`
+#### [![Discord](https://img.shields.io/discord/442095224953634828?color=5865F2&logoColor=white&label=discord&logo=discord&style=for-the-badge)](https://discord.gg/XUqghtw4DE)
+
+
+---
+
 
 ## Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
@@ -192,7 +202,7 @@ The letters are split into two parts *( numbers )*
 
 
 ### Supported Plugins
-- SynTexMagicHome *( `homebridge-syntex-magichome` )*
+- SynTexMagicHome *( `homebridge-syntex-tuya` )*
 - SynTexTuya *( `homebridge-syntex-tuya` )*
 - SynTexWebHooks *( `homebridge-syntex-webhooks` )*
 
