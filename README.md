@@ -1,15 +1,13 @@
 # Homebridge SynTex Tuya
-A plugin to control Tuya devices based on the `tuyawebapi`<br>
-This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge
-
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-tuya?label=release&color=brightgree&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-tuya)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-tuya/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-tuya)
 [![NPM Downloads](https://img.shields.io/npm/dt/homebridge-syntex-tuya?color=9944ee&&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-tuya)
 [![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex-tuya/1.0.0?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya/commits)
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-tuya?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya)
 
+A plugin to control Tuya devices based on the `tuyawebapi`<br>
+This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge
 
-<br>
 
 ## Troubleshooting
 #### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
