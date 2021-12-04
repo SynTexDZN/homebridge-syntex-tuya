@@ -51,6 +51,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
     }
 ]
 ```
+
 ### Required Parameters
 - `platform` is always `SynTexTuya`
 - `baseDirectory` The path where cache data is stored.
@@ -158,6 +159,7 @@ To enable the automation module you have to create a file named `automation.json
   }
 }
 ```
+
 ### Required Parameters
 - `id` is the same like in your config file *( or in your log )*
 - `name` The name of the accessory.
@@ -165,11 +167,9 @@ To enable the automation module you have to create a file named `automation.json
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
 - `value` The state of your accessory.
 
-
 ### Optional Parameters
 - `plugin` Use the platform name of the plugin *( see supported plugins below )*
 - `brightness` is used for dimmable lights.
-
 
 ### Letter Configuration
 The letters are split into two parts *( numbers )*
@@ -197,7 +197,6 @@ The letters are split into two parts *( numbers )*
 - Simply count from top to bottom.
 
 **Example:**  The first switch in your config has the letters `40`, the second `41` and so on ..
-
 
 ### Supported Plugins
 - SynTexMagicHome *( `homebridge-syntex-tuya` )*
