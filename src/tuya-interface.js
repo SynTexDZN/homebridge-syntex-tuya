@@ -1,6 +1,8 @@
 const axios = require('axios'), https = require('https');
 const querystring = require('querystring');
 
+// TODO: Translate All Errors
+
 class Session
 {
 	constructor(accessToken, refreshToken, expiresIn, areaCode, areaBaseUrl)
@@ -134,11 +136,15 @@ module.exports = class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error(deviceId + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
+					reject();
+
+					this.logger.log('error', deviceId, '', deviceId + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )');
 				}
 				else
 				{
-					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
+					reject();
+
+					this.logger.log('error', deviceId, '', 'Invalid payload in response: ' + JSON.stringify(obj));
 				}
 
 			}, (error) => {
@@ -272,7 +278,7 @@ module.exports = class TuyaWebApi
 							resolve(this.session);
 						}
 
-					}).catch((err) => reject(new Error('Authentication fault, could not retreive token. ' + JSON.stringify(err))));
+					}).catch((err) => reject(new Error('Authentication fault, could not retreive token.' + JSON.stringify(err))));
 				});
 			}
 		}
