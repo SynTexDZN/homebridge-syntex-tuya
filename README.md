@@ -152,7 +152,7 @@ To enable the automation module you have to create a file named `automation.json
           "brightness": "75"
         },
         {
-          "url": "http://192.168.178.100:1713/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
+          "url": "http://192.168.1.100:1713/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
         }
       ]
     }
