@@ -19,7 +19,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 		this.username = config['username'];
 		this.password = config['password'];
-		this.countryCode = this.options['countryCode'];
+		this.countryCode = config['countryCode'];
 
 		this.platform = this.options['platform'] || 'smart_life';
 		this.pollingInterval = this.options['pollingInterval'] == 0 ? 0 : Math.max((this.options['pollingInterval'] || 610), 610);
