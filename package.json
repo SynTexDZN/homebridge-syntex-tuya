@@ -35,5 +35,8 @@
 	"license": "ISC",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"devDependencies": {
+		"eslint": "^8.7.0"
 	}
 }
