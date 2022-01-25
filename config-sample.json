@@ -3,13 +3,13 @@
 		{
 			"platform": "SynTexTuya",
 			"baseDirectory": "/var/homebridge/SynTex",
-			"port": 1713,
-			"language": "us",
-			"debug": false,
+			"username": "xxxxx@mail.com",
+			"password": "xxxxxxxxxx",
+			"countryCode": "xx",
 			"options": {
-				"username": "xxxxx@mail.com",
-				"password": "xxxxxxxxxx",
-				"countryCode": "xx",
+				"port": 1713,
+				"language": "us",
+				"debug": false,
 				"platform": "smart_life",
 				"pollingInterval": 1200,
 				"discoverScenes": false

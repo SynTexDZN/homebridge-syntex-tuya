@@ -17,15 +17,13 @@ class SynTexTuyaPlatform extends DynamicPlatform
 	{
 		super(config, api, pluginID, pluginName, pluginVersion);
 
-		if(config.options != null)
-		{
-			this.username = config.options['username'];
-			this.password = config.options['password'];
-			this.countryCode = config.options['countryCode'] || '49';
-			this.platform = config.options['platform'] || 'smart_life';
-			this.pollingInterval = config.options['pollingInterval'] == 0 ? 0 : Math.max((config.options['pollingInterval'] || 610), 610);
-			this.discoverScenes = config.options['discoverScenes'] || false;
-		}
+		this.username = config['username'];
+		this.password = config['password'];
+		this.countryCode = this.options['countryCode'];
+
+		this.platform = this.options['platform'] || 'smart_life';
+		this.pollingInterval = this.options['pollingInterval'] == 0 ? 0 : Math.max((this.options['pollingInterval'] || 610), 610);
+		this.discoverScenes = this.options['discoverScenes'] || false;
 
 		if(this.api != null && this.logger != null && this.files != null && this.username != null && this.password != null && this.countryCode != null)
 		{
@@ -104,8 +102,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 		{
 			this.WebServer.addPage('/reload-automation', async (response) => {
 
-				response.write(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
-				response.end();
+				response.end(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
 			});
 		}
 	}
