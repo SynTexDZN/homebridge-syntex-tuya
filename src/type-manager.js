@@ -61,55 +61,58 @@ module.exports = class TypeManager
 	
 	validateUpdate(id, letters, state)
 	{
-		for(const i in state)
+		if(state != null && state instanceof Object)
 		{
-			try
+			for(const i in state)
 			{
-				state[i] = JSON.parse(state[i]);
-			}
-			catch(e)
-			{
-				this.logger.log('warn', id, letters, '%conversion_error_parse[0]%: [' + state[i] + '] %conversion_error_parse[1]%! ( ' + id + ' )');
-
-				return null;
-			}
-			
-			var format = this.data[letters[0].toUpperCase()].format;
-
-			if(format instanceof Object)
-			{
-				format = format[i];
-			}
-
-			if(typeof state[i] != format)
-			{
-				this.logger.log('warn', id, letters, '%conversion_error_format[0]%: [' + state[i] + '] %conversion_error_format[1]% ' + (format == 'boolean' ? '%conversion_error_format[2]%' : format == 'number' ? '%conversion_error_format[3]%' : '%conversion_error_format[4]%') + ' %conversion_error_format[5]%! ( ' + id + ' )');
-
-				return null;
-			}
-			
-			if(format == 'number')
-			{
-				var min = this.data[letters[0].toUpperCase()].min, max = this.data[letters[0].toUpperCase()].max;
-
-				if(min instanceof Object)
+				try
 				{
-					min = min[i];
+					state[i] = JSON.parse(state[i]);
+				}
+				catch(e)
+				{
+					this.logger.log('warn', id, letters, '%conversion_error_parse[0]%: [' + state[i] + '] %conversion_error_parse[1]%! ( ' + id + ' )');
+
+					return null;
+				}
+				
+				var format = this.data[letters[0].toUpperCase()].format;
+
+				if(format instanceof Object)
+				{
+					format = format[i];
 				}
 
-				if(max instanceof Object)
+				if(typeof state[i] != format)
 				{
-					max = max[i];
-				}
+					this.logger.log('warn', id, letters, '%conversion_error_format[0]%: [' + state[i] + '] %conversion_error_format[1]% ' + (format == 'boolean' ? '%conversion_error_format[2]%' : format == 'number' ? '%conversion_error_format[3]%' : '%conversion_error_format[4]%') + ' %conversion_error_format[5]%! ( ' + id + ' )');
 
-				if(min != null && state[i] < min)
-				{
-					state[i] = min;
+					return null;
 				}
-
-				if(max != null && state[i] > max)
+				
+				if(format == 'number')
 				{
-					state[i] = max;
+					var min = this.data[letters[0].toUpperCase()].min, max = this.data[letters[0].toUpperCase()].max;
+
+					if(min instanceof Object)
+					{
+						min = min[i];
+					}
+
+					if(max instanceof Object)
+					{
+						max = max[i];
+					}
+
+					if(min != null && state[i] < min)
+					{
+						state[i] = min;
+					}
+
+					if(max != null && state[i] > max)
+					{
+						state[i] = max;
+					}
 				}
 			}
 		}
