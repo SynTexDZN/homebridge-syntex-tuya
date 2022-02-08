@@ -1,16 +1,14 @@
-const TypeManager = require('./type-manager');
-
 module.exports = class DeviceManager
 {
-	constructor(logger, tuyaWebAPI)
+	constructor(platform)
 	{
-		this.logger = logger;
-		this.tuyaWebAPI = tuyaWebAPI;
-
-		this.TypeManager = new TypeManager(this.logger);
+		this.logger = platform.logger;
+		this.tuyaWebAPI = platform.tuyaWebAPI;
+		this.TypeManager = platform.TypeManager;
+		this.EventManager = platform.EventManager;
 	}
 
-	refreshAccessories(accessories)
+	refreshAccessories()
 	{
 		this.logger.debug('%device_refresh% ..');
 
@@ -20,55 +18,42 @@ module.exports = class DeviceManager
 
 				for(const device of devices)
 				{
-					var type = device.dev_type;
+					var state = {};
 
-					if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer')
+					try
 					{
-						var state = {};
-
-						try
+						if(device.data.state != null)
 						{
-							if(device.data.state != null)
+							state.power = JSON.parse(device.data.state);
+						}
+
+						if(device.data.brightness != null)
+						{
+							state.brightness = JSON.parse(device.data.brightness);
+
+							if(device.data.color_mode == 'white')
 							{
-								state.power = JSON.parse(device.data.state);
+								state.brightness /= 2.55;
 							}
-
-							if(device.data.brightness != null)
+							else if(device.data.color_mode == 'colour')
 							{
-								state.brightness = JSON.parse(device.data.brightness);
-
-								if(device.data.color_mode == 'white')
-								{
-									state.brightness /= 2.55;
-								}
-								else if(device.data.color_mode == 'colour')
-								{
-									state.brightness /= 5;
-								}
+								state.brightness /= 5;
 							}
 						}
-						catch(e)
+
+						if(Object.keys(state).length == 0)
 						{
 							state = null;
-
-							this.logger.err(e);
-						}
-
-						for(const accessory of accessories)
-						{
-							if(accessory[1].id == device.id)
-							{
-								if((state = this.TypeManager.validateUpdate(accessory[1].id, accessory[1].service[1].letters, state)) != null)
-								{
-									accessory[1].service[1].updateState(state);
-								}
-								else
-								{
-									this.logger.log('error', accessory[1].id, accessory[1].service[1].letters, '[' + accessory[1].name + '] %update_error%! ( ' + accessory[1].id + ' )');
-								}
-							}
 						}
 					}
+					catch(e)
+					{
+						state = null;
+
+						this.logger.err(e);
+					}
+
+					this.EventManager.setOutputStream('SynTexTuya', null, device.id, state);
 				}
 
 				resolve(true);
@@ -127,6 +112,8 @@ module.exports = class DeviceManager
 		return new Promise((resolve) => {
 
 			this.tuyaWebAPI.setDeviceState(service.id, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
+
+				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { power : value });
 
 				resolve(true);
 		
@@ -193,6 +180,8 @@ module.exports = class DeviceManager
 		return new Promise((resolve) => {
 
 			this.tuyaWebAPI.setDeviceState(service.id, 'brightnessSet', { value }).then(() => {
+
+				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { brightness : value });
 
 				resolve(true);
 		

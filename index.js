@@ -1,4 +1,4 @@
-let DeviceManager = require('./src/device-manager'), AutomationSystem = require('syntex-automation');
+let DeviceManager = require('./src/device-manager'), TypeManager = require('./src/type-manager');
 
 const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
@@ -16,6 +16,8 @@ class SynTexTuyaPlatform extends DynamicPlatform
 	constructor(log, config, api)
 	{
 		super(config, api, pluginID, pluginName, pluginVersion);
+
+		this.devices = config['accessories'] || [];
 
 		this.username = config['username'];
 		this.password = config['password'];
@@ -37,8 +39,9 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					this.logger
 				);
 
-				DeviceManager = new DeviceManager(this.logger, this.tuyaWebAPI);
-				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
+				this.TypeManager = new TypeManager(this.logger);
+
+				DeviceManager = new DeviceManager(this);
 
 				this.loadAccessories();
 				this.initWebServer();
@@ -52,43 +55,77 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 	loadAccessories()
 	{
-		this.tuyaWebAPI.getOrRefreshToken().then(function(token) {
+		for(const device of this.devices)
+		{
+			const homebridgeAccessory = this.getAccessory(device.id);
+
+			device.manufacturer = pluginName;
+
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager, ContextManager }));
+		}
+
+		this.tuyaWebAPI.getOrRefreshToken().then((token) => {
 
 			this.tuyaWebAPI.token = token;
 
-			this.tuyaWebAPI.discoverDevices().then(function(devices) {
+			this.tuyaWebAPI.discoverDevices().then((devices) => {
 
 				for(const device of devices)
 				{
-					var type = device.dev_type;
+					var type = device.dev_type, found = false;
 
-					if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || (type == 'scene' && this.discoverScenes))
+					for(const configDevice of this.devices)
 					{
-						const homebridgeAccessory = this.getAccessory(device.id);
+						if(configDevice.id == device.id)
+						{
+							found = true;
+						}
 
-						this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, { id : device.id, name : device.name, services : type, manufacturer : pluginName }, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem, ContextManager : ContextManager }));
+						if(Array.isArray(configDevice.services))
+						{
+							for(const i in configDevice.services)
+							{
+								if(configDevice.services[i] instanceof Object && configDevice.services[i].id == device.id)
+								{
+									found = true;
+								}
+							}
+						}
+						else if(configDevice.services instanceof Object && configDevice.services.id == device.id)
+						{
+							found = true;
+						}
+					}
+
+					if(!found)
+					{
+						if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || (type == 'scene' && this.discoverScenes))
+						{
+							const homebridgeAccessory = this.getAccessory(device.id);
+
+							device.manufacturer = pluginName;
+							device.services = type;
+
+							this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager, ContextManager }));
+						}
 					}
 				}
 
-				DeviceManager.refreshAccessories(this.accessories);
+				DeviceManager.refreshAccessories();
 
 				if(this.pollingInterval > 0)
 				{
-					this.refreshInterval = setInterval(() => {
-
-						DeviceManager.refreshAccessories(this.accessories);
-		
-					}, this.pollingInterval * 1000);
+					this.refreshInterval = setInterval(() => DeviceManager.refreshAccessories(), this.pollingInterval * 1000);
 				}
 
-			}.bind(this)).catch((e) => {
+			}).catch((e) => {
 
 				this.logger.err(e);
 
 				setTimeout(() => this.loadAccessories(), 70 * 1000);
 			});
 
-		}.bind(this)).catch((e) => {
+		}).catch((e) => {
 
 			this.logger.err(e);
 
@@ -102,7 +139,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 		{
 			this.WebServer.addPage('/reload-automation', async (response) => {
 
-				response.end(await AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
+				response.end(await this.AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
 			});
 		}
 	}
