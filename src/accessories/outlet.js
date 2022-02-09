@@ -1,13 +1,11 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { OutletService } = require('homebridge-syntex-dynamic-platform');
+
+let DeviceManager;
 
 module.exports = class SynTexOutletService extends OutletService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -16,7 +14,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 			this.power = value || false;
 
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
 
 		}, true);
 
@@ -24,7 +22,7 @@ module.exports = class SynTexOutletService extends OutletService
 		{
 			if(state.value != null)
 			{
-				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+				this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
 
 				this.setState(state.value, () => {});
 			}
@@ -70,20 +68,18 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				this.power = value;
 
-				super.setState(this.power, () => {
+				super.setState(this.power,
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 
-					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )');
-				
-					callback();
-				});
+				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
+
+				callback();
 			}
 			else
 			{
 				callback(new Error('Offline'));
 			}
 		});
-
-		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
 	}
 
 	updateState(state)
@@ -92,11 +88,12 @@ module.exports = class SynTexOutletService extends OutletService
 		{
 			this.power = state.power;
 
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(state.power);
 
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )');
-		}
+			super.setState(state.power,
+				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + state.power + '] ( ' + this.id + ' )'));
 		
-		super.setState(state.power, () => {});
+			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : state.power });
+		}
 	}
 }

@@ -22,28 +22,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		}
 
 		super(homebridgeAccessory, deviceConfig, manager);
-
-		this.logger = manager.platform.logger;
-		this.TypeManager = manager.platform.TypeManager;
-		this.EventManager = manager.platform.EventManager;
-
-		for(const i in this.service)
-		{
-			if(this.service[i].letters != null)
-			{
-				this.EventManager.setInputStream('SynTexTuya', this.service[i], this.service[i].id, (state) => {
-
-					if((state = this.TypeManager.validateUpdate(this.service[i].id, this.service[i].letters, state)) != null)
-					{
-						this.service[i].updateState(state);
-					}
-					else
-					{
-						this.logger.log('error', this.service[i].id, this.service[i].letters, '[' + this.service[i].name + '] %update_error%! ( ' + this.service[i].id + ' )');
-					}
-				});
-			}
-		}
 	}
 	
 	setService(config, subtype)
@@ -70,22 +48,24 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			}
 		}
 
+		var deviceConfig = { ...this.deviceConfig };
+
+		if(config instanceof Object && config.id != null)
+		{
+			deviceConfig.id = config.id;
+		}
+
 		if(serviceConfig.type == 'outlet')
 		{
-			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+			service = new OutletService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
 		}
 		else if(serviceConfig.type == 'dimmer')
 		{
-			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+			service = new DimmedBulbService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
 		}
 		else if(serviceConfig.type == 'switch' && this.platform.discoverScenes)
 		{
 			service = new SceneSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-
-		if(config instanceof Object && config.id != null)
-		{
-			service.id = config.id;
 		}
 
 		if(service != null)

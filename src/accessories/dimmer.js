@@ -1,13 +1,11 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
+
+let DeviceManager;
 
 module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -17,11 +15,10 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.power = power || false;
 			this.brightness = brightness || 50;
 
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
-			this.service.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
 			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-
 		}));
 
 		this.changeHandler = (state) => {
@@ -32,14 +29,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(state.value != null)
 				{
-					this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
+					this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
 
 					super.setState(state.value, () => {});
 				}
 
 				if(state.brightness != null)
 				{
-					this.service.getCharacteristic(Characteristic.Brightness).updateValue(state.brightness);
+					this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness);
 
 					super.setBrightness(state.brightness, () => {});
 				}
@@ -145,7 +142,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			this.power = state.power;
 
-			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
 
 			changed = true;
 		}
@@ -154,7 +151,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			this.brightness = state.brightness;
 
-			this.service.getCharacteristic(Characteristic.Brightness).updateValue(this.brightness);
+			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
 			changed = true;
 		}
@@ -237,7 +234,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 							});
 						}
 
-						AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
+						this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
 					}
 					else if(this.changedBrightness)
 					{
@@ -260,7 +257,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 							this.running = false;
 						});
 
-						AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
+						this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
 					}
 					else
 					{
