@@ -144,7 +144,7 @@ module.exports = class DeviceManager
 					{
 						state.brightness /= 5;
 					}
-
+					
 					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
 					{
 						resolve(state.brightness);

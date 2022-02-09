@@ -75,7 +75,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setState(value, callback)
 	{
-		this.setToCurrentBrightness({ value : value }, (offline) => {
+		this.setToCurrentBrightness({ value }, (offline) => {
 
 			if(!offline)
 			{

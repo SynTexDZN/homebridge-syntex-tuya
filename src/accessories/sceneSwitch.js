@@ -38,7 +38,7 @@ module.exports = class SynTexOutletService extends SwitchService
 			{
 				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [triggered] ( ' + this.id + ' )');
 				
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
+				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 
 				callback();
 
