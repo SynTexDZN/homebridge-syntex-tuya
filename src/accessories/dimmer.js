@@ -10,8 +10,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.getState((power) => super.getBrightness((brightness) => {
-
 		super.getState((value) => super.getBrightness((brightness) => {
 
 			this.value = value || false;

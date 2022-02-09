@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"axios": "^0.21.1",
-		"homebridge-syntex-dynamic-platform": "1.0.7-b30"
+		"homebridge-syntex-dynamic-platform": "1.0.7-b31"
 	},
 	"keywords": [
 		"syntex",
