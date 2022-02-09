@@ -1,4 +1,4 @@
-let DeviceManager = require('./src/device-manager'), TypeManager = require('./src/type-manager');
+let DeviceManager = require('./src/device-manager');
 
 const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
@@ -38,8 +38,6 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					this.platform,
 					this.logger
 				);
-
-				this.TypeManager = new TypeManager(this.logger);
 
 				DeviceManager = new DeviceManager(this);
 

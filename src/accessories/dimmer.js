@@ -12,18 +12,18 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		super.getState((power) => super.getBrightness((brightness) => {
 
-			this.power = power || false;
+		super.getState((value) => super.getBrightness((brightness) => {
+
+			this.value = value || false;
 			this.brightness = brightness || 50;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
-			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		}));
 
 		this.changeHandler = (state) => {
-
-			state.power = state.value;
 
 			this.setToCurrentBrightness(state, () => {
 
@@ -50,11 +50,11 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(value != null)
 			{
-				this.power = value;
+				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
-				callback(null, this.power);
+				callback(null, this.value);
 			}
 			else
 			{
@@ -62,14 +62,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 					if(value != null && !isNaN(value))
 					{
-						this.power = value;
+						this.value = value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					
-						super.setState(this.power, () => {});
+						super.setState(this.value, () => {});
 					}
 					
-					callback(null, this.power);
+					callback(null, this.value);
 				});
 			}
 		});
@@ -77,7 +77,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setState(value, callback)
 	{
-		this.setToCurrentBrightness({ power : value }, (offline) => {
+		this.setToCurrentBrightness({ value : value }, (offline) => {
 
 			if(!offline)
 			{
@@ -138,11 +138,11 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	{
 		var changed = false;
 
-		if(state.power != null && !isNaN(state.power) && this.power != state.power)
+		if(state.value != null && !isNaN(state.value) && this.value != state.value)
 		{
-			this.power = state.power;
+			this.value = state.value;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 
 			changed = true;
 		}
@@ -156,20 +156,20 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			changed = true;
 		}
 		
-		super.setState(state.power, () => {});
+		super.setState(state.value, () => {});
 		super.setBrightness(state.brightness, () => {});
 
 		if(changed)
 		{
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		}
 	}
 
 	setToCurrentBrightness(state, callback)
 	{
-		if(state.power != null && this.power != state.power)
+		if(state.value != null && this.value != state.value)
 		{
-			this.power = state.power;
+			this.value = state.value;
 
 			this.changedPower = true;
 		}
@@ -191,13 +191,13 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 					if(this.changedPower)
 					{
-						if(this.power == false)
+						if(this.value == false)
 						{
-							DeviceManager.setState(this, this.power).then((success) => {
+							DeviceManager.setState(this, this.value).then((success) => {
 
 								if(success)
 								{
-									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 								}
 	
 								this.offline = !success;
@@ -218,7 +218,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 								if(success)
 								{
-									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 								}
 		
 								this.offline = !success;
@@ -234,7 +234,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 							});
 						}
 
-						this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
+						this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value, brightness : this.brightness });
 					}
 					else if(this.changedBrightness)
 					{
@@ -242,7 +242,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 							if(success)
 							{
-								this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.power + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+								this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 							}
 	
 							this.offline = !success;
@@ -257,7 +257,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 							this.running = false;
 						});
 
-						this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.power, brightness : this.brightness });
+						this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value, brightness : this.brightness });
 					}
 					else
 					{

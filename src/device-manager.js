@@ -24,7 +24,7 @@ module.exports = class DeviceManager
 					{
 						if(device.data.state != null)
 						{
-							state.power = JSON.parse(device.data.state);
+							state.value = JSON.parse(device.data.state);
 						}
 
 						if(device.data.brightness != null)
@@ -75,11 +75,11 @@ module.exports = class DeviceManager
 				
 				try
 				{
-					var state = { power : JSON.parse(data.state) };
+					var state = { value : JSON.parse(data.state) };
 
 					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
 					{
-						resolve(state.power);
+						resolve(state.value);
 					}
 					else
 					{
@@ -113,7 +113,7 @@ module.exports = class DeviceManager
 
 			this.tuyaWebAPI.setDeviceState(service.id, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
 
-				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { power : value });
+				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { value });
 
 				resolve(true);
 		
