@@ -18,7 +18,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
-			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		}));
 
 		this.changeHandler = (state) => {
@@ -50,7 +50,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
 				callback(null, this.value);
 			}
@@ -62,7 +62,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						this.value = value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 					
 						super.setState(this.value, () => {});
 					}
@@ -159,7 +159,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		if(changed)
 		{
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		}
 	}
 
@@ -195,7 +195,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 								if(success)
 								{
-									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 								}
 	
 								this.offline = !success;
@@ -216,7 +216,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 								if(success)
 								{
-									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 								}
 		
 								this.offline = !success;
@@ -240,7 +240,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 							if(success)
 							{
-								this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+								this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 							}
 	
 							this.offline = !success;
