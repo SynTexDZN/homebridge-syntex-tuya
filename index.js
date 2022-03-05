@@ -42,7 +42,6 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				DeviceManager = new DeviceManager(this);
 
 				this.loadAccessories();
-				this.initWebServer();
 			});
 		}
 		else
@@ -129,16 +128,5 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 			setTimeout(() => this.loadAccessories(), 70 * 1000);
 		});
-	}
-
-	initWebServer()
-	{
-		if(this.port != null)
-		{
-			this.WebServer.addPage('/reload-automation', async (response) => {
-
-				response.end(await this.AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
-			});
-		}
 	}
 }
