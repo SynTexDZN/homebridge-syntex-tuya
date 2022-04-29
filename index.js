@@ -108,11 +108,11 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					}
 				}
 
-				DeviceManager.refreshAccessories();
+				DeviceManager.refreshAccessories(this.accessories);
 
 				if(this.pollingInterval > 0)
 				{
-					this.refreshInterval = setInterval(() => DeviceManager.refreshAccessories(), this.pollingInterval * 1000);
+					this.refreshInterval = setInterval(() => DeviceManager.refreshAccessories(this.accessories), this.pollingInterval * 1000);
 				}
 
 			}).catch((e) => {
