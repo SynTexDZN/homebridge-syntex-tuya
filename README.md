@@ -43,10 +43,12 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
         "options": {
             "port": 1713,
             "language": "us",
-            "debug": false,
             "platform": "smart_life",
             "pollingInterval": 1200,
             "discoverScenes": false
+        },
+        "log": {
+            "debug": false
         }
     }
 ]
