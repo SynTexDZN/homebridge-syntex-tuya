@@ -53,7 +53,10 @@ module.exports = class DeviceManager
 						this.logger.err(e);
 					}
 
-					this.EventManager.setOutputStream('SynTexTuya', null, device.id, state);
+					if(state != null)
+					{
+						this.EventManager.setOutputStream('SynTexTuya', null, device.id, state);
+					}
 				}
 
 				resolve(true);
