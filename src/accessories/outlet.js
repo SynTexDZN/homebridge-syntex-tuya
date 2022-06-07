@@ -43,14 +43,14 @@ module.exports = class SynTexOutletService extends OutletService
 			}
 			else
 			{
-				DeviceManager.getState(this).then((value) => {
+				DeviceManager.getState(this).then((state) => {
 
-					if(value != null && !isNaN(value))
+					if(state != null && state.value != null)
 					{
-						this.value = value;
+						this.value = state.value;
 
 						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
-					
+
 						super.setState(this.value, () => {});
 					}
 					

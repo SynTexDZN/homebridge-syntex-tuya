@@ -6,6 +6,8 @@ module.exports = class DeviceManager
 		this.tuyaWebAPI = platform.tuyaWebAPI;
 		this.TypeManager = platform.TypeManager;
 		this.EventManager = platform.EventManager;
+
+		this.runningRequests = {};
 	}
 
 	refreshAccessories(accessories)
@@ -30,7 +32,7 @@ module.exports = class DeviceManager
 						if(device.data.brightness != null)
 						{
 							state.brightness = JSON.parse(device.data.brightness);
-
+							
 							if(device.data.color_mode == 'white')
 							{
 								state.brightness /= 2.55;
@@ -72,40 +74,79 @@ module.exports = class DeviceManager
 
 	getState(service)
 	{
-		return new Promise((resolve) => {
+		return new Promise((callback) => {
 
-			this.tuyaWebAPI.getDeviceState(service.id).then((data) => {
-				
-				try
-				{
-					var state = { value : JSON.parse(data.state) };
+			if(this.runningRequests[service.id] == null)
+			{
+				this.runningRequests[service.id] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service.id).then((data) => {
 
-					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
+					try
 					{
-						resolve(state.value);
+						var state = {};
+						
+						if(data.state != null)
+						{
+							state.value = JSON.parse(data.state);
+						}
+
+						if(data.brightness != null)
+						{
+							state.brightness = JSON.parse(data.brightness);
+
+							if(data.color_mode == 'white')
+							{
+								state.brightness /= 2.55;
+							}
+							else if(data.color_mode == 'colour')
+							{
+								state.brightness /= 5;
+							}
+						}
+	
+						if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
+						{
+							if(state.value != null)
+							{
+								service.value = state.value;
+							}
+
+							if(state.brightness != null)
+							{
+								service.brightness = state.brightness;
+							}
+
+							resolve(state);
+						}
+						else
+						{
+							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
+						
+							resolve(null);
+						}
 					}
-					else
+					catch(e)
 					{
+						this.logger.err(e);
+
 						resolve(null);
-
-						this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
 					}
-				}
-				catch(e)
-				{
-					this.logger.err(e);
+
+				}).catch((e) => {
+			
+					if(e != null)
+					{
+						this.logger.err(e);
+					}
 
 					resolve(null);
-				}
+				}));
+			}
+			
+			this.runningRequests[service.id].then((state) => {
+				
+				delete this.runningRequests[service.id]
 
-			}).catch((e) => {
-		
-				if(e != null)
-				{
-					this.logger.err(e);
-				}
-		
-				resolve(null);
+				callback(state);
 			});
 		});
 	}
@@ -125,55 +166,6 @@ module.exports = class DeviceManager
 				this.logger.err(e);
 
 				resolve(false);
-			});
-		});
-	}
-
-	getBrightness(service)
-	{
-		return new Promise((resolve) => {
-
-			this.tuyaWebAPI.getDeviceState(service.id).then((data) => {
-				
-				try
-				{
-					var state = { brightness : JSON.parse(data.brightness) };
-
-					if(data.color_mode == 'white')
-					{
-						state.brightness /= 2.55;
-					}
-					else if(data.color_mode == 'colour')
-					{
-						state.brightness /= 5;
-					}
-					
-					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
-					{
-						resolve(state.brightness);
-					}
-					else
-					{
-						resolve(null);
-
-						this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
-					}
-				}
-				catch(e)
-				{
-					this.logger.err(e);
-
-					resolve(null);
-				}
-		
-			}).catch((e) => {
-		
-				if(e != null)
-				{
-					this.logger.err(e);
-				}
-		
-				resolve(null);
 			});
 		});
 	}
