@@ -105,7 +105,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 					if(state != null && state.brightness != null)
 					{
-						this.brightness = value;
+						this.brightness = state.brightness;
 						
 						super.setBrightness(this.brightness, () => {});
 					}
