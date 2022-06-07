@@ -144,9 +144,13 @@ module.exports = class DeviceManager
 			
 			this.runningRequests[service.id].then((state) => {
 				
-				delete this.runningRequests[service.id]
+				delete this.runningRequests[service.id];
 
 				callback(state);
+
+			}).catch(() => {
+
+				callback(null);
 			});
 		});
 	}
