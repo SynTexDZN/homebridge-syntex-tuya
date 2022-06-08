@@ -18,8 +18,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
-			this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-		}));
+		}), true);
 
 		this.changeHandler = (state) => {
 
