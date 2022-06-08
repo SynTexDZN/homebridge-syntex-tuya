@@ -84,16 +84,26 @@ module.exports = class SynTexOutletService extends OutletService
 
 	updateState(state)
 	{
-		if(state.value != null && this.value != state.value)
+		var changed = false;
+
+		if(state.value != null)
 		{
+			if(this.value != state.value)
+			{
+				changed = true;
+			}
+
 			this.value = state.value;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
-
-			super.setState(state.value,
-				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + state.value + '] ( ' + this.id + ' )'));
-		
-			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : state.value });
+			super.setState(state.value, 
+				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
 		}
+
+		if(changed)
+		{
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+		}
+
+		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value });
 	}
 }

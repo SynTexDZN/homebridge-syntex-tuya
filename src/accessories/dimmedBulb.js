@@ -136,31 +136,38 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	{
 		var changed = false;
 
-		if(state.value != null && this.value != state.value)
+		if(state.value != null)
 		{
+			if(this.value != state.value)
+			{
+				changed = true;
+			}
+
 			this.value = state.value;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
+			super.setState(state.value, 
+				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
+		}
 
+		if(state.brightness != null)
+		{
+			if(this.brightness != state.brightness)
+			{
 			changed = true;
 		}
 
-		if(state.brightness != null && this.brightness != state.brightness)
-		{
 			this.brightness = state.brightness;
 
-			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness);
-
-			changed = true;
+			super.setBrightness(state.brightness, 
+				() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
 		}
 		
-		super.setState(state.value, () => {});
-		super.setBrightness(state.brightness, () => {});
-
 		if(changed)
 		{
 			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 		}
+
+		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value, brightness : this.brightness });
 	}
 
 	setToCurrentBrightness(state, callback)
