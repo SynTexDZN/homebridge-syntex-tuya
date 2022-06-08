@@ -171,7 +171,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			this.tuyaWebAPI.setDeviceState(service.id, 'brightnessSet', { value }).then(() => {
+			this.tuyaWebAPI.setDeviceState(service, 'brightnessSet', { value }).then(() => {
 
 				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { brightness : value });
 
