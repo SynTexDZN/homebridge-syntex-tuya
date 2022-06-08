@@ -71,7 +71,7 @@ module.exports = class DeviceManager
 
 			if(this.runningRequests[service.id] == null)
 			{
-				this.runningRequests[service.id] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service.id).then((data) => {
+				this.runningRequests[service.id] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service).then((data) => {
 
 					try
 					{
@@ -152,7 +152,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			this.tuyaWebAPI.setDeviceState(service.id, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
+			this.tuyaWebAPI.setDeviceState(service, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
 
 				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { value });
 
