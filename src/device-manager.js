@@ -77,12 +77,12 @@ module.exports = class DeviceManager
 					{
 						var state = {};
 						
-						if(data.state != null)
+						if(data.state != null && this.TypeManager.getCharacteristic('value', { letters : service.letters }) != null)
 						{
 							state.value = JSON.parse(data.state);
 						}
 
-						if(data.brightness != null)
+						if(data.brightness != null && this.TypeManager.getCharacteristic('brightness', { letters : service.letters }) != null)
 						{
 							state.brightness = JSON.parse(data.brightness);
 
