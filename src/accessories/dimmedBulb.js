@@ -50,9 +50,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
-				callback(null, this.value);
+				callback(null, value);
 			}
 			else
 			{
@@ -62,9 +62,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						this.value = state.value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + this.value + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + state.value + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
 
-						super.setState(this.value, () => {});
+						super.setState(state.value, () => {});
 					}
 
 					callback(null, this.value);
@@ -97,7 +97,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.brightness = value;
 
-				callback(null, this.brightness);
+				callback(null, value);
 			}
 			else
 			{
@@ -107,7 +107,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						this.brightness = state.brightness;
 						
-						super.setBrightness(this.brightness, () => {});
+						super.setBrightness(state.brightness, () => {});
 					}
 					
 					callback(null, this.brightness);
@@ -136,20 +136,20 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	{
 		var changed = false;
 
-		if(state.value != null && !isNaN(state.value) && this.value != state.value)
+		if(state.value != null && this.value != state.value)
 		{
 			this.value = state.value;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
 
 			changed = true;
 		}
 
-		if(state.brightness != null && !isNaN(state.brightness) && this.brightness != state.brightness)
+		if(state.brightness != null && this.brightness != state.brightness)
 		{
 			this.brightness = state.brightness;
 
-			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
+			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness);
 
 			changed = true;
 		}

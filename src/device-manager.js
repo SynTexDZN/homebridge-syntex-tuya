@@ -2,12 +2,12 @@ module.exports = class DeviceManager
 {
 	constructor(platform)
 	{
+		this.runningRequests = {};
+
 		this.logger = platform.logger;
 		this.tuyaWebAPI = platform.tuyaWebAPI;
 		this.TypeManager = platform.TypeManager;
 		this.EventManager = platform.EventManager;
-
-		this.runningRequests = {};
 	}
 
 	refreshAccessories(accessories)
@@ -20,10 +20,10 @@ module.exports = class DeviceManager
 
 				for(const device of devices)
 				{
-					var state = {};
-
 					try
 					{
+						var state = {};
+
 						if(device.data.state != null)
 						{
 							state.value = JSON.parse(device.data.state);
@@ -43,21 +43,14 @@ module.exports = class DeviceManager
 							}
 						}
 
-						if(Object.keys(state).length == 0)
+						if(Object.keys(state).length > 0)
 						{
-							state = null;
+							this.EventManager.setOutputStream('SynTexTuya', null, device.id, state);
 						}
 					}
 					catch(e)
 					{
-						state = null;
-
 						this.logger.err(e);
-					}
-
-					if(state != null)
-					{
-						this.EventManager.setOutputStream('SynTexTuya', null, device.id, state);
 					}
 				}
 

@@ -37,9 +37,9 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )');
 
-				callback(null, this.value);
+				callback(null, value);
 			}
 			else
 			{
@@ -49,9 +49,9 @@ module.exports = class SynTexOutletService extends OutletService
 					{
 						this.value = state.value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + state.value + '] ( ' + this.id + ' )');
 
-						super.setState(this.value, () => {});
+						super.setState(state.value, () => {});
 					}
 					
 					callback(null, this.value);
@@ -68,8 +68,8 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				this.value = value;
 
-				super.setState(this.value,
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
+				super.setState(value,
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + value + '] ( ' + this.id + ' )'));
 
 				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 
@@ -84,7 +84,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 	updateState(state)
 	{
-		if(state.value != null && !isNaN(state.value) && this.value != state.value)
+		if(state.value != null && this.value != state.value)
 		{
 			this.value = state.value;
 
