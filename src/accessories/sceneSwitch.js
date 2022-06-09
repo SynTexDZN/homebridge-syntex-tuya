@@ -1,18 +1,14 @@
 const { SwitchService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexOutletService extends SwitchService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
 		this.service.getCharacteristic(this.Characteristic.On).updateValue(false);
 
-		super.setState(false, () => {});
+		this.DeviceManager = manager.DeviceManager;
 
 		this.changeHandler = (state) => {
 			
@@ -32,7 +28,7 @@ module.exports = class SynTexOutletService extends SwitchService
 
 	setState(value, callback)
 	{
-		DeviceManager.setState(this, value).then((success) => {
+		this.DeviceManager.setState(this, value).then((success) => {
 
 			if(success)
 			{

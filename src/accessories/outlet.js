@@ -1,13 +1,9 @@
 const { OutletService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexOutletService extends OutletService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
 		super.getState((value) => {
@@ -18,8 +14,10 @@ module.exports = class SynTexOutletService extends OutletService
 
 		}, true);
 
-		this.changeHandler = (state) =>
-		{
+		this.DeviceManager = manager.DeviceManager;
+
+		this.changeHandler = (state) => {
+
 			if(state.value != null)
 			{
 				this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
@@ -43,15 +41,14 @@ module.exports = class SynTexOutletService extends OutletService
 			}
 			else
 			{
-				DeviceManager.getState(this).then((state) => {
+				this.DeviceManager.getState(this).then((state) => {
 
 					if(state != null && state.value != null)
 					{
 						this.value = state.value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + state.value + '] ( ' + this.id + ' )');
-
-						super.setState(state.value, () => {});
+						super.setState(state.value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + state.value + '] ( ' + this.id + ' )'));
 					}
 					
 					callback(null, this.value);
@@ -62,7 +59,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 	setState(value, callback)
 	{
-		DeviceManager.setState(this, value).then((success) => {
+		this.DeviceManager.setState(this, value).then((success) => {
 
 			if(success)
 			{

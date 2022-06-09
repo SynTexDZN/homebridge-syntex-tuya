@@ -1,13 +1,9 @@
 const { DimmedBulbService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
 		super.getState((value) => super.getBrightness((brightness) => {
@@ -19,6 +15,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
 
 		}), true);
+
+		this.DeviceManager = manager.DeviceManager;
 
 		this.changeHandler = (state) => {
 
@@ -55,15 +53,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 			else
 			{
-				DeviceManager.getState(this).then((state) => {
+				this.DeviceManager.getState(this).then((state) => {
 
 					if(state != null && state.value != null)
 					{
 						this.value = state.value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + state.value + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )');
-
-						super.setState(state.value, () => {});
+						super.setState(state.value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [power: ' + state.value + ', brightness: ' + state.brightness + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -79,7 +76,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			if(!offline)
 			{
 				super.setState(value,
-					() => callback(null));
+					() => callback());
 			}
 			else
 			{
@@ -100,7 +97,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 			else
 			{
-				DeviceManager.getState(this).then((state) => {
+				this.DeviceManager.getState(this).then((state) => {
 
 					if(state != null && state.brightness != null)
 					{
@@ -122,7 +119,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			if(!offline)
 			{
 				super.setBrightness(value,
-					() => callback(null));
+					() => callback());
 			}
 			else
 			{
@@ -197,7 +194,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						if(this.value == false)
 						{
-							DeviceManager.setState(this, this.value).then((success) => {
+							this.DeviceManager.setState(this, this.value).then((success) => {
 
 								if(success)
 								{
@@ -218,7 +215,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 						}
 						else
 						{
-							DeviceManager.setBrightness(this, this.brightness).then((success) => {
+							this.DeviceManager.setBrightness(this, this.brightness).then((success) => {
 
 								if(success)
 								{
@@ -242,7 +239,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					}
 					else if(this.changedBrightness)
 					{
-						DeviceManager.setBrightness(this, this.brightness).then((success) => {
+						this.DeviceManager.setBrightness(this, this.brightness).then((success) => {
 
 							if(success)
 							{
