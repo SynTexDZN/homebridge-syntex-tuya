@@ -10,7 +10,7 @@ module.exports = class DeviceManager
 		this.EventManager = platform.EventManager;
 	}
 
-	refreshAccessories(accessories)
+	refreshAccessories()
 	{
 		this.logger.debug('%device_refresh% ..');
 
