@@ -8,15 +8,15 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
-		if(deviceConfig.services == 'switch' && manager.platform.discovery.addDevices)
+		if(deviceConfig.services == 'switch')
 		{
 			deviceConfig.services = 'outlet';
 		}
-		else if((deviceConfig.services == 'light' || deviceConfig.services == 'dimmer') && manager.platform.discovery.addDevices)
+		else if((deviceConfig.services == 'light' || deviceConfig.services == 'dimmer'))
 		{
 			deviceConfig.services = 'dimmer';
 		}
-		else if(deviceConfig.services == 'scene' && manager.platform.discovery.addScenes)
+		else if(deviceConfig.services == 'scene')
 		{
 			deviceConfig.services = 'switch';
 		}
@@ -55,15 +55,15 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			deviceConfig.id = config.id;
 		}
 
-		if(serviceConfig.type == 'outlet' && this.platform.discovery.addDevices)
+		if(serviceConfig.type == 'outlet')
 		{
 			service = new OutletService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
 		}
-		else if(serviceConfig.type == 'dimmer' && this.platform.discovery.addDevices)
+		else if(serviceConfig.type == 'dimmer')
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
 		}
-		else if(serviceConfig.type == 'switch' && this.platform.discovery.addScenes)
+		else if(serviceConfig.type == 'switch')
 		{
 			service = new SceneSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
