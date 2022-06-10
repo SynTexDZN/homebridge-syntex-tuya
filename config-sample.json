@@ -10,8 +10,10 @@
 				"port": 1713,
 				"language": "us",
 				"platform": "smart_life",
-				"pollingInterval": 1200,
-				"discoverScenes": false
+				"pollingInterval": 1200
+			},
+			"discovery": {
+				"addScenes": false
 			},
 			"log": {
 				"debug": false

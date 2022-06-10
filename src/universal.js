@@ -16,7 +16,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			deviceConfig.services = 'dimmer';
 		}
-		else if(deviceConfig.services == 'scene' && manager.platform.discoverScenes)
+		else if(deviceConfig.services == 'scene' && manager.platform.discovery.addScenes)
 		{
 			deviceConfig.services = 'switch';
 		}
@@ -63,7 +63,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
 		}
-		else if(serviceConfig.type == 'switch' && this.platform.discoverScenes)
+		else if(serviceConfig.type == 'switch' && this.platform.discovery.addScenes)
 		{
 			service = new SceneSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}

@@ -25,7 +25,8 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 		this.platform = this.options['platform'] || 'smart_life';
 		this.pollingInterval = this.options['pollingInterval'] == 0 ? 0 : Math.max((this.options['pollingInterval'] || 610), 610);
-		this.discoverScenes = this.options['discoverScenes'] || false;
+
+		this.discovery = config['discovery'] || {};
 
 		if(this.api != null && this.logger != null && this.files != null && this.username != null && this.password != null && this.countryCode != null)
 		{
@@ -96,7 +97,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 					if(!found)
 					{
-						if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || (type == 'scene' && this.discoverScenes))
+						if(type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || (type == 'scene' && this.discovery.addScenes))
 						{
 							const homebridgeAccessory = this.getAccessory(device.id);
 

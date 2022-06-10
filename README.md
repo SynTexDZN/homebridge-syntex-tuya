@@ -44,8 +44,10 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
             "port": 1713,
             "language": "us",
             "platform": "smart_life",
-            "pollingInterval": 1200,
-            "discoverScenes": false
+            "pollingInterval": 1200
+        },
+        "discovery": {
+            "addScenes": false
         },
         "log": {
             "debug": false
@@ -67,7 +69,9 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - `debug` For further information because of troubleshooting and bug reports.
 - `platform` The App where you registered your account. `tuya` for Tuya Smart, `smart_life` for Smart Life, `jinvoo_smart` for Jinvoo Smart. Defaults to `tuya`
 - `pollingInterval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
-- `discoverScenes` Adds switches to control your Tuya scenes.
+
+### Discovery Parameters
+- `addScenes` Adds switches to control your Tuya scenes.
 
 
 ---
