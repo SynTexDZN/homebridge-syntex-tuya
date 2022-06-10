@@ -8,11 +8,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
-		if(deviceConfig.services == 'switch')
+		if(deviceConfig.services == 'switch' && manager.platform.discovery.addDevices)
 		{
 			deviceConfig.services = 'outlet';
 		}
-		else if(deviceConfig.services == 'light' || deviceConfig.services == 'dimmer')
+		else if((deviceConfig.services == 'light' || deviceConfig.services == 'dimmer') && manager.platform.discovery.addDevices)
 		{
 			deviceConfig.services = 'dimmer';
 		}
@@ -55,11 +55,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			deviceConfig.id = config.id;
 		}
 
-		if(serviceConfig.type == 'outlet')
+		if(serviceConfig.type == 'outlet' && this.platform.discovery.addDevices)
 		{
 			service = new OutletService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
 		}
-		else if(serviceConfig.type == 'dimmer')
+		else if(serviceConfig.type == 'dimmer' && this.platform.discovery.addDevices)
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
 		}

@@ -13,6 +13,7 @@
 				"pollingInterval": 1200
 			},
 			"discovery": {
+				"addDevices": true,
 				"addScenes": false
 			},
 			"log": {

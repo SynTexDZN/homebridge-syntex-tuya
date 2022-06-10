@@ -47,6 +47,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
             "pollingInterval": 1200
         },
         "discovery": {
+            "addDevices": true,
             "addScenes": false
         },
         "log": {
@@ -71,6 +72,7 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 - `pollingInterval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
 
 ### Discovery Parameters
+- `addDevices` Adds your existing Tuya devices.
 - `addScenes` Adds switches to control your Tuya scenes.
 
 
