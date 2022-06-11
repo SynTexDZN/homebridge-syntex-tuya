@@ -6,11 +6,19 @@
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-tuya?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya)
 
 A plugin to control Tuya devices based on the `tuyawebapi`<br>
-This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge
+This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
+It also offers some tweaks and improvements to the original devices.
+
+
+## Core Features
+- **Device Control:** View and control your Tuya devices.
+- **Scene Support:** Connect your Tuya scenes with switches.
+- **HTTP Access:** Update and read device states via HTTP calls.
+- **Automation:** We integrated our powerful automation API for fast and complex automation.
 
 
 ## Troubleshooting
-#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
+#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-tuya?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya/issues)
 - `Report` us your `Issues`
 - `Join` our `Discord Server`
 #### [![Discord](https://img.shields.io/discord/442095224953634828?color=5865F2&logoColor=white&label=discord&logo=discord&style=for-the-badge)](https://discord.gg/XUqghtw4DE)
@@ -67,13 +75,15 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 ### Optional Parameters
 - `port` To control your accessory over HTTP calls.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
-- `debug` For further information because of troubleshooting and bug reports.
 - `platform` The App where you registered your account. `tuya` for Tuya Smart, `smart_life` for Smart Life, `jinvoo_smart` for Jinvoo Smart. Defaults to `tuya`
-- `pollingInterval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 610.
+- `pollingInterval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency (high interval number, e.g. 1800 = 30 minutes). Minimum is 1030.
 
 ### Discovery Parameters
 - `addDevices` Adds your existing Tuya devices.
 - `addScenes` Adds switches to control your Tuya scenes.
+
+### Log Parameters
+- Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*
 
 
 ---
@@ -91,11 +101,11 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
-- For all devices: `true` / `false` *( outlet, switch, light, dimmable light )*
+- For all devices: `true` / `false` *( dimmer, led, outlet, switch )*
 - For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&value=true&brightness=100`\
-*( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example )*
+*( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` for example )*
 
 
 ## Read Tuya Device Values
@@ -103,7 +113,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890`\
-*( Reads the value of `ABCDEF1234567890` as example )*
+*( Reads the value of `ABCDEF1234567890` for example )*
 
 
 ## Remove Tuya Device
@@ -164,7 +174,7 @@ To enable the automation module you have to create a file named `automation.json
         }
       ]
     }
-  }
+  ]
 }
 ```
 
@@ -189,6 +199,7 @@ The letters are split into two parts *( numbers )*
 - D : Humidity
 - E : Rain
 - F : Light
+- G : Blind
 - 0 : Occupancy
 - 1 : Smoke
 - 2 : Airquality
@@ -208,7 +219,7 @@ The letters are split into two parts *( numbers )*
 
 ### Supported Plugins
 - SynTexKNX *( `homebridge-syntex-knx` )*
-- SynTexMagicHome *( `homebridge-syntex-tuya` )*
+- SynTexMagicHome *( `homebridge-syntex-magichome` )*
 - SynTexTuya *( `homebridge-syntex-tuya` )*
 - SynTexWebHooks *( `homebridge-syntex-webhooks` )*
 
