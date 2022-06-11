@@ -59,6 +59,8 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 			this.tuyaWebAPI.discoverDevices().then((devices) => {
 
+				var additionalConfig = [];
+
 				for(const device of this.devices)
 				{
 					const homebridgeAccessory = this.getAccessory(device.id);
@@ -99,13 +101,28 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					{
 						const homebridgeAccessory = this.getAccessory(device.id);
 
-						if(homebridgeAccessory != null || ((type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer') && this.discovery.addDevices) || (type == 'scene' && this.discovery.addScenes))
+						if(homebridgeAccessory != null || ((type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer') && this.discovery.addDevices != false) || (type == 'scene' && this.discovery.addScenes != false))
 						{
 							device.manufacturer = pluginName;
 							device.services = type;
 
 							this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager, ContextManager }));
 						}
+
+						if(type == 'switch')
+						{
+							type = 'outlet';
+						}
+						else if(type == 'light')
+						{
+							type = 'dimmer';
+						}
+						else if(type == 'scene')
+						{
+							type = 'switch';
+						}
+
+						additionalConfig.push({ id : device.id, name : device.name, services : [{ type }] });
 					}
 				}
 
@@ -114,6 +131,11 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				if(this.pollingInterval > 0)
 				{
 					this.refreshInterval = setInterval(() => DeviceManager.refreshAccessories(), this.pollingInterval * 1000);
+				}
+
+				if(additionalConfig.length > 0 && this.discovery.generateConfig != false)
+				{
+					this.generateConfig(additionalConfig);
 				}
 
 			}).catch((e) => {
@@ -128,6 +150,33 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.logger.err(e);
 
 			setTimeout(() => this.loadAccessories(), 70 * 1000);
+		});
+	}
+
+	generateConfig(additionalConfig)
+	{
+		this.readConfig().then((data) => {
+
+			if(data != null)
+			{
+				for(const i in data.platforms)
+				{
+					if(data.platforms[i].platform == this.pluginName)
+					{
+						if(data.platforms[i].accessories == null)
+						{
+							data.platforms[i].accessories = [];
+						}
+
+						for(const x in additionalConfig)
+						{
+							data.platforms[i].accessories.push(additionalConfig[x]);
+						}
+					}
+				}
+
+				this.writeConfig(data).then(() => {});
+			}
 		});
 	}
 }

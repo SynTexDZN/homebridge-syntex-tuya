@@ -56,7 +56,8 @@ It also offers some tweaks and improvements to the original devices.
         },
         "discovery": {
             "addDevices": true,
-            "addScenes": false
+            "addScenes": true,
+            "generateConfig": true
         },
         "log": {
             "debug": false
@@ -81,6 +82,7 @@ It also offers some tweaks and improvements to the original devices.
 ### Discovery Parameters
 - `addDevices` Adds your existing Tuya devices.
 - `addScenes` Adds switches to control your Tuya scenes.
+- `generateConfig` Generates an accessory list and includes it into the `config.json` for later editing *( required using the `homebridge-syntex` plugin )*
 
 ### Log Parameters
 - Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*

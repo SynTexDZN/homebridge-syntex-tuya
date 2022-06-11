@@ -14,7 +14,8 @@
 			},
 			"discovery": {
 				"addDevices": true,
-				"addScenes": false
+				"addScenes": true,
+				"generateConfig": true
 			},
 			"log": {
 				"debug": false
