@@ -6,8 +6,6 @@ module.exports = class SynTexOutletService extends SwitchService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.service.getCharacteristic(this.Characteristic.On).updateValue(false);
-
 		this.DeviceManager = manager.DeviceManager;
 
 		this.changeHandler = (state) => {

@@ -69,14 +69,14 @@ module.exports = class DeviceManager
 	{
 		return new Promise((callback) => {
 
+			var state = {};
+			
 			if(this.runningRequests[service.id] == null)
 			{
 				this.runningRequests[service.id] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service).then((data) => {
 
 					try
 					{
-						var state = {};
-						
 						if(data.state != null && this.TypeManager.getCharacteristic('value', { letters : service.letters }) != null)
 						{
 							state.value = JSON.parse(data.state);
@@ -107,22 +107,18 @@ module.exports = class DeviceManager
 							{
 								service.brightness = state.brightness;
 							}
-
-							resolve(state);
 						}
 						else
 						{
 							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
-						
-							resolve(null);
 						}
 					}
 					catch(e)
 					{
 						this.logger.err(e);
-
-						resolve(null);
 					}
+
+					resolve(state);
 
 				}).catch((e) => {
 			
@@ -131,7 +127,7 @@ module.exports = class DeviceManager
 						this.logger.err(e);
 					}
 
-					resolve(null);
+					resolve(state);
 				}));
 			}
 			
@@ -143,7 +139,7 @@ module.exports = class DeviceManager
 
 			}).catch(() => {
 
-				callback(null);
+				callback(state);
 			});
 		});
 	}

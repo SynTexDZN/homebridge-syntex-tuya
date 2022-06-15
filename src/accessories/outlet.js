@@ -6,14 +6,6 @@ module.exports = class SynTexOutletService extends OutletService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.getState((value) => {
-
-			this.value = value || false;
-
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
-
-		}, true);
-
 		this.DeviceManager = manager.DeviceManager;
 
 		this.changeHandler = (state) => {
@@ -31,7 +23,7 @@ module.exports = class SynTexOutletService extends OutletService
 	{
 		super.getState((value) => {
 
-			if(value != null)
+			if(super.hasState('value'))
 			{
 				this.value = value;
 
@@ -43,7 +35,7 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				this.DeviceManager.getState(this).then((state) => {
 
-					if(state != null && state.value != null)
+					if(state.value != null)
 					{
 						this.value = state.value;
 
@@ -85,7 +77,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 		if(state.value != null)
 		{
-			if(this.value != state.value)
+			if(!super.hasState('value') || this.value != state.value)
 			{
 				changed = true;
 			}
@@ -101,6 +93,6 @@ module.exports = class SynTexOutletService extends OutletService
 			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )');
 		}
 
-		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : this.value });
+		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 	}
 }
