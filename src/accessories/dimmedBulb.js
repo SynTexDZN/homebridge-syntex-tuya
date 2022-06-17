@@ -63,8 +63,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(!offline)
 			{
-				super.setState(value,
-					() => callback());
+				super.setState(value, () => callback());
 			}
 			else
 			{
@@ -75,13 +74,13 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	getBrightness(callback)
 	{
-		super.getBrightness((value) => {
+		super.getBrightness((brightness) => {
 
 			if(super.hasState('brightness'))
 			{
-				this.brightness = value;
+				this.brightness = brightness;
 
-				callback(null, value);
+				callback(null, brightness);
 			}
 			else
 			{
@@ -106,8 +105,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(!offline)
 			{
-				super.setBrightness(brightness,
-					() => callback());
+				super.setBrightness(brightness, () => callback());
 			}
 			else
 			{
