@@ -14,16 +14,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(state.value != null)
 				{
-					this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
-
-					super.setState(state.value, () => {});
+					super.setState(state.value,
+						() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
 				}
 
 				if(state.brightness != null)
 				{
-					this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness);
-
-					super.setBrightness(state.brightness, () => {});
+					super.setBrightness(state.brightness,
+						() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
 				}
 			});
 		};
@@ -102,13 +100,13 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		});
 	}
 
-	setBrightness(value, callback)
+	setBrightness(brightness, callback)
 	{
-		this.setToCurrentBrightness({ brightness : value }, (offline) => {
+		this.setToCurrentBrightness({ brightness }, (offline) => {
 
 			if(!offline)
 			{
-				super.setBrightness(value,
+				super.setBrightness(brightness,
 					() => callback());
 			}
 			else
@@ -158,14 +156,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setToCurrentBrightness(state, callback)
 	{
-		if(state.value != null && this.value != state.value)
+		if(state.value != null && (!super.hasState('value') || this.value != state.value))
 		{
 			this.value = state.value;
 
 			this.changedPower = true;
 		}
 
-		if(state.brightness != null && this.brightness != state.brightness)
+		if(state.brightness != null && (!super.hasState('brightness') || this.brightness != state.brightness))
 		{
 			this.brightness = state.brightness;
 
