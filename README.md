@@ -135,48 +135,48 @@ To enable the automation module you have to create a file named `automation.json
 
 ```json
 {
-  "id": "automation",
-  "automation": [
-    {
-      "id": 0,
-      "name": "Demo Automation",
-      "active": true,
-      "trigger": [
+    "id": "automation",
+    "automation": [
         {
-          "id": "multi2",
-          "name": "Multi Device",
-          "letters": "F0",
-          "plugin": "SynTexWebHooks",
-          "operation": "<",
-          "value": "1000"
+            "id": 0,
+            "name": "Demo Automation",
+            "active": true,
+            "trigger": [
+                {
+                    "id": "multi2",
+                    "name": "Multi Device",
+                    "letters": "F0",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "<",
+                    "value": "1000"
+                }
+            ],
+            "condition": [
+                {
+                    "id": "multi1",
+                    "name": "Multi Switch",
+                    "letters": "41",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "=",
+                    "value": "false"
+                }
+            ],
+            "result": [
+                {
+                    "id": "58747302d8afc008d0dc",
+                    "name": "Kitchen Dimmable LED",
+                    "letters": "90",
+                    "plugin": "SynTexTuya",
+                    "operation": "=",
+                    "value": "true",
+                    "brightness": "75"
+                },
+                {
+                    "url": "http://192.168.1.100:1713/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
+                }
+            ]
         }
-      ],
-      "condition": [
-        {
-          "id": "multi1",
-          "name": "Multi Switch",
-          "letters": "41",
-          "plugin": "SynTexWebHooks",
-          "operation": "=",
-          "value": "false"
-        }
-      ],
-      "result": [
-        {
-          "id": "58747302d8afc008d0dc",
-          "name": "Kitchen Dimmable LED",
-          "letters": "90",
-          "plugin": "SynTexTuya",
-          "operation": "=",
-          "value": "true",
-          "brightness": "75"
-        },
-        {
-          "url": "http://192.168.1.100:1713/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
-        }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
