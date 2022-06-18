@@ -105,6 +105,9 @@ https://github.com/SynTexDZN/homebridge-syntex
 3. For the `New Value` you can type this pattern:
 - For all devices: `true` / `false` *( dimmer, led, outlet, switch )*
 - For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
+- For accessories with multiple service types add `&type=`  **SERVICETYPE**
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&value=true&brightness=100`\
 *( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` for example )*
@@ -113,6 +116,9 @@ https://github.com/SynTexDZN/homebridge-syntex
 ## Read Tuya Device Values
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
+- For accessories with multiple service types add `&type=`  **SERVICETYPE**
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890`\
 *( Reads the value of `ABCDEF1234567890` for example )*
@@ -121,6 +127,9 @@ https://github.com/SynTexDZN/homebridge-syntex
 ## Remove Tuya Device
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
 2. Insert the `Bridge IP` and `Device ID`
+- To remove a specific service add `&type=`  **SERVICETYPE**
+- To remove a specific service from an accessory with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&remove=CONFIRM`\
 *( Removes `ABCDEF1234567890` from the Home app )*
