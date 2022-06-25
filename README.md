@@ -114,7 +114,7 @@ It also offers some tweaks and improvements to the original devices.
 
 ### Accessory Config
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
-- `id` has to be either an `real mac address` or another `random unique text` *( no duplicates! )*
+- `id` has to be either an `real tuya id` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` see service config below.
 
