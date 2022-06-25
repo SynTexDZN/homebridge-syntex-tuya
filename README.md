@@ -119,6 +119,7 @@ It also offers some tweaks and improvements to the original devices.
 - `services` see service config below.
 
 ### Service Config
+- `id` has to be a `real tuya id` *( when using multiple services )*
 - `type` should be one of these: `dimmer`, `outlet`
 - `name` could be anything.
 
