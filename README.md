@@ -61,7 +61,32 @@ It also offers some tweaks and improvements to the original devices.
         },
         "log": {
             "debug": false
-        }
+        },
+        "accessories": [
+            {
+                "id": "ABCDEF1234567890",
+                "name": "Overwrite Accessory",
+                "services": [
+                    {
+                        "type": "outlet"
+                    }
+                ]
+            },
+            {
+                "id": "multi1",
+                "name": "Multi Accessory",
+                "services": [
+                    {
+                        "id": "ABCDEF1234567890",
+                        "type": "outlet"
+                    },
+                    {
+                        "id": "GHIJKL0987654321",
+                        "type": "dimmer"
+                    }
+                ]
+            }
+        ]
     }
 ]
 ```
@@ -86,6 +111,15 @@ It also offers some tweaks and improvements to the original devices.
 
 ### Log Parameters
 - Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*
+
+### Accessory Config
+- Every device needs these parameters: `id`, `name` and `services` *( required )*
+- `id` has to be either an `real mac address` or another `random unique text` *( no duplicates! )*
+- `name` could be anything.
+- `services` see service config below.
+
+### Service Config
+- `type` should be one of these: `dimmer`, `outlet`
 
 
 ---
@@ -132,19 +166,18 @@ https://github.com/SynTexDZN/homebridge-syntex
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&remove=CONFIRM`\
-*( Removes `ABCDEF1234567890` from the Home app )*
+*( Removes `ABCDEF1234567890` from the Config and Home App )*
 
 
 ---
 
 
 ## Automation
-To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
+To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between SynTex plugins )*<br><br>
 **Example:**  For manual configuration update your `automation.json` file. See snippet below.   
 
 ```json
 {
-    "id": "automation",
     "automation": [
         {
             "id": 0,
@@ -194,23 +227,18 @@ To enable the automation module you have to create a file named `automation.json
 - `name` The name of the accessory.
 - `letters` See letter configuration below.
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
-- `value` The state of your accessory.
+- `value` The state value of your accessory.
 
 ### Optional Parameters
 - `plugin` Use the platform name of the plugin *( see supported plugins below )*
-- `brightness` is used for dimmable lights.
+- `brightness` can be used for dimmable / RGB lights.
+- `hue` can be used for RGB lights.
+- `saturation` can be used for RGB lights.
 
 ### Letter Configuration
-The letters are split into two parts *( numbers )*
+The letters are split into two parts *( characters )*
 
 **1. Service Type**
-- A : Contact
-- B : Motion
-- C : Temperature
-- D : Humidity
-- E : Rain
-- F : Light
-- G : Blind
 - 0 : Occupancy
 - 1 : Smoke
 - 2 : Airquality
@@ -221,6 +249,13 @@ The letters are split into two parts *( numbers )*
 - 7 : Outlet
 - 8 : LED
 - 9 : Dimmer
+- A : Contact
+- B : Motion
+- C : Temperature
+- D : Humidity
+- E : Rain
+- F : Light
+- G : Blind
 
 **2. Duplicate Counter**
 - If there are more services of the same type the counter indicates which is which

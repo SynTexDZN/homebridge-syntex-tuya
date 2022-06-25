@@ -19,7 +19,32 @@
 			},
 			"log": {
 				"debug": false
-			}
+			},
+			"accessories": [
+				{
+					"id": "ABCDEF1234567890",
+					"name": "Overwrite Accessory",
+					"services": [
+						{
+							"type": "outlet"
+						}
+					]
+				},
+				{
+					"id": "multi1",
+					"name": "Multi Accessory",
+					"services": [
+						{
+							"id": "ABCDEF1234567890",
+							"type": "outlet"
+						},
+						{
+							"id": "GHIJKL0987654321",
+							"type": "dimmer"
+						}
+					]
+				}
+			]
 		}
 	]
 }
