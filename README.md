@@ -105,8 +105,8 @@ It also offers some tweaks and improvements to the original devices.
 - `pollingInterval` Defaults to empty which entails no polling. The frequency in seconds that the plugin polls the cloud to get device updates. When you exclusively control the devices through Homebridge, you can set this to a low frequency ( high interval number, e.g. 1800 = 30 minutes ). Minimum is 1030.
 
 ### Discovery Parameters
-- `addDevices` Adds your existing Tuya devices.
-- `addScenes` Adds switches to control your Tuya scenes.
+- `addDevices` Adding your existing Tuya devices.
+- `addScenes` Creates switches to control your Tuya scenes.
 - `generateConfig` Generates an accessory list and includes it into the `config.json` for later editing *( required using the `homebridge-syntex` plugin )*
 
 ### Log Parameters
@@ -114,7 +114,7 @@ It also offers some tweaks and improvements to the original devices.
 
 ### Accessory Config
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
-- `id` has to be either an `real tuya id` or another `random unique text` *( no duplicates! )*
+- `id` has to be either a `real tuya id` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` see service config below.
 
