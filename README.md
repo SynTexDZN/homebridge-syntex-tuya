@@ -120,6 +120,7 @@ It also offers some tweaks and improvements to the original devices.
 
 ### Service Config
 - `type` should be one of these: `dimmer`, `outlet`
+- `name` could be anything.
 
 
 ---
