@@ -71,9 +71,9 @@ module.exports = class DeviceManager
 
 			var state = {};
 			
-			if(this.runningRequests[service.id] == null)
+			if(this.runningRequests[service.sid] == null)
 			{
-				this.runningRequests[service.id] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service).then((data) => {
+				this.runningRequests[service.sid] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service).then((data) => {
 
 					try
 					{
@@ -131,9 +131,9 @@ module.exports = class DeviceManager
 				}));
 			}
 			
-			this.runningRequests[service.id].then((state) => {
+			this.runningRequests[service.sid].then((state) => {
 				
-				delete this.runningRequests[service.id];
+				delete this.runningRequests[service.sid];
 
 				callback(state);
 
@@ -150,7 +150,7 @@ module.exports = class DeviceManager
 
 			this.tuyaWebAPI.setDeviceState(service, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
 
-				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { value });
+				this.EventManager.setOutputStream('SynTexTuya', service, service.sid, { value });
 
 				resolve(true);
 		
@@ -169,7 +169,7 @@ module.exports = class DeviceManager
 
 			this.tuyaWebAPI.setDeviceState(service, 'brightnessSet', { value }).then(() => {
 
-				this.EventManager.setOutputStream('SynTexTuya', service, service.id, { brightness : value });
+				this.EventManager.setOutputStream('SynTexTuya', service, service.sid, { brightness : value });
 
 				resolve(true);
 		

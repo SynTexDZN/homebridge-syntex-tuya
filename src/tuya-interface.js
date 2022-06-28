@@ -121,7 +121,7 @@ module.exports = class TuyaWebApi
 			},
 			'payload': {
 				'accessToken': this.session.accessToken,
-				'devId': service.id,
+				'devId': service.sid,
 				'value': 1
 			}
 		};
@@ -138,13 +138,13 @@ module.exports = class TuyaWebApi
 				{
 					reject();
 
-					this.logger.log('error', service.id, service.letters, service.id + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )');
+					this.logger.log('error', service.id, service.letters, service.sid + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )');
 				}
 				else
 				{
 					reject();
 
-					this.logger.log('error', service.id, service.letters, service.id + ': Invalid payload in response! (' + JSON.stringify(obj) + ' )');
+					this.logger.log('error', service.id, service.letters, service.sid + ': Invalid payload in response! (' + JSON.stringify(obj) + ' )');
 				}
 
 			}, (error) => {
@@ -176,7 +176,7 @@ module.exports = class TuyaWebApi
 		}
 
 		data.payload.accessToken = this.session.accessToken;
-		data.payload.devId = service.id;
+		data.payload.devId = service.sid;
 
 		return new Promise((resolve, reject) => {
 
@@ -188,11 +188,11 @@ module.exports = class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error(service.id + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
+					reject(new Error(service.sid + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
 				}
 				else
 				{
-					reject(new Error(service.id + ': Invalid payload in response! (' + JSON.stringify(obj) + ' )'))
+					reject(new Error(service.sid + ': Invalid payload in response! (' + JSON.stringify(obj) + ' )'))
 				}
 				
 			}, (error) => {

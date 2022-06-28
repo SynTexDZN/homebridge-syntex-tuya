@@ -48,20 +48,13 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			}
 		}
 
-		var deviceConfig = { ...this.deviceConfig };
-
-		if(config instanceof Object && config.id != null)
-		{
-			deviceConfig.id = config.id;
-		}
-
 		if(serviceConfig.type == 'outlet')
 		{
-			service = new OutletService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
+			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(serviceConfig.type == 'dimmer')
 		{
-			service = new DimmedBulbService(this.homebridgeAccessory, deviceConfig, serviceConfig, this.manager);
+			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
 		else if(serviceConfig.type == 'switch')
 		{
