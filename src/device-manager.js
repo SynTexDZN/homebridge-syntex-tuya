@@ -43,6 +43,11 @@ module.exports = class DeviceManager
 							}
 						}
 
+						if(device.data.online != null)
+						{
+							state.online = device.data.online;
+						}
+
 						if(Object.keys(state).length > 0)
 						{
 							this.EventManager.setOutputStream('SynTexTuya', null, device.id, state);
@@ -58,7 +63,10 @@ module.exports = class DeviceManager
 
 			}).catch((e) => {
 
-				this.logger.err(e);
+				if(e != null)
+				{
+					this.logger.err(e);
+				}
 
 				resolve(false);
 			});
@@ -95,7 +103,7 @@ module.exports = class DeviceManager
 								state.brightness /= 5;
 							}
 						}
-	
+
 						if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
 						{
 							if(state.value != null)
@@ -111,6 +119,11 @@ module.exports = class DeviceManager
 						else
 						{
 							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
+						}
+
+						if(data.online != null)
+						{
+							service.setConnectionState(data.online, () => {});
 						}
 					}
 					catch(e)
@@ -156,7 +169,10 @@ module.exports = class DeviceManager
 		
 			}).catch((e) => {
 		
-				this.logger.err(e);
+				if(e != null)
+				{
+					this.logger.err(e);
+				}
 
 				resolve(false);
 			});

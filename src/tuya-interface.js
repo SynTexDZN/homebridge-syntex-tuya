@@ -1,5 +1,4 @@
-const axios = require('axios'), https = require('https');
-const querystring = require('querystring');
+const axios = require('axios'), https = require('https'), querystring = require('querystring');
 
 // TODO: Translate All Errors
 
@@ -87,11 +86,15 @@ module.exports = class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error('Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
+					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %frequently_invoke%! %query_once%: ' + JSON.stringify(obj.header.msg).split('once in ')[1].split(' seconds')[0] + 's');
+
+					reject();
 				}
 				else
 				{
-					reject(new Error('Invalid payload in response: ' + JSON.stringify(obj)))
+					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %invalid_response%! ( ' + JSON.stringify(obj) + ' )');
+
+					reject();
 				}
 
 			}, (error) => {
@@ -136,15 +139,15 @@ module.exports = class TuyaWebApi
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject();
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(obj.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
 
-					this.logger.log('error', service.id, service.letters, service.sid + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )');
+					reject();
 				}
 				else
 				{
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(obj) + ' )');
+				
 					reject();
-
-					this.logger.log('error', service.id, service.letters, service.sid + ': Invalid payload in response! (' + JSON.stringify(obj) + ' )');
 				}
 
 			}, (error) => {
@@ -184,15 +187,25 @@ module.exports = class TuyaWebApi
 
 				if(obj.header && obj.header.code == 'SUCCESS')
 				{
-					resolve();
+					service.setConnectionState(true, () => resolve());
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
-					reject(new Error(service.sid + ': Requesting too quickly! ( ' + JSON.stringify(obj.header.msg) + ' )'));
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(obj.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
+
+					reject();
+				}
+				else if(obj.header && obj.header.code === 'TargetOffline')
+				{
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %accessory_offline%! ( ' + service.sid + ' )');
+
+					service.setConnectionState(false, () => reject());
 				}
 				else
 				{
-					reject(new Error(service.sid + ': Invalid payload in response! (' + JSON.stringify(obj) + ' )'))
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(obj) + ' )');
+
+					reject();
 				}
 				
 			}, (error) => {
