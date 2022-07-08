@@ -187,7 +187,7 @@ module.exports = class TuyaWebApi
 
 				if(obj.header && obj.header.code == 'SUCCESS')
 				{
-					service.setConnectionState(true, () => resolve());
+					service.setConnectionState(true, () => resolve(), true);
 				}
 				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
 				{
@@ -199,7 +199,7 @@ module.exports = class TuyaWebApi
 				{
 					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %accessory_offline%! ( ' + service.sid + ' )');
 
-					service.setConnectionState(false, () => reject());
+					service.setConnectionState(false, () => reject(), true);
 				}
 				else
 				{
