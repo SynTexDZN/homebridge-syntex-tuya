@@ -47,7 +47,6 @@ class SynTexTuyaPlatform extends DynamicPlatform
 		}
 		else
 		{
-			// DEMO
 			throw new Error('Minimal parameters not configurated. Please check the README! https://github.com/SynTexDZN/homebridge-syntex-tuya/blob/master/README.md');
 		}
 	}
