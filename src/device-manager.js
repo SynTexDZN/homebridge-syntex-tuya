@@ -45,7 +45,7 @@ module.exports = class DeviceManager
 
 						if(device.data.online != null)
 						{
-							state.online = device.data.online;
+							state.connection = device.data.online;
 						}
 
 						if(Object.keys(state).length > 0)
