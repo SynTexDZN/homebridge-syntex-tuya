@@ -191,7 +191,10 @@ module.exports = class DeviceManager
 		
 			}).catch((e) => {
 		
-				this.logger.err(e);
+				if(e != null)
+				{
+					this.logger.err(e);
+				}
 		
 				resolve(false);
 			});
