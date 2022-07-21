@@ -1,6 +1,6 @@
 let DeviceManager = require('./src/device-manager');
 
-const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
+const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
 
 const SynTexUniversalAccessory = require('./src/universal');
 const TuyaWebApi = require('./src/tuya-interface');
@@ -67,7 +67,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 					device.manufacturer = pluginName;
 
-					this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager, ContextManager }));
+					this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager }));
 				}
 				
 				for(const device of devices)
@@ -106,7 +106,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 							device.manufacturer = pluginName;
 							device.services = type;
 
-							this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager, ContextManager }));
+							this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager }));
 						}
 
 						if(type == 'switch')
