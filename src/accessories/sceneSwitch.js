@@ -35,7 +35,7 @@ module.exports = class SynTexOutletService extends SwitchService
 				
 				setTimeout(() => this.service.getCharacteristic(this.Characteristic.On).updateValue(false), 2000);
 
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
 			else
 			{

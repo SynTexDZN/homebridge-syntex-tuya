@@ -58,7 +58,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 				super.setState(value, () => callback(), true);
 
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
 			else
 			{
@@ -77,6 +77,6 @@ module.exports = class SynTexOutletService extends OutletService
 				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), true);
 		}
 
-		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
 }
