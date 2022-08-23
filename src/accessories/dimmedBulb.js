@@ -125,40 +125,43 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	updateState(state)
 	{
-		var changed = false;
-
-		if(state.value != null)
+		if(!this.running)
 		{
-			if(!super.hasState('value') || this.value != state.value)
+			var changed = false;
+
+			if(state.value != null)
 			{
-				changed = true;
+				if(!super.hasState('value') || this.value != state.value)
+				{
+					changed = true;
+				}
+
+				this.value = state.value;
+
+				super.setState(state.value, 
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
 			}
 
-			this.value = state.value;
-
-			super.setState(state.value, 
-				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
-		}
-
-		if(state.brightness != null)
-		{
-			if(!super.hasState('brightness') || this.brightness != state.brightness)
+			if(state.brightness != null)
 			{
-				changed = true;
+				if(!super.hasState('brightness') || this.brightness != state.brightness)
+				{
+					changed = true;
+				}
+
+				this.brightness = state.brightness;
+
+				super.setBrightness(state.brightness, 
+					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+			}
+			
+			if(changed)
+			{
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 			}
 
-			this.brightness = state.brightness;
-
-			super.setBrightness(state.brightness, 
-				() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+			this.AutomationSystem.LogikEngine.runAutomation(this, state);
 		}
-		
-		if(changed)
-		{
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-		}
-
-		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
 
 	setToCurrentBrightness(state, callback)
