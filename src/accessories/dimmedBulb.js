@@ -10,18 +10,23 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		this.changeHandler = (state) => {
 
-			this.setToCurrentBrightness(state, () => {
+			this.setToCurrentBrightness(state, (offline) => {
 
-				if(state.value != null)
+				if(!offline)
 				{
-					super.setState(state.value,
-						() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
-				}
+					if(state.value != null)
+					{
+						super.setState(state.value,
+							() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
+					}
 
-				if(state.brightness != null)
-				{
-					super.setBrightness(state.brightness,
-						() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+					if(state.brightness != null)
+					{
+						super.setBrightness(state.brightness,
+							() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+					}
+
+					this.AutomationSystem.LogikEngine.runAutomation(this, state);
 				}
 			});
 		};
@@ -64,6 +69,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			if(!offline)
 			{
 				super.setState(value, () => callback());
+
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value, brightness : this.brightness });
 			}
 			else
 			{
@@ -106,6 +113,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			if(!offline)
 			{
 				super.setBrightness(brightness, () => callback());
+
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness });
 			}
 			else
 			{
@@ -193,7 +202,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 								{
 									callback(this.offline);
 								}
-	
+
 								this.changedPower = false;
 		
 								this.running = false;
@@ -214,14 +223,12 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 								{
 									callback(this.offline);
 								}
-	
+
 								this.changedBrightness = false;
 		
 								this.running = false;
 							});
 						}
-
-						this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 					}
 					else if(this.changedBrightness)
 					{
@@ -243,8 +250,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 	
 							this.running = false;
 						});
-
-						this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 					}
 					else
 					{
