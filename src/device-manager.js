@@ -50,7 +50,7 @@ module.exports = class DeviceManager
 
 						if(Object.keys(state).length > 0)
 						{
-							this.EventManager.setOutputStream('SynTexTuya', null, device.id, state);
+							this.EventManager.setOutputStream('updateState', { receiver : device.id }, state);
 						}
 					}
 					catch(e)
@@ -163,7 +163,7 @@ module.exports = class DeviceManager
 
 			this.tuyaWebAPI.setDeviceState(service, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
 
-				this.EventManager.setOutputStream('SynTexTuya', service, service.sid, { value });
+				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { value });
 
 				resolve(true);
 		
@@ -185,7 +185,7 @@ module.exports = class DeviceManager
 
 			this.tuyaWebAPI.setDeviceState(service, 'brightnessSet', { value }).then(() => {
 
-				this.EventManager.setOutputStream('SynTexTuya', service, service.sid, { brightness : value });
+				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { brightness : value });
 
 				resolve(true);
 		
