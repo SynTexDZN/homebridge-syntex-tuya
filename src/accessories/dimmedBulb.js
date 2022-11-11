@@ -8,6 +8,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		this.DeviceManager = manager.DeviceManager;
 
+		this.mode = serviceConfig.mode;
+
 		this.changeHandler = (state) => {
 
 			this.setToCurrentBrightness(state, (offline) => {

@@ -32,7 +32,7 @@ module.exports = class DeviceManager
 						if(device.data.brightness != null && device.data.color_mode == 'white')
 						{
 							var min = 25, max = 255;
-							
+
 							state.brightness = (JSON.parse(device.data.brightness) - min) / ((max - min) / 99) + 1;
 						}
 
@@ -172,13 +172,28 @@ module.exports = class DeviceManager
 		});
 	}
 
-	setBrightness(service, value)
+	setBrightness(service, brightness)
 	{
 		return new Promise((resolve) => {
+			
+			var value = brightness, homekitStart = 1, homekitEnd = 100, tuyaStart = 10, tuyaEnd = 100;
+
+			if(service.mode == 1)
+			{
+				tuyaStart = 12;
+				tuyaEnd = 32.5;
+			}
+
+			if(value <= homekitStart)
+			{
+				value++;
+			}
+
+			value = ((value - homekitStart) * (tuyaEnd - tuyaStart)) / (homekitEnd - homekitStart) + tuyaStart;
 
 			this.tuyaWebAPI.setDeviceState(service, 'brightnessSet', { value }).then(() => {
 
-				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { brightness : value });
+				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { brightness });
 
 				resolve(true);
 		
