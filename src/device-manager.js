@@ -14,7 +14,7 @@ module.exports = class DeviceManager
 	{
 		this.logger.debug('%device_refresh% ..');
 
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
 			this.tuyaWebAPI.getAllDeviceStates().then((devices) => {
 
@@ -29,18 +29,11 @@ module.exports = class DeviceManager
 							state.value = JSON.parse(device.data.state);
 						}
 
-						if(device.data.brightness != null)
+						if(device.data.brightness != null && device.data.color_mode == 'white')
 						{
-							state.brightness = JSON.parse(device.data.brightness);
+							var min = 25, max = 255;
 							
-							if(device.data.color_mode == 'white')
-							{
-								state.brightness /= 2.55;
-							}
-							else if(device.data.color_mode == 'colour')
-							{
-								state.brightness /= 5;
-							}
+							state.brightness = (JSON.parse(device.data.brightness) - min) / ((max - min) / 99) + 1;
 						}
 
 						if(device.data.online != null)
