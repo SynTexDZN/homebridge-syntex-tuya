@@ -5,7 +5,7 @@
 [![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex-tuya/0.0.0?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya/commits)
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-tuya?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-tuya)
 
-A plugin to control Tuya devices based on the `tuyawebapi`<br>
+A simple plugin to control Tuya devices based on the `tuyawebapi`<br>
 This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
 It also offers some tweaks and improvements to the original devices.
 
@@ -97,6 +97,7 @@ It also offers some tweaks and improvements to the original devices.
 - `username` The username for the account that is registered in the Android / iOS App.
 - `password` The password for the account that is registered in the Android / iOS App.
 - `countryCode` Your account country code, `1` for USA or `86` for China.
+- `accessories` For the accessory config.
 
 ### Optional Parameters
 - `port` To control your accessory over HTTP calls.
@@ -137,13 +138,13 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
-- For all devices: `true` / `false` *( dimmer, led, outlet, switch )*
+- For boolean devices: `true` / `false` *( dimmer, led, outlet, switch )*
 - For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
-**Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&value=true&brightness=100`\
+**Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890&type=dimmer&counter=0&value=true&brightness=100`\
 *( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` for example )*
 
 
@@ -151,11 +152,11 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1713/devices?id=ABCDEF1234567890`\
-*( Reads the value of `ABCDEF1234567890` for example )*
+*( Reads the state of `ABCDEF1234567890` for example )*
 
 
 ## Remove Tuya Device
@@ -269,7 +270,7 @@ To enable the automation module you have to create a file named `automation.json
                     "delay": 1000
                 },
                 {
-                    "url": "http://192.168.1.100:1713/devices?id=58757402d8bfc108d0dc&value=true&brightness=100"
+                    "url": "http://192.168.1.100:1713/devices?id=ABCDEF1234567890&value=true&brightness=100"
                 }
             ]
         }
