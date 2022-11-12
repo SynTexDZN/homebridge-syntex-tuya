@@ -148,7 +148,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 *( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` for example )*
 
 
-## Read Tuya Device Values
+## Read Tuya Device
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
