@@ -36,11 +36,19 @@
 					"services": [
 						{
 							"id": "ABCDEF1234567890",
-							"type": "outlet"
+							"type": "outlet",
+							"name": "Basic Outlet"
 						},
 						{
 							"id": "GHIJKL0987654321",
-							"type": "dimmer"
+							"type": "dimmer",
+							"name": "Basic Dimmer"
+						},
+						{
+							"id": "GHIJKL0987654321",
+							"type": "dimmer",
+							"name": "Modified Dimmer",
+							"mode": 1
 						}
 					]
 				}

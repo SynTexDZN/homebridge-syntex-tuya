@@ -78,11 +78,19 @@ It also offers some tweaks and improvements to the original devices.
                 "services": [
                     {
                         "id": "ABCDEF1234567890",
-                        "type": "outlet"
+                        "type": "outlet",
+                        "name": "Basic Outlet"
                     },
                     {
                         "id": "GHIJKL0987654321",
-                        "type": "dimmer"
+                        "type": "dimmer",
+                        "name": "Basic Dimmer"
+                    },
+                    {
+                        "id": "GHIJKL0987654321",
+                        "type": "dimmer",
+                        "name": "Modified Dimmer",
+                        "mode": 1
                     }
                 ]
             }
@@ -118,10 +126,10 @@ It also offers some tweaks and improvements to the original devices.
 - `id` has to be either a `real tuya id` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
+    - `name` could be anything.
     - `id` has to be a `real tuya id` *( when using multiple services )*
     - `type` Define the service type *( `dimmer`, `outlet` )*
-    - `name` could be anything.
-
+    - `mode` Calibrate the brightness conversion *( `0` or `1` )*
 
 ---
 
