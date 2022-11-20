@@ -9,7 +9,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		this.DeviceManager = manager.DeviceManager;
 
 		this.min = serviceConfig.min || 10;
-		this.max = serviceConfig.min || 100;
+		this.max = serviceConfig.max || 100;
 
 		this.changeHandler = (state) => {
 
