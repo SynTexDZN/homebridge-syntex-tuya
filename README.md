@@ -90,7 +90,8 @@ It also offers some tweaks and improvements to the original devices.
                         "id": "GHIJKL0987654321",
                         "type": "dimmer",
                         "name": "Modified Dimmer",
-                        "mode": 1
+                        "min": 12,
+                        "max": 32.5
                     }
                 ]
             }
@@ -129,7 +130,8 @@ It also offers some tweaks and improvements to the original devices.
     - `name` could be anything.
     - `id` has to be a `real tuya id` *( when using multiple services )*
     - `type` Define the service type *( `dimmer`, `outlet` )*
-    - `mode` Calibrate the brightness conversion *( `0` or `1` )*
+    - `min` Calibrate the brightness conversion minimum *( from `0` to `100` )*
+    - `max` Calibrate the brightness conversion maximum *( from `0` to `100` )*
 
 ---
 

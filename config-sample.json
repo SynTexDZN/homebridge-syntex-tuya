@@ -48,7 +48,8 @@
 							"id": "GHIJKL0987654321",
 							"type": "dimmer",
 							"name": "Modified Dimmer",
-							"mode": 1
+							"min": 12,
+							"max": 32.5
 						}
 					]
 				}

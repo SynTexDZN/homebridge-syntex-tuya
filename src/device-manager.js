@@ -31,9 +31,14 @@ module.exports = class DeviceManager
 
 						if(device.data.brightness != null && device.data.color_mode == 'white')
 						{
-							var min = 25, max = 255;
+							state.brightness = JSON.parse(device.data.brightness);
 
-							state.brightness = (JSON.parse(device.data.brightness) - min) / ((max - min) / 99) + 1;
+							if(state.brightness != null)
+							{
+								var min = 25, max = 255;
+
+								state.brightness = (state.brightness - min) / ((max - min) / 99) + 1;
+							}
 						}
 
 						if(device.data.online != null)
@@ -83,17 +88,15 @@ module.exports = class DeviceManager
 							state.value = JSON.parse(data.state);
 						}
 
-						if(data.brightness != null && this.TypeManager.getCharacteristic('brightness', { letters : service.letters }) != null)
+						if(data.brightness != null && this.TypeManager.getCharacteristic('brightness', { letters : service.letters }) != null && data.color_mode == 'white')
 						{
 							state.brightness = JSON.parse(data.brightness);
 
-							if(data.color_mode == 'white')
+							if(state.brightness != null)
 							{
-								state.brightness /= 2.55;
-							}
-							else if(data.color_mode == 'colour')
-							{
-								state.brightness /= 5;
+								var min = 25, max = 255;
+
+								state.brightness = (state.brightness - min) / ((max - min) / 99) + 1;
 							}
 						}
 
@@ -176,13 +179,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 			
-			var value = brightness, homekitStart = 1, homekitEnd = 100, tuyaStart = 10, tuyaEnd = 100;
-
-			if(service.mode == 1)
-			{
-				tuyaStart = 12;
-				tuyaEnd = 32.5;
-			}
+			var value = brightness, homekitStart = 1, homekitEnd = 100, tuyaStart = service.min, tuyaEnd = service.max;
 
 			if(value <= homekitStart)
 			{
