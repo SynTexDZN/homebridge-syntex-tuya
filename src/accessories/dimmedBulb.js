@@ -169,114 +169,69 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setToCurrentBrightness(state, callback)
 	{
-		if(state.value != null && (!super.hasState('value') || this.value != state.value))
-		{
-			this.value = state.value;
+		const setState = (resolve) => {
 
-			this.changedPower = true;
-		}
+			this.DeviceManager.setState(this, this.value).then((success) => {
 
-		if(state.brightness != null && (!super.hasState('brightness') || this.brightness != state.brightness))
-		{
-			this.brightness = state.brightness;
-
-			this.changedBrightness = true;
-		}
-
-		if(this.changedPower || this.changedBrightness)
-		{
-			setTimeout(() => {
-
-				if(!this.running)
+				if(success)
 				{
-					this.running = true;
-
-					if(this.changedPower)
-					{
-						if(this.value == false)
-						{
-							this.DeviceManager.setState(this, this.value).then((success) => {
-
-								if(success)
-								{
-									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-								}
-	
-								this.offline = !success;
-	
-								if(callback)
-								{
-									callback(this.offline);
-								}
-
-								this.changedPower = false;
-		
-								this.running = false;
-							});
-						}
-						else
-						{
-							this.DeviceManager.setBrightness(this, this.brightness).then((success) => {
-
-								if(success)
-								{
-									this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-								}
-		
-								this.offline = !success;
-	
-								if(callback)
-								{
-									callback(this.offline);
-								}
-
-								this.changedBrightness = false;
-		
-								this.running = false;
-							});
-						}
-					}
-					else if(this.changedBrightness)
-					{
-						this.DeviceManager.setBrightness(this, this.brightness).then((success) => {
-
-							if(success)
-							{
-								this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-							}
-	
-							this.offline = !success;
-
-							if(callback)
-							{
-								callback(this.offline);
-							}
-
-							this.changedBrightness = false;
-	
-							this.running = false;
-						});
-					}
-					else
-					{
-						if(callback)
-						{
-							callback(this.offline);
-						}
-
-						this.running = false;
-					}
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 				}
-				else if(callback)
+
+				this.offline = !success;
+
+				if(callback)
 				{
 					callback(this.offline);
 				}
 
-			}, 100);
-		}
-		else if(callback)
-		{
-			callback(this.offline);
-		}
+				resolve();
+			});
+		};
+
+		const setBrightness = (resolve) => {
+
+			this.DeviceManager.setBrightness(this, this.brightness).then((success) => {
+
+				if(success)
+				{
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				}
+
+				this.offline = !success;
+
+				if(callback)
+				{
+					callback(this.offline);
+				}
+
+				resolve();
+			});
+		};
+
+		super.setToCurrentBrightness(state, (resolve) => {
+
+			if(this.value)
+			{
+				setBrightness(resolve);
+			}
+			else
+			{
+				setState(resolve);
+			}
+
+		}, (resolve) => {
+
+			setBrightness(resolve);
+
+		}, (resolve) => {
+
+			if(callback)
+			{
+				callback(this.offline);
+			}
+
+			resolve();
+		});
 	}
 }
