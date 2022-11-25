@@ -56,15 +56,15 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setState(value, callback)
 	{
-		this.setToCurrentBrightness({ value }, (offline) => {
+		this.setToCurrentBrightness({ value }, (failed) => {
 
-			if(!offline)
+			if(!failed)
 			{
 				callback();
 			}
 			else
 			{
-				callback(new Error('Offline'));
+				callback(new Error('Failed'));
 			}
 		});
 	}
@@ -98,15 +98,15 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setBrightness(brightness, callback)
 	{
-		this.setToCurrentBrightness({ brightness }, (offline) => {
+		this.setToCurrentBrightness({ brightness }, (failed) => {
 
-			if(!offline)
+			if(!failed)
 			{
 				callback();
 			}
 			else
 			{
-				callback(new Error('Offline'));
+				callback(new Error('Failed'));
 			}
 		});
 	}
