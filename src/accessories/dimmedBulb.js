@@ -164,7 +164,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				{
 					this.value = this.tempState.value;
 
-					super.setState(this.value, () => {}, true);
+					super.setState(this.value, () => {});
+
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 				}
 
 				if(callback)
