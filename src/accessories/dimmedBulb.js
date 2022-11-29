@@ -13,9 +13,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		this.changeHandler = (state) => {
 
-			this.setToCurrentBrightness(state, (offline) => {
+			this.setToCurrentBrightness(state, (failed) => {
 
-				if(!offline)
+				if(!failed)
 				{
 					this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 					this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
