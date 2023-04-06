@@ -69,7 +69,7 @@ module.exports = class SynTexOutletService extends OutletService
 
 	updateState(state)
 	{
-		if(state.value != null && (!super.hasState('value') || this.value != state.value))
+		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
 			this.value = state.value;
 
