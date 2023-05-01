@@ -369,6 +369,5 @@ The letters are split into two parts *( characters )*
 
 ## Currently Supported
 - Outlets
-- LED Lights
-- Dimmable LED Lights
+- LED Lights / Dimmable Lights
 - Scenes *( From the Tuya app )*
