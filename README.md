@@ -82,6 +82,11 @@ It also offers some tweaks and improvements to the original devices.
                         "name": "Basic Outlet"
                     },
                     {
+                        "id": "ABCDEF1234567890",
+                        "type": "led",
+                        "name": "Basic LED"
+                    },
+                    {
                         "id": "GHIJKL0987654321",
                         "type": "dimmer",
                         "name": "Basic Dimmer"
@@ -129,7 +134,7 @@ It also offers some tweaks and improvements to the original devices.
 - `services` The services of your accessory.<br><br>
     - `name` could be anything.
     - `id` has to be a `real tuya id` *( when using multiple services )*
-    - `type` Define the service type *( `dimmer`, `outlet` )*
+    - `type` Define the service type *( `dimmer`, `led`, `outlet` )*
     - `min` Calibrate the brightness conversion minimum *( from `0` to `100` )*
     - `max` Calibrate the brightness conversion maximum *( from `0` to `100` )*
 
