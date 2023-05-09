@@ -217,7 +217,19 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		}, (resolve) => {
 
-			setBrightness(resolve);
+			if(this.tempState.value)
+			{
+				setBrightness(resolve);
+			}
+			else
+			{
+				if(callback != null)
+				{
+					callback(this.offline);
+				}
+
+				resolve();
+			}
 
 		}, (resolve) => {
 
