@@ -35,9 +35,9 @@ module.exports = class DeviceManager
 
 							if(state.brightness != null)
 							{
-								var min = 25, max = 255;
+								var tuyaStart = 25, tuyaEnd = 255, homekitStart = 1, homekitEnd = 100;
 
-								state.brightness = (state.brightness - min) / ((max - min) / 99) + 1;
+								state.brightness = ((state.brightness - tuyaStart) * (homekitEnd - homekitStart)) / (tuyaEnd - tuyaStart) + homekitStart;
 							}
 						}
 
@@ -94,9 +94,9 @@ module.exports = class DeviceManager
 
 							if(state.brightness != null)
 							{
-								var min = 25, max = 255;
+								var tuyaStart = 25, tuyaEnd = 255, homekitStart = 1, homekitEnd = 100;
 
-								state.brightness = (state.brightness - min) / ((max - min) / 99) + 1;
+								state.brightness = ((state.brightness - tuyaStart) * (homekitEnd - homekitStart)) / (tuyaEnd - tuyaStart) + homekitStart;
 							}
 						}
 
