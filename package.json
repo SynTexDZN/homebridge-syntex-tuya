@@ -9,7 +9,6 @@
 		"node": ">=9.11.2"
 	},
 	"dependencies": {
-		"axios": "^0.21.1",
 		"homebridge-syntex-dynamic-platform": "1.0.8-b29"
 	},
 	"keywords": [

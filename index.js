@@ -32,13 +32,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 		{
 			this.api.on('didFinishLaunching', () => {
 
-				this.tuyaWebAPI = new TuyaWebApi(
-					this.username,
-					this.password,
-					this.countryCode,
-					this.platform,
-					this.logger
-				);
+				this.tuyaWebAPI = new TuyaWebApi(this);
 
 				DeviceManager = new DeviceManager(this);
 

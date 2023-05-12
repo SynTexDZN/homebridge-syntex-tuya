@@ -1,4 +1,4 @@
-const axios = require('axios'), https = require('https'), querystring = require('querystring');
+const querystring = require('querystring');
 
 // TODO: Translate All Errors
 
@@ -44,18 +44,20 @@ class Session
 
 module.exports = class TuyaWebApi
 {
-	constructor(username, password, countryCode, tuyaPlatform = 'tuya', logger)
+	constructor(platform)
 	{
-		this.username = username;
-		this.password = password;
-		this.countryCode = countryCode;
-		this.tuyaPlatform = tuyaPlatform;
+		this.logger = platform.logger;
+
+		this.username = platform.username;
+		this.password = platform.password;
+		this.countryCode = platform.countryCode;
+		this.tuyaPlatform = platform.tuyaPlatform;
+
+		this.RequestManager = platform.RequestManager;
 
 		this.session = new Session();
 
 		this.authBaseUrl = 'https://px1.tuyaeu.com';
-
-		this.logger = logger;
 	}
 
 	discoverDevices()
@@ -65,34 +67,34 @@ module.exports = class TuyaWebApi
 			throw new Error('No valid token');
 		}
 
-		var data = {
-			'header': {
-				'name': 'Discovery',
-				'namespace': 'discovery',
-				'payloadVersion': 1
+		var body = {
+			header : {
+				name : 'Discovery',
+				namespace : 'discovery',
+				payloadVersion : 1
 			},
-			'payload': {
-				'accessToken': this.session.accessToken
+			payload : {
+				accessToken : this.session.accessToken
 			}
 		};
 
 		return new Promise((resolve, reject) => {
 
-			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', data, 'GET', (response, obj) => {
+			this.sendRequest(this.session.areaBaseUrl + '/homeassistant/skill', { body }, (data) => {
 
-				if(obj.header && obj.header.code == 'SUCCESS' && obj.payload && obj.payload.devices)
+				if(data.header && data.header.code == 'SUCCESS' && data.payload && data.payload.devices)
 				{
-					resolve(obj.payload.devices);
+					resolve(data.payload.devices);
 				}
-				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
+				else if(data.header && data.header.code === 'FrequentlyInvoke')
 				{
-					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %frequently_invoke%! %query_once%: ' + JSON.stringify(obj.header.msg).split('once in ')[1].split(' seconds')[0] + 's');
+					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's');
 
 					reject();
 				}
 				else
 				{
-					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %invalid_response%! ( ' + JSON.stringify(obj) + ' )');
+					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %invalid_response%! ( ' + JSON.stringify(data) + ' )');
 
 					reject();
 				}
@@ -116,36 +118,36 @@ module.exports = class TuyaWebApi
 			throw new Error('No valid token');
 		}
 
-		var data = {
-			'header': {
-				'name': 'QueryDevice',
-				'namespace': 'query',
-				'payloadVersion': 1
+		var body = {
+			header : {
+				name : 'QueryDevice',
+				namespace : 'query',
+				payloadVersion : 1
 			},
-			'payload': {
-				'accessToken': this.session.accessToken,
-				'devId': service.sid,
-				'value': 1
+			payload : {
+				accessToken : this.session.accessToken,
+				devId : service.sid,
+				value : 1
 			}
 		};
 
 		return new Promise((resolve, reject) => {
 
-			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', data, 'GET', (response, obj) => {
+			this.sendRequest(this.session.areaBaseUrl + '/homeassistant/skill', { body }, (data) => {
 
-				if(obj.header && obj.header.code == 'SUCCESS' && obj.payload && obj.payload.data)
+				if(data.header && data.header.code == 'SUCCESS' && data.payload && data.payload.data)
 				{
-					resolve(obj.payload.data);
+					resolve(data.payload.data);
 				}
-				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
+				else if(data.header && data.header.code === 'FrequentlyInvoke')
 				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(obj.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
 
 					reject();
 				}
 				else
 				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(obj) + ' )');
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(data) + ' )');
 				
 					reject();
 				}
@@ -169,33 +171,33 @@ module.exports = class TuyaWebApi
 		 * brightnessSet --> 0..100 
 		*/
 
-		var data = {
-			'header': {
-				'name': method,
-				'namespace': 'control',
-				'payloadVersion': 1
+		var body = {
+			header : {
+				name : method,
+				namespace : 'control',
+				payloadVersion : 1
 			},
-			'payload': payload
+			payload : payload
 		}
 
-		data.payload.accessToken = this.session.accessToken;
-		data.payload.devId = service.sid;
+		body.payload.accessToken = this.session.accessToken;
+		body.payload.devId = service.sid;
 
 		return new Promise((resolve, reject) => {
 
-			this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/skill', data, 'POST', (response, obj) => {
+			this.sendRequest(this.session.areaBaseUrl + '/homeassistant/skill', { body }, (data) => {
 
-				if(obj.header && obj.header.code == 'SUCCESS')
+				if(data.header && data.header.code == 'SUCCESS')
 				{
 					service.setConnectionState(true, () => resolve(), true);
 				}
-				else if(obj.header && obj.header.code === 'FrequentlyInvoke')
+				else if(data.header && data.header.code === 'FrequentlyInvoke')
 				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(obj.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
 
 					reject();
 				}
-				else if(obj.header && obj.header.code === 'TargetOffline')
+				else if(data.header && data.header.code === 'TargetOffline')
 				{
 					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %accessory_offline%! ( ' + service.sid + ' )');
 
@@ -203,7 +205,7 @@ module.exports = class TuyaWebApi
 				}
 				else
 				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(obj) + ' )');
+					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(data) + ' )');
 
 					reject();
 				}
@@ -232,11 +234,11 @@ module.exports = class TuyaWebApi
 			if(this.username && this.password && this.countryCode)
 			{
 				const form = {
-					userName: this.username,
-					password: this.password,
-					countryCode: this.countryCode,
-					bizType: this.tuyaPlatform,
-					from: 'tuya',
+					userName : this.username,
+					password : this.password,
+					countryCode : this.countryCode,
+					bizType : this.tuyaPlatform,
+					from : 'tuya',
 				};
 
 				const formData = querystring.stringify(form);
@@ -244,54 +246,57 @@ module.exports = class TuyaWebApi
 
 				return new Promise((resolve, reject) => {
 
-					var theRequest = {
+					var options = {
 						headers : {
-							'Content-Length': contentLength,
-							'Content-Type': 'application/x-www-form-urlencoded'
+							'Content-Length' : contentLength,
+							'Content-Type' : 'application/x-www-form-urlencoded'
 						},
-						url : this.authBaseUrl + '/homeassistant/auth.do',
 						data : formData,
 						method : 'POST'
 					};
 
-					axios(theRequest).then((response) => {
+					this.RequestManager.fetch(this.authBaseUrl + '/homeassistant/auth.do', options).then((data) => {
 
-						let obj = response.data;
-
-						if(obj.responseStatus === 'error')
+						if(data != null)
 						{
-							reject(new Error('Authentication fault: ' + obj.errorMsg));
+							if(data.responseStatus === 'error')
+							{
+								reject(new Error('Authentication fault: ' + data.errorMsg));
+							}
+							else
+							{
+								// NOTE: Received token
+								this.session.resetToken(data.access_token, data.refresh_token, data.expires_in);
+								
+								// NOTE: Change url based on areacode in accesstoken first two chars
+								this.session.areaCode = 'EU';
+
+								if(data.access_token)
+								{
+									this.session.areaCode = data.access_token.substr(0, 2);
+								}
+
+								switch(this.session.areaCode)
+								{
+									case 'AY':
+										this.session.areaBaseUrl = 'https://px1.tuyacn.com';
+										break;
+									case 'EU':
+										this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
+										break;
+									case 'US':
+									default:
+										this.session.areaBaseUrl = 'https://px1.tuyaus.com';
+								}
+
+								resolve(this.session);
+							}
 						}
 						else
 						{
-							// NOTE: Received token
-							this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
-							
-							// NOTE: Change url based on areacode in accesstoken first two chars
-							this.session.areaCode = 'EU';
-
-							if(obj.access_token)
-							{
-								this.session.areaCode = obj.access_token.substr(0, 2);
-							}
-
-							switch(this.session.areaCode)
-							{
-								case 'AY':
-									this.session.areaBaseUrl = 'https://px1.tuyacn.com';
-									break;
-								case 'EU':
-									this.session.areaBaseUrl = 'https://px1.tuyaeu.com';
-									break;
-								case 'US':
-								default:
-									this.session.areaBaseUrl = 'https://px1.tuyaus.com';
-							}
-
-							resolve(this.session);
+							reject(new Error('Authentication fault, could not retreive token.'));
 						}
-
-					}).catch((err) => reject(new Error('Authentication fault, could not retreive token.' + JSON.stringify(err))));
+					});
 				});
 			}
 		}
@@ -299,9 +304,9 @@ module.exports = class TuyaWebApi
 		{
 			return new Promise((resolve, reject) => {
 
-				this.sendRequestJson(this.session.areaBaseUrl + '/homeassistant/access.do?grant_type=refresh_token&refresh_token=' + this.session.refreshToken, '', 'GET', (response, obj) => {
+				this.sendRequest(this.session.areaBaseUrl + '/homeassistant/access.do?grant_type=refresh_token&refresh_token=' + this.session.refreshToken, '', 'GET', (data) => {
 						
-					this.session.resetToken(obj.access_token, obj.refresh_token, obj.expires_in);
+					this.session.resetToken(data.access_token, data.refresh_token, data.expires_in);
 
 					resolve(this.session);
 
@@ -313,20 +318,18 @@ module.exports = class TuyaWebApi
 		}
 	}
 
-	sendRequest(url, body, method, callbackSuccess, callbackError)
+	sendRequest(url, options, callbackSuccess, callbackError)
 	{
-		var theRequest = {
-			url : url,
-			data : body,
-			method : method,
-			httpsAgent : new https.Agent({ rejectUnauthorized: false })
-		};
-
-		axios(theRequest).then((response) => callbackSuccess(response, response.data)).catch((error) => callbackError(error));
-	}
-
-	sendRequestJson(url, body, method, callbackSuccess, callbackError)
-	{
-		this.sendRequest(url, body, method, (response, body) => callbackSuccess(response, body), (error) => callbackError(error));
+		this.RequestManager.fetch(url, { data : options.body }).then((data) => {
+			
+			if(data != null)
+			{
+				callbackSuccess(data);
+			}
+			else
+			{
+				callbackError();
+			}
+		});
 	}
 }
