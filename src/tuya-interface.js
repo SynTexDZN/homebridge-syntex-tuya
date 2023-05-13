@@ -250,7 +250,7 @@ module.exports = class TuyaWebApi
 						method : 'POST'
 					};
 
-					this.RequestManager.fetch(this.authBaseUrl + '/homeassistant/auth.do', options).then((data, error) => {
+					this.RequestManager.fetch(this.authBaseUrl + '/homeassistant/auth.do', options).then((data, err) => {
 
 						if(data != null)
 						{
@@ -289,7 +289,7 @@ module.exports = class TuyaWebApi
 						}
 						else
 						{
-							reject(new Error('Authentication fault, could not retreive token.' + JSON.stringify(error)));
+							reject(new Error('Authentication fault, could not retreive token.' + JSON.stringify(err)));
 						}
 					});
 				});
@@ -300,14 +300,17 @@ module.exports = class TuyaWebApi
 			return new Promise((resolve, reject) => {
 
 				this.sendRequest(this.session.areaBaseUrl + '/homeassistant/access.do?grant_type=refresh_token&refresh_token=' + this.session.refreshToken, '', 'GET', (data) => {
-						
-					this.session.resetToken(data.access_token, data.refresh_token, data.expires_in);
+					
+					if(data != null)
+					{
+						this.session.resetToken(data.access_token, data.refresh_token, data.expires_in);
 
-					resolve(this.session);
-
-				}, (error) => {
-
-					reject(error);
+						resolve(this.session);
+					}
+					else
+					{
+						reject();
+					}
 				});
 			});
 		}
