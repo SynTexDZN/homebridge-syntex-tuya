@@ -16,7 +16,7 @@ module.exports = class DeviceManager
 
 		return new Promise((resolve) => {
 
-			this.tuyaWebAPI.getAllDeviceStates().then((devices) => {
+			this.tuyaWebAPI.discoverDevices().then((devices) => {
 
 				for(const device of devices)
 				{
@@ -75,10 +75,10 @@ module.exports = class DeviceManager
 	{
 		return new Promise((callback) => {
 
-			var state = {};
-			
 			if(this.runningRequests[service.sid] == null)
 			{
+				var state = {};
+				
 				this.runningRequests[service.sid] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service).then((data) => {
 
 					try
@@ -143,10 +143,6 @@ module.exports = class DeviceManager
 			this.runningRequests[service.sid].then((state) => {
 				
 				delete this.runningRequests[service.sid];
-
-				callback(state);
-
-			}).catch(() => {
 
 				callback(state);
 			});

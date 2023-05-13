@@ -82,33 +82,28 @@ module.exports = class TuyaWebApi
 
 			this.sendRequest(this.session.areaBaseUrl + '/homeassistant/skill', { body }, (data) => {
 
-				if(data.header && data.header.code == 'SUCCESS' && data.payload && data.payload.devices)
+				if(data != null && data.header != null && data.header.code == 'SUCCESS' && data.payload != null && data.payload.devices != null)
 				{
 					resolve(data.payload.devices);
 				}
-				else if(data.header && data.header.code === 'FrequentlyInvoke')
-				{
-					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's');
-
-					reject();
-				}
 				else
 				{
-					this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %invalid_response%! ( ' + JSON.stringify(data) + ' )');
+					if(data != null)
+					{
+						if(data.header != null && data.header.code === 'FrequentlyInvoke')
+						{
+							this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's');
+						}
+						else
+						{
+							this.logger.log('error', 'bridge', 'Bridge', '%device_discovery% %invalid_response%! ( ' + JSON.stringify(data) + ' )');
+						}
+					}
 
 					reject();
 				}
-
-			}, (error) => {
-
-				reject(error);
 			});
 		});
-	}
-
-	getAllDeviceStates()
-	{
-		return this.discoverDevices();
 	}
 
 	getDeviceState(service)
@@ -135,26 +130,26 @@ module.exports = class TuyaWebApi
 
 			this.sendRequest(this.session.areaBaseUrl + '/homeassistant/skill', { body }, (data) => {
 
-				if(data.header && data.header.code == 'SUCCESS' && data.payload && data.payload.data)
+				if(data != null && data.header != null && data.header.code == 'SUCCESS' && data.payload != null && data.payload.data != null)
 				{
 					resolve(data.payload.data);
 				}
-				else if(data.header && data.header.code === 'FrequentlyInvoke')
-				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
-
-					reject();
-				}
 				else
 				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(data) + ' )');
+					if(data != null)
+					{
+						if(data.header != null && data.header.code === 'FrequentlyInvoke')
+						{
+							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
+						}
+						else
+						{
+							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(data) + ' )');
+						}
+					}
 				
 					reject();
 				}
-
-			}, (error) => {
-
-				reject(error);
 			});
 		});
 	}
@@ -187,32 +182,32 @@ module.exports = class TuyaWebApi
 
 			this.sendRequest(this.session.areaBaseUrl + '/homeassistant/skill', { body }, (data) => {
 
-				if(data.header && data.header.code == 'SUCCESS')
+				if(data != null && data.header != null && data.header.code == 'SUCCESS')
 				{
 					service.setConnectionState(true, () => resolve(), true);
 				}
-				else if(data.header && data.header.code === 'FrequentlyInvoke')
-				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
-
-					reject();
-				}
-				else if(data.header && data.header.code === 'TargetOffline')
-				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %accessory_offline%! ( ' + service.sid + ' )');
-
-					service.setConnectionState(false, () => reject(), true);
-				}
 				else
 				{
-					this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(data) + ' )');
+					if(data != null)
+					{
+						if(data.header != null && data.header.code === 'TargetOffline')
+						{
+							service.setConnectionState(false, () => {}, true);
+
+							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %accessory_offline%! ( ' + service.sid + ' )');
+						}
+						else if(data.header != null && data.header.code === 'FrequentlyInvoke')
+						{
+							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %frequently_invoke%! %query_once%: ' + JSON.stringify(data.header.msg).split('once in ')[1].split(' seconds')[0] + 's ( ' + service.sid + ' )');
+						}
+						else
+						{
+							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %invalid_response%! ( ' + JSON.stringify(data) + ' )');
+						}
+					}
 
 					reject();
 				}
-				
-			}, (error) => {
-
-				reject(error);
 			});
 		});
 	}
@@ -255,7 +250,7 @@ module.exports = class TuyaWebApi
 						method : 'POST'
 					};
 
-					this.RequestManager.fetch(this.authBaseUrl + '/homeassistant/auth.do', options).then((data) => {
+					this.RequestManager.fetch(this.authBaseUrl + '/homeassistant/auth.do', options).then((data, error) => {
 
 						if(data != null)
 						{
@@ -294,7 +289,7 @@ module.exports = class TuyaWebApi
 						}
 						else
 						{
-							reject(new Error('Authentication fault, could not retreive token.'));
+							reject(new Error('Authentication fault, could not retreive token.' + JSON.stringify(error)));
 						}
 					});
 				});
@@ -318,17 +313,13 @@ module.exports = class TuyaWebApi
 		}
 	}
 
-	sendRequest(url, options, callbackSuccess, callbackError)
+	sendRequest(url, options, callback)
 	{
-		this.RequestManager.fetch(url, { data : options.body }).then((data) => {
+		this.RequestManager.fetch(url, { data : options.body, verbose : true }).then((data) => {
 			
-			if(data != null)
+			if(callback != null)
 			{
-				callbackSuccess(data);
-			}
-			else
-			{
-				callbackError();
+				callback(data);
 			}
 		});
 	}
