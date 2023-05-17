@@ -250,25 +250,25 @@ module.exports = class TuyaWebApi
 						method : 'POST'
 					};
 
-					this.RequestManager.fetch(this.authBaseUrl + '/homeassistant/auth.do', options).then((data, err) => {
+					this.RequestManager.fetch(this.authBaseUrl + '/homeassistant/auth.do', options).then((response) => {
 
-						if(data != null)
+						if(response.data instanceof Object)
 						{
-							if(data.responseStatus === 'error')
+							if(response.data.responseStatus === 'error')
 							{
-								reject(new Error('Authentication fault: ' + data.errorMsg));
+								reject(new Error('Authentication fault: ' + response.data.errorMsg));
 							}
 							else
 							{
 								// NOTE: Received token
-								this.session.resetToken(data.access_token, data.refresh_token, data.expires_in);
+								this.session.resetToken(response.data.access_token, response.data.refresh_token, response.data.expires_in);
 								
 								// NOTE: Change url based on areacode in accesstoken first two chars
 								this.session.areaCode = 'EU';
 
-								if(data.access_token)
+								if(response.data.access_token)
 								{
-									this.session.areaCode = data.access_token.substr(0, 2);
+									this.session.areaCode = response.data.access_token.substr(0, 2);
 								}
 
 								switch(this.session.areaCode)
@@ -289,7 +289,7 @@ module.exports = class TuyaWebApi
 						}
 						else
 						{
-							reject(new Error('Authentication fault, could not retreive token.' + JSON.stringify(err)));
+							reject(new Error('Authentication fault, could not retreive token.' + JSON.stringify(response.error)));
 						}
 					});
 				});
@@ -318,11 +318,11 @@ module.exports = class TuyaWebApi
 
 	sendRequest(url, options, callback)
 	{
-		this.RequestManager.fetch(url, { data : options.body, verbose : true }).then((data) => {
+		this.RequestManager.fetch(url, { data : options.body, verbose : true }).then((response) => {
 			
 			if(callback != null)
 			{
-				callback(data);
+				callback(response.data);
 			}
 		});
 	}
