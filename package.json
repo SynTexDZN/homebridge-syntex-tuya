@@ -9,7 +9,7 @@
 		"node": ">=9.11.2"
 	},
 	"dependencies": {
-		"homebridge-syntex-dynamic-platform": "1.0.8-b39"
+		"homebridge-syntex-dynamic-platform": "1.0.8-b40"
 	},
 	"keywords": [
 		"syntex",
