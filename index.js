@@ -1,9 +1,8 @@
-let DeviceManager = require('./src/device-manager');
-
 const { DynamicPlatform } = require('homebridge-syntex-dynamic-platform');
 
 const SynTexUniversalAccessory = require('./src/universal');
-const TuyaWebApi = require('./src/tuya-interface');
+
+const DeviceManager = require('./src/device-manager'), TuyaWebApi = require('./src/tuya-interface');
 
 const pluginID = 'homebridge-syntex-tuya';
 const pluginName = 'SynTexTuya';
@@ -34,7 +33,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 				this.tuyaWebAPI = new TuyaWebApi(this);
 
-				DeviceManager = new DeviceManager(this);
+				this.DeviceManager = new DeviceManager(this);
 
 				this.loadAccessories();
 			});
@@ -59,9 +58,9 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				{
 					const homebridgeAccessory = this.getAccessory(device.id);
 
-					device.manufacturer = pluginName;
+					device.manufacturer = this.pluginName;
 
-					this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager }));
+					this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager : this.DeviceManager }));
 				}
 				
 				for(const device of devices)
@@ -97,10 +96,10 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 						if(homebridgeAccessory != null || ((type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer') && this.discovery.addDevices != false) || (type == 'scene' && this.discovery.addScenes != false))
 						{
-							device.manufacturer = pluginName;
+							device.manufacturer = this.pluginName;
 							device.services = type;
 
-							this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager }));
+							this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager : this.DeviceManager }));
 						}
 
 						if(type == 'switch')
@@ -120,11 +119,11 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					}
 				}
 
-				DeviceManager.refreshAccessories();
+				this.DeviceManager.refreshAccessories();
 
 				if(this.pollingInterval > 0)
 				{
-					this.refreshInterval = setInterval(() => DeviceManager.refreshAccessories(), this.pollingInterval * 1000);
+					this.refreshInterval = setInterval(() => this.DeviceManager.refreshAccessories(), this.pollingInterval * 1000);
 				}
 
 				if(additionalConfig.length > 0 && this.discovery.generateConfig != false)

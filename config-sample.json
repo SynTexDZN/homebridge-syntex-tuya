@@ -40,6 +40,11 @@
 							"name": "Basic Outlet"
 						},
 						{
+							"id": "ABCDEF1234567890",
+							"type": "led",
+							"name": "Basic LED"
+						},
+						{
 							"id": "GHIJKL0987654321",
 							"type": "dimmer",
 							"name": "Basic Dimmer"
