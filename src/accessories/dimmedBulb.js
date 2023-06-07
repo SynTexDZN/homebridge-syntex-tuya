@@ -42,7 +42,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				callback(null, this.value);
 			}
 
-		}, super.hasState('value'));
+		}, super.hasState('value') || super.hasState('brightness'));
 	}
 
 	setState(value, callback)
@@ -78,7 +78,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				callback(null, this.brightness);
 			}
 
-		}, super.hasState('brightness'));
+		}, false);
 	}
 
 	setBrightness(brightness, callback)
