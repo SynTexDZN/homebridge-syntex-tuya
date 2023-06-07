@@ -77,8 +77,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				callback(null, this.brightness);
 			}
-
-		}, false);
+		});
 	}
 
 	setBrightness(brightness, callback)
@@ -124,7 +123,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			
 			if(changed)
 			{
-				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText(this.letters) + '] ( ' + this.id + ' )');
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 			}
 
 			this.AutomationSystem.LogikEngine.runAutomation(this, state);
@@ -167,7 +166,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					super.setState(this.tempState.value, null, false);
 					super.setBrightness(this.tempState.brightness, null, false);
 
-					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText(this.letters) + '] ( ' + this.id + ' )');
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
 
 				if(callback != null)
