@@ -126,7 +126,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 			}
 
-			this.AutomationSystem.LogikEngine.runAutomation(this, state);
+			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 		}
 	}
 
