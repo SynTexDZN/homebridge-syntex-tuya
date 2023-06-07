@@ -148,7 +148,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 				this.logger.err(e);
 			}
 
-			setTimeout(() => this.loadAccessories(), 70 * 1000);
+			setTimeout(() => this.loadAccessories(), 190 * 1000);
 		});
 	}
 
