@@ -119,11 +119,27 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					}
 				}
 
-				this.DeviceManager.refreshAccessories();
+				this.DeviceManager.refreshAccessories(devices);
 
 				if(this.pollingInterval > 0)
 				{
-					this.refreshInterval = setInterval(() => this.DeviceManager.refreshAccessories(), this.pollingInterval * 1000);
+					this.refreshInterval = setInterval(() => {
+
+						this.logger.debug('%device_refresh% ..');
+
+						this.tuyaWebAPI.discoverDevices().then((devices) => {
+
+							this.DeviceManager.refreshAccessories(devices);
+
+						}).catch((e) => {
+
+							if(e != null)
+							{
+								this.logger.err(e);
+							}
+						});
+					
+					}, this.pollingInterval * 1000);
 				}
 
 				if(additionalConfig.length > 0 && this.discovery.generateConfig != false)

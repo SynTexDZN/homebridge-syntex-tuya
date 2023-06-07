@@ -10,64 +10,50 @@ module.exports = class DeviceManager
 		this.EventManager = platform.EventManager;
 	}
 
-	refreshAccessories()
+	refreshAccessories(devices)
 	{
-		this.logger.debug('%device_refresh% ..');
-
 		return new Promise((resolve) => {
 
-			this.tuyaWebAPI.discoverDevices().then((devices) => {
-
-				for(const device of devices)
+			for(const device of devices)
+			{
+				try
 				{
-					try
+					var state = {};
+
+					if(device.data.state != null)
 					{
-						var state = {};
+						state.value = JSON.parse(device.data.state);
+					}
 
-						if(device.data.state != null)
+					if(device.data.brightness != null && device.data.color_mode == 'white')
+					{
+						state.brightness = JSON.parse(device.data.brightness);
+
+						if(state.brightness != null)
 						{
-							state.value = JSON.parse(device.data.state);
-						}
+							var tuyaStart = 25, tuyaEnd = 255, homekitStart = 1, homekitEnd = 100;
 
-						if(device.data.brightness != null && device.data.color_mode == 'white')
-						{
-							state.brightness = JSON.parse(device.data.brightness);
-
-							if(state.brightness != null)
-							{
-								var tuyaStart = 25, tuyaEnd = 255, homekitStart = 1, homekitEnd = 100;
-
-								state.brightness = Math.round(((state.brightness - tuyaStart) * (homekitEnd - homekitStart)) / (tuyaEnd - tuyaStart) + homekitStart);
-							}
-						}
-
-						if(device.data.online != null)
-						{
-							state.connection = device.data.online;
-						}
-
-						if(Object.keys(state).length > 0)
-						{
-							this.EventManager.setOutputStream('updateState', { receiver : device.id }, state);
+							state.brightness = Math.round(((state.brightness - tuyaStart) * (homekitEnd - homekitStart)) / (tuyaEnd - tuyaStart) + homekitStart);
 						}
 					}
-					catch(e)
+
+					if(device.data.online != null)
 					{
-						this.logger.err(e);
+						state.connection = device.data.online;
+					}
+
+					if(Object.keys(state).length > 0)
+					{
+						this.EventManager.setOutputStream('updateState', { receiver : device.id }, state);
 					}
 				}
-
-				resolve(true);
-
-			}).catch((e) => {
-
-				if(e != null)
+				catch(e)
 				{
 					this.logger.err(e);
 				}
+			}
 
-				resolve(false);
-			});
+			resolve();
 		});
 	}
 
