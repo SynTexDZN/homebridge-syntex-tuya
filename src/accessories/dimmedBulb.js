@@ -103,8 +103,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 			{
-				this.tempState.value = state.value;
-
 				super.setState(state.value, 
 					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), false);
 
@@ -113,8 +111,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(state.brightness != null && !isNaN(state.brightness) && (!super.hasState('brightness') || this.brightness != state.brightness))
 			{
-				this.tempState.brightness = state.brightness;
-
 				super.setBrightness(state.brightness, 
 					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness), false);
 
@@ -163,9 +159,16 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(success)
 				{
-					super.setState(this.tempState.value, null, false);
-					super.setBrightness(this.tempState.brightness, null, false);
+					if(this.changedValue)
+					{
+						super.setState(this.tempState.value, null, false);
+					}
 
+					if(this.changedBrightness)
+					{
+						super.setBrightness(this.tempState.brightness, null, false);
+					}
+					
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
 
