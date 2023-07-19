@@ -38,7 +38,7 @@ module.exports = class SynTexBlindService extends BlindService
 				callback(null, this.value);
 			}
 
-		}, super.hasState('value') || super.hasState('target') || super.hasState('state'));
+		}, super.hasState('value') || super.hasState('target'));
 	}
 
 	setTargetPosition(target, callback)
