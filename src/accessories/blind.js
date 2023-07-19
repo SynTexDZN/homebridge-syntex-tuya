@@ -47,20 +47,14 @@ module.exports = class SynTexBlindService extends BlindService
 
             if(success)
             {
-                super.setState(target);
+				super.setState(target, () => callback());
 
-                callback();
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target });
             }
             else
 			{
 				callback(new Error('Offline'));
 			}
-
-            this.offline = !success;
-
-            this.setConnectionState(!this.offline, () => {}, true);
-
-            this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target });
         });
 	}
 
