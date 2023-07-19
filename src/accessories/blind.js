@@ -6,7 +6,7 @@ module.exports = class SynTexBlindService extends BlindService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-        super.updateProperties('target', { minStep: 100 });
+		super.updateProperties('target', { minStep: 100 });
 
 		this.DeviceManager = manager.DeviceManager;
 
@@ -43,51 +43,51 @@ module.exports = class SynTexBlindService extends BlindService
 
 	setTargetPosition(target, callback)
 	{
-        this.DeviceManager.setState(this, target > 0).then((success) => {
+		this.DeviceManager.setState(this, target > 0).then((success) => {
 
-            if(success)
-            {
+			if(success)
+			{
 				super.setState(target, () => callback());
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target });
-            }
-            else
+			}
+			else
 			{
 				callback(new Error('Offline'));
 			}
-        });
+		});
 	}
 
 	updateState(state)
 	{
-        var changed = false;
+		var changed = false;
+		
+		if(state.connection != null)
+		{
+			this.setConnectionState(state.connection, null, true);
+		}
 
-        if(state.connection != null)
-        {
-            this.setConnectionState(state.connection, null, true);
-        }
+		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
+		{
+			super.setState(state.value, 
+				() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(state.value), false);
 
-        if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
-        {
-            super.setState(state.value, 
-                () => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(state.value), false);
+			changed = true;
+		}
 
-            changed = true;
-        }
+		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || this.target != state.target))
+		{
+			super.setTargetPosition(state.target, 
+				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.target), false);
 
-        if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || this.target != state.target))
-        {
-            super.setTargetPosition(state.target, 
-                () => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.target), false);
+			changed = true;
+		}
+		
+		if(changed)
+		{
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
+		}
 
-            changed = true;
-        }
-        
-        if(changed)
-        {
-            this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
-        }
-
-        this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target });
+		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target });
 	}
 }
