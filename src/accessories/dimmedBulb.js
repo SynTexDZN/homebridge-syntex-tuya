@@ -153,8 +153,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					callback(this.offline);
 				}
 
-				this.setConnectionState(!this.offline,
-					() => resolve(), true);
+				resolve();
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 			});
@@ -186,8 +185,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					callback(this.offline);
 				}
 
-				this.setConnectionState(!this.offline,
-					() => resolve(), true);
+				resolve();
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 			});
