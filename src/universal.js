@@ -1,5 +1,6 @@
 const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
 
+const BlindService = require('./accessories/blind');
 const DimmedBulbService = require('./accessories/dimmedBulb');
 const LightBulbService = require('./accessories/lightBulb');
 const OutletService = require('./accessories/outlet');
@@ -13,13 +14,17 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			deviceConfig.services = 'outlet';
 		}
-		else if((deviceConfig.services == 'light' || deviceConfig.services == 'dimmer'))
+		else if(deviceConfig.services == 'light')
 		{
 			deviceConfig.services = 'dimmer';
 		}
 		else if(deviceConfig.services == 'scene')
 		{
 			deviceConfig.services = 'switch';
+		}
+		else if(deviceConfig.services == 'cover')
+		{
+			deviceConfig.services = 'blind';
 		}
 
 		super(homebridgeAccessory, deviceConfig, manager);
@@ -49,7 +54,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			}
 		}
 
-		if(serviceConfig.type == 'dimmer')
+		if(serviceConfig.type == 'blind')
+		{
+			service = new BlindService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
+		}
+		else if(serviceConfig.type == 'dimmer')
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}

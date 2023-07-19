@@ -94,7 +94,7 @@ class SynTexTuyaPlatform extends DynamicPlatform
 					{
 						const homebridgeAccessory = this.getAccessory(device.id);
 
-						if(homebridgeAccessory != null || ((type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer') && this.discovery.addDevices != false) || (type == 'scene' && this.discovery.addScenes != false))
+						if(homebridgeAccessory != null || ((type == 'switch' || type == 'outlet' || type == 'light' || type == 'dimmer' || type == 'cover' || type == 'blind') && this.discovery.addDevices != false) || (type == 'scene' && this.discovery.addScenes != false))
 						{
 							device.manufacturer = this.pluginName;
 							device.services = type;
@@ -113,6 +113,10 @@ class SynTexTuyaPlatform extends DynamicPlatform
 						else if(type == 'scene')
 						{
 							type = 'switch';
+						}
+						else if(type == 'cover')
+						{
+							type = 'blind';
 						}
 
 						additionalConfig.push({ id : device.id, name : device.name, services : [{ type }] });

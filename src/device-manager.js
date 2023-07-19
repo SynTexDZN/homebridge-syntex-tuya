@@ -25,6 +25,13 @@ module.exports = class DeviceManager
 						state.value = JSON.parse(device.data.state);
 					}
 
+					if(device.dev_type == 'cover' && state.value != null)
+					{
+						var targetSteps = [null, 0, 50, 100];
+
+						state.value = state.target = targetSteps[state.value];
+					}
+
 					if(device.data.brightness != null && device.data.color_mode == 'white')
 					{
 						state.brightness = JSON.parse(device.data.brightness);
@@ -72,6 +79,13 @@ module.exports = class DeviceManager
 						if(data.state != null && this.TypeManager.getCharacteristic('value', { letters : service.letters }) != null)
 						{
 							state.value = JSON.parse(data.state);
+						}
+
+						if(this.TypeManager.letterToType(service.letters) == 'blind' && state.value != null)
+						{
+							var targetSteps = [null, 0, 50, 100];
+	
+							state.value = state.target = targetSteps[state.value];
 						}
 
 						if(data.brightness != null && this.TypeManager.getCharacteristic('brightness', { letters : service.letters }) != null && data.color_mode == 'white')
