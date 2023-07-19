@@ -101,6 +101,11 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			var changed = false;
 
+			if(state.connection != null)
+			{
+				this.setConnectionState(state.connection, null, true);
+			}
+
 			if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 			{
 				this.tempState.value = state.value;

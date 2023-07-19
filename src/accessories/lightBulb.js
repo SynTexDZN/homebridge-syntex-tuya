@@ -58,6 +58,11 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 	updateState(state)
 	{
+		if(state.connection != null)
+        {
+            this.setConnectionState(state.connection, null, true);
+        }
+		
 		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
 			super.setState(state.value, 
