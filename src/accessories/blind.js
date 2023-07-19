@@ -38,7 +38,7 @@ module.exports = class SynTexBlindService extends BlindService
 				callback(null, this.value);
 			}
 
-		}, super.hasState('value') || super.hasState('target'));
+		}, super.hasState('value') || super.hasState('target') || super.hasState('state'));
 	}
 
 	setTargetPosition(target, callback)
@@ -49,7 +49,7 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				super.setState(target, () => callback());
 
-				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 			}
 			else
 			{
@@ -88,6 +88,6 @@ module.exports = class SynTexBlindService extends BlindService
 			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 		}
 
-		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target });
+		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 	}
 }
