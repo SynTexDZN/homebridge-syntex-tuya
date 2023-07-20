@@ -55,6 +55,11 @@
 							"name": "Modified Dimmer",
 							"min": 12,
 							"max": 32.5
+						},
+						{
+							"id": "MNOPQR1234567890",
+							"type": "blind",
+							"name": "Basic Blind"
 						}
 					]
 				}

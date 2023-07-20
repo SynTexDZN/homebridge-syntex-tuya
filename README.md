@@ -97,6 +97,11 @@ It also offers some tweaks and improvements to the original devices.
                         "name": "Modified Dimmer",
                         "min": 12,
                         "max": 32.5
+                    },
+                    {
+                        "id": "MNOPQR1234567890",
+                        "type": "blind",
+                        "name": "Basic Blind"
                     }
                 ]
             }
@@ -134,7 +139,7 @@ It also offers some tweaks and improvements to the original devices.
 - `services` The services of your accessory.<br><br>
     - `name` could be anything.
     - `id` has to be a `real tuya id` *( when using multiple services )*
-    - `type` Define the service type *( `dimmer`, `led`, `outlet` )*
+    - `type` Define the service type *( `blind`, `dimmer`, `led`, `outlet` )*
     - `min` Calibrate the brightness conversion minimum *( from `0` to `100` )*
     - `max` Calibrate the brightness conversion maximum *( from `0` to `100` )*
 
@@ -154,6 +159,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
 - For boolean devices: `true` / `false` *( dimmer, led, outlet, switch )*
+- For numeric devices: `10` / `12.4` *( blind )*
 - For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
@@ -377,4 +383,5 @@ The letters are split into two parts *( characters )*
 ## Currently Supported
 - Outlets
 - LED Lights / Dimmable Lights
+- Blinds / Shutters / Window Coverings
 - Scenes *( From the Tuya app )*
