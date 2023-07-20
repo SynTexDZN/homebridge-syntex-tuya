@@ -6,7 +6,7 @@ module.exports = class SynTexBlindService extends BlindService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		super.updateProperties('target', { minStep: 100 });
+		super.updateProperties('target', { minStep : 50 });
 
 		this.DeviceManager = manager.DeviceManager;
 
@@ -43,11 +43,13 @@ module.exports = class SynTexBlindService extends BlindService
 
 	setTargetPosition(target, callback)
 	{
-		this.DeviceManager.setState(this, target > 0).then((success) => {
+		this.DeviceManager.setTargetPosition(this, target).then((success) => {
 
 			if(success)
 			{
-				super.setState(target, () => callback());
+				super.setTargetPosition(target, () => callback());
+
+				this.updateTarget();
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 			}
@@ -89,5 +91,11 @@ module.exports = class SynTexBlindService extends BlindService
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
+	}
+
+	updateTarget()
+	{
+		super.setState(this.target,
+			() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.target), false);
 	}
 }

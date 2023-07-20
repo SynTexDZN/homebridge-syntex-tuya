@@ -201,4 +201,29 @@ module.exports = class DeviceManager
 			});
 		});
 	}
+
+	setTargetPosition(service, target)
+	{
+		return new Promise((resolve) => {
+
+			var method = target == 50 ? 'startStop' : 'turnOnOff',
+				payload = { value : target > 50 ? 1 : 0 };
+
+			this.tuyaWebAPI.setDeviceState(service, method, payload).then(() => {
+
+				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { value : target, target });
+
+				resolve(true);
+		
+			}).catch((e) => {
+		
+				if(e != null)
+				{
+					this.logger.err(e);
+				}
+
+				resolve(false);
+			});
+		});
+	}
 }
