@@ -27,9 +27,9 @@ module.exports = class DeviceManager
 
 					if(device.dev_type == 'cover' && state.value != null)
 					{
-						var targetSteps = [null, 0, 50, 100];
+						var targetSteps = [0, 50, 100];
 
-						state.value = state.target = targetSteps[state.value];
+						state.value = state.target = targetSteps[state.value - 1];
 					}
 
 					if(device.data.brightness != null && device.data.color_mode == 'white')
@@ -83,9 +83,9 @@ module.exports = class DeviceManager
 
 						if(this.TypeManager.letterToType(service.letters) == 'blind' && state.value != null)
 						{
-							var targetSteps = [null, 0, 50, 100];
+							var targetSteps = [0, 50, 100];
 	
-							state.value = state.target = targetSteps[state.value];
+							state.value = state.target = targetSteps[state.value - 1];
 						}
 
 						if(data.brightness != null && this.TypeManager.getCharacteristic('brightness', { letters : service.letters }) != null && data.color_mode == 'white')
