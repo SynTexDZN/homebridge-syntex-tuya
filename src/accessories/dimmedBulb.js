@@ -103,6 +103,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(state.connection != null)
 			{
+				this.offline = !state.connection;
+				
 				this.setConnectionState(state.connection, null, true);
 			}
 

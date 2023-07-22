@@ -119,7 +119,7 @@ module.exports = class DeviceManager
 
 						if(data.online != null)
 						{
-							service.setConnectionState(data.online, null, true);
+							state.connection = data.online;
 						}
 					}
 					catch(e)
