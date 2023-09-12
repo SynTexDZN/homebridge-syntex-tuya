@@ -27,15 +27,13 @@ module.exports = class DeviceManager
 
 					if(device.dev_type == 'cover' && state.value != null)
 					{
-						var targetSteps = [100, 0];
-
 						if(state.value == 3)
 						{
 							delete state.value;
 						}
 						else
 						{
-							state.value = state.target = targetSteps[state.value - 1];
+							state.value = state.target = state.value == 2 ? 0 : 100;
 						}
 					}
 
@@ -90,15 +88,13 @@ module.exports = class DeviceManager
 
 						if(this.TypeManager.letterToType(service.letters) == 'blind' && state.value != null)
 						{
-							var targetSteps = [100, 0];
-
 							if(state.value == 3)
 							{
 								delete state.value;
 							}
 							else
 							{
-								state.value = state.target = targetSteps[state.value - 1];
+								state.value = state.target = state.value == 2 ? 0 : 100;
 							}
 						}
 
