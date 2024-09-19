@@ -73,89 +73,96 @@ module.exports = class DeviceManager
 	{
 		return new Promise((callback) => {
 
-			if(this.runningRequests[service.sid] == null)
+			var state = {};
+
+			if(this.tuyaWebAPI.session.hasValidToken())
 			{
-				var state = {};
-				
-				this.runningRequests[service.sid] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service).then((data) => {
-
-					try
-					{
-						if(data.state != null && this.TypeManager.getCharacteristic('value', { letters : service.letters }) != null)
+				if(this.runningRequests[service.sid] == null)
+				{
+					this.runningRequests[service.sid] = new Promise((resolve) => this.tuyaWebAPI.getDeviceState(service).then((data) => {
+	
+						try
 						{
-							state.value = JSON.parse(data.state);
-						}
-
-						if(this.TypeManager.letterToType(service.letters) == 'blind' && state.value != null)
-						{
-							if(state.value == 3)
+							if(data.state != null && this.TypeManager.getCharacteristic('value', { letters : service.letters }) != null)
 							{
-								delete state.value;
+								state.value = JSON.parse(data.state);
+							}
+	
+							if(this.TypeManager.letterToType(service.letters) == 'blind' && state.value != null)
+							{
+								if(state.value == 3)
+								{
+									delete state.value;
+								}
+								else
+								{
+									state.value = state.target = state.value == 2 ? 0 : 100;
+								}
+							}
+	
+							if(data.brightness != null && this.TypeManager.getCharacteristic('brightness', { letters : service.letters }) != null && data.color_mode == 'white')
+							{
+								state.brightness = JSON.parse(data.brightness);
+	
+								if(state.brightness != null)
+								{
+									var tuyaStart = 25, tuyaEnd = 255, homekitStart = 1, homekitEnd = 100;
+	
+									state.brightness = Math.round(((state.brightness - tuyaStart) * (homekitEnd - homekitStart)) / (tuyaEnd - tuyaStart) + homekitStart);
+								}
+							}
+	
+							if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
+							{
+								if(state.value != null)
+								{
+									service.value = state.value;
+								}
+	
+								if(state.brightness != null)
+								{
+									service.brightness = state.brightness;
+								}
 							}
 							else
 							{
-								state.value = state.target = state.value == 2 ? 0 : 100;
+								this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
 							}
-						}
-
-						if(data.brightness != null && this.TypeManager.getCharacteristic('brightness', { letters : service.letters }) != null && data.color_mode == 'white')
-						{
-							state.brightness = JSON.parse(data.brightness);
-
-							if(state.brightness != null)
+	
+							if(data.online != null)
 							{
-								var tuyaStart = 25, tuyaEnd = 255, homekitStart = 1, homekitEnd = 100;
-
-								state.brightness = Math.round(((state.brightness - tuyaStart) * (homekitEnd - homekitStart)) / (tuyaEnd - tuyaStart) + homekitStart);
+								state.connection = data.online;
 							}
 						}
-
-						if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null)
+						catch(e)
 						{
-							if(state.value != null)
-							{
-								service.value = state.value;
-							}
-
-							if(state.brightness != null)
-							{
-								service.brightness = state.brightness;
-							}
+							this.logger.err(e);
 						}
-						else
-						{
-							this.logger.log('error', service.id, service.letters, '[' + service.name + '] %update_error%! ( ' + service.id + ' )');
-						}
-
-						if(data.online != null)
-						{
-							state.connection = data.online;
-						}
-					}
-					catch(e)
-					{
-						this.logger.err(e);
-					}
-
-					resolve(state);
-
-				}).catch((e) => {
-			
-					if(e != null)
-					{
-						this.logger.err(e);
-					}
-
-					resolve(state);
-				}));
-			}
-			
-			this.runningRequests[service.sid].then((state) => {
+	
+						resolve(state);
+	
+					}).catch((e) => {
 				
-				delete this.runningRequests[service.sid];
-
+						if(e != null)
+						{
+							this.logger.err(e);
+						}
+	
+						resolve(state);
+					}));
+				}
+				
+				this.runningRequests[service.sid].then((state) => {
+					
+					delete this.runningRequests[service.sid];
+	
+					callback(state);
+				});
+			}
+			else
+			{
 				callback(state);
-			});
+			}
 		});
 	}
 
@@ -163,52 +170,66 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			this.tuyaWebAPI.setDeviceState(service, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
+			if(this.tuyaWebAPI.session.hasValidToken())
+			{
+				this.tuyaWebAPI.setDeviceState(service, 'turnOnOff', { value : value ? 1 : 0 }).then(() => {
 
-				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { value });
+					this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { value });
 
-				resolve(true);
-		
-			}).catch((e) => {
-		
-				if(e != null)
-				{
-					this.logger.err(e);
-				}
+					resolve(true);
+			
+				}).catch((e) => {
+			
+					if(e != null)
+					{
+						this.logger.err(e);
+					}
 
+					resolve(false);
+				});
+			}
+			else
+			{
 				resolve(false);
-			});
+			}
 		});
 	}
 
 	setBrightness(service, brightness)
 	{
 		return new Promise((resolve) => {
-			
-			var value = brightness, homekitStart = 1, homekitEnd = 100, tuyaStart = service.min, tuyaEnd = service.max;
 
-			if(value <= homekitStart)
+			if(this.tuyaWebAPI.session.hasValidToken())
 			{
-				value++;
-			}
+				var value = brightness, homekitStart = 1, homekitEnd = 100, tuyaStart = service.min, tuyaEnd = service.max;
 
-			value = ((value - homekitStart) * (tuyaEnd - tuyaStart)) / (homekitEnd - homekitStart) + tuyaStart;
-
-			this.tuyaWebAPI.setDeviceState(service, 'brightnessSet', { value }).then(() => {
-
-				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { brightness });
-
-				resolve(true);
-		
-			}).catch((e) => {
-		
-				if(e != null)
+				if(value <= homekitStart)
 				{
-					this.logger.err(e);
+					value++;
 				}
-		
+
+				value = ((value - homekitStart) * (tuyaEnd - tuyaStart)) / (homekitEnd - homekitStart) + tuyaStart;
+
+				this.tuyaWebAPI.setDeviceState(service, 'brightnessSet', { value }).then(() => {
+
+					this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { brightness });
+
+					resolve(true);
+			
+				}).catch((e) => {
+			
+					if(e != null)
+					{
+						this.logger.err(e);
+					}
+			
+					resolve(false);
+				});
+			}
+			else
+			{
 				resolve(false);
-			});
+			}
 		});
 	}
 
@@ -216,24 +237,31 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			var method = target == 50 ? 'startStop' : 'turnOnOff',
-				payload = { value : target > 50 ? 1 : 0 };
+			if(this.tuyaWebAPI.session.hasValidToken())
+			{
+				var method = target == 50 ? 'startStop' : 'turnOnOff',
+					payload = { value : target > 50 ? 1 : 0 };
 
-			this.tuyaWebAPI.setDeviceState(service, method, payload).then(() => {
+				this.tuyaWebAPI.setDeviceState(service, method, payload).then(() => {
 
-				this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { value : target, target });
+					this.EventManager.setOutputStream('updateState', { sender : service, receiver : service.sid }, { value : target, target });
 
-				resolve(true);
-		
-			}).catch((e) => {
-		
-				if(e != null)
-				{
-					this.logger.err(e);
-				}
+					resolve(true);
+			
+				}).catch((e) => {
+			
+					if(e != null)
+					{
+						this.logger.err(e);
+					}
 
+					resolve(false);
+				});
+			}
+			else
+			{
 				resolve(false);
-			});
+			}
 		});
 	}
 }

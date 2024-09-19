@@ -55,8 +55,6 @@ class SynTexTuyaPlatform extends DynamicPlatform
 			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager : this.DeviceManager }));
 		}
 
-		super.loadAccessories();
-		
 		this.tuyaWebAPI.getOrRefreshToken().then((token) => {
 
 			this.tuyaWebAPI.token = token;
