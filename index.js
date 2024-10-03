@@ -46,15 +46,6 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 	loadAccessories()
 	{
-		for(const device of this.devices)
-		{
-			const homebridgeAccessory = this.getAccessory(device.id);
-
-			device.manufacturer = this.pluginName;
-
-			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager : this.DeviceManager }));
-		}
-
 		this.tuyaWebAPI.getOrRefreshToken().then((token) => {
 
 			this.tuyaWebAPI.token = token;
@@ -63,6 +54,15 @@ class SynTexTuyaPlatform extends DynamicPlatform
 
 				var additionalConfig = [];
 
+				for(const device of this.devices)
+				{
+					const homebridgeAccessory = this.getAccessory(device.id);
+
+					device.manufacturer = this.pluginName;
+
+					this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager : this.DeviceManager }));
+				}
+				
 				for(const device of devices)
 				{
 					var type = device.dev_type, found = false;
